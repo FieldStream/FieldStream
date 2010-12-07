@@ -546,15 +546,15 @@ public class InterviewScheduler extends Service {
 
 	public static ArrayList<Integer> activeModels = new ArrayList<Integer>() {
 		{
-			add(Constants.MODEL_ACTIVITY);
-			add(Constants.MODEL_DATAQUALITY);
-			add(Constants.MODEL_STRESS);
-			add(Constants.MODEL_ACCUMULATION);	
-			add(Constants.MODEL_CONVERSATION);	
-			add(Constants.MODEL_COMMUTING);
-		// added to capture user self reported events
-			add(Constants.MODEL_SELF_DRINKING);
-			add(Constants.MODEL_SELF_SMOKING);
+//			add(Constants.MODEL_ACTIVITY);
+//			add(Constants.MODEL_DATAQUALITY);
+//			add(Constants.MODEL_STRESS);
+//			add(Constants.MODEL_ACCUMULATION);	
+//			add(Constants.MODEL_CONVERSATION);	
+//			add(Constants.MODEL_COMMUTING);
+//		// added to capture user self reported events
+//			add(Constants.MODEL_SELF_DRINKING);
+//			add(Constants.MODEL_SELF_SMOKING);
 		}
 	};
 	
@@ -569,8 +569,10 @@ public class InterviewScheduler extends Service {
 			add(Constants.SENSOR_ACCELPHONEZ);		
 			add(Constants.SENSOR_BODY_TEMP);
 			add(Constants.SENSOR_AMBIENT_TEMP);			
-			add(Constants.SENSOR_GSR);						
-			add(Constants.SENSOR_ALCOHOL);
+			add(Constants.SENSOR_GSR);					
+			add(Constants.SENSOR_ECK);
+			add(Constants.SENSOR_RIP);
+//			add(Constants.SENSOR_ALCOHOL);
 		}
 	};
 	/*
