@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  
+Copyright (c) 2010, University of Memphis
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided 
+that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and 
+      the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions 
+      and the following disclaimer in the documentation and/or other materials provided with the 
+      distribution.
+    * Neither the name of the University of Memphis nor the names of its contributors may be used to 
+      endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR 
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
+TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE.
+
+Authors: Smriti Kumar, Andrew Raij
+
+-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/myScreen"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip">
+    
+    <TextView android:layout_width="wrap_content" 
+          android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:textStyle="bold"
+          android:text="HAPPY ???" android:textSize="30px" android:id="@+id/Happy" android:layout_marginTop="5px"></TextView>
+          
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="20px"
+           android:id="@+id/YES1" android:layout_below="@+id/Happy" android:layout_marginTop="15px" android:text="NO!"></TextView>
+           
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="20px"
+          android:text=" NO " android:id="@+id/YES2" android:layout_toRightOf="@+id/YES1" android:layout_alignTop="@+id/YES1" android:layout_marginLeft="44px"></TextView>
+
+     <TextView android:layout_width="wrap_content" android:textSize="20px" android:layout_alignTop="@+id/YES1"
+          android:layout_height="wrap_content" android:text="no " android:layout_marginLeft="59px" android:id="@+id/yes1" android:layout_toRightOf="@+id/YES2" ></TextView>
+
+     <TextView android:layout_width="wrap_content" android:textSize="20px" android:layout_alignTop="@+id/YES1"
+          android:layout_height="wrap_content" android:text="  yes " android:layout_marginLeft="50px" android:id="@+id/no1" android:layout_toRightOf="@+id/yes1" ></TextView>
+          
+	<TextView android:layout_width="wrap_content" android:textSize="20px" android:layout_alignTop="@+id/YES1"
+          android:layout_height="wrap_content" android:text=" YES" android:layout_marginLeft="50px" android:id="@+id/NO1" android:layout_toRightOf="@+id/no1" ></TextView>
+          
+	<TextView android:layout_width="wrap_content" android:textSize="20px" android:layout_alignTop="@+id/YES1"
+          android:layout_height="wrap_content" android:layout_toRightOf="@+id/NO1" android:id="@+id/NO2" android:text="YES!" android:layout_marginLeft="42px"></TextView>
+
+
+
+     <SeekBar android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="50" 
+        android:secondaryProgress="0" android:clickable="true" android:layout_below="@+id/YES1" android:layout_alignLeft="@+id/YES1"
+        android:id="@+id/HappySlider" android:layout_width="fill_parent" android:progressDrawable="@color/yellow"/>
+        
+     <TextView android:id="@+id/progress1" android:layout_height="wrap_content" android:layout_below="@+id/HappySlider"
+               android:layout_alignLeft="@+id/HappySlider" android:layout_width="fill_parent"/>
+
+<TextView android:id="@+id/tracking1"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/HappySlider" 
+        android:layout_width="fill_parent" android:layout_toRightOf="@+id/progress1"/>
+        
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textStyle="bold" android:textSize="30px" 
+			android:id="@+id/Sad" android:layout_below="@+id/progress1" android:layout_centerHorizontal="true" android:text="SAD ???" android:layout_marginTop="15px"></TextView>
+  
+<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_below="@+id/Sad" android:layout_marginTop="15px"
+           android:layout_alignLeft="@+id/SadSlider" android:textSize="20px" android:id="@+id/YES3" android:text="NO!"></TextView>
+   
+<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="20px"
+          android:id="@+id/YES4" android:layout_toRightOf="@+id/YES3" android:layout_alignTop="@+id/YES3" android:layout_marginLeft="44px" android:text=" NO "></TextView>
+           
+<TextView android:layout_width="wrap_content" android:textSize="20px" android:layout_alignTop="@+id/YES3"
+          android:layout_height="wrap_content" android:text="no  " android:id="@+id/yes2" android:layout_toRightOf="@+id/YES4" android:layout_marginLeft="59px"></TextView>
+
+<TextView android:layout_width="wrap_content" android:textSize="20px" android:layout_alignTop="@+id/YES3"
+          android:layout_height="wrap_content" android:text=" yes" android:id="@+id/no2" android:layout_toRightOf="@+id/yes2" android:layout_marginLeft="50px"></TextView>
+          
+<TextView android:layout_width="wrap_content" android:textSize="20px" android:layout_alignTop="@+id/YES3"
+          android:layout_height="wrap_content" android:text="  YES" android:id="@+id/NO3" android:layout_toRightOf="@+id/no2" android:layout_marginLeft="50px"></TextView>
+          
+<TextView android:layout_width="wrap_content" android:textSize="20px" android:layout_alignTop="@+id/YES3"
+          android:layout_height="wrap_content" android:layout_toRightOf="@+id/NO3" android:id="@+id/NO4" android:text="YES!" android:layout_marginLeft="42px"></TextView>
+ 
+ 
+<TextView android:id="@+id/progress2" android:layout_height="wrap_content" android:layout_below="@+id/SadSlider"
+               android:layout_alignLeft="@+id/SadSlider" android:layout_width="fill_parent"/>
+          
+<TextView android:id="@+id/tracking2"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/SadSlider" 
+        android:layout_width="fill_parent" android:layout_toRightOf="@+id/progress2"/>
+  
+
+    
+    <SeekBar android:layout_height="wrap_content" android:layout_below="@+id/YES3" android:layout_width="fill_parent" android:id="@+id/SadSlider" android:progress="50" android:max="100"  android:progressDrawable="@color/yellow"></SeekBar>
+
+ <TextView android:id="@+id/line0" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="3px" android:layout_below="@+id/YES1" android:textColor="#000000"></TextView>    
+ <TextView android:id="@+id/line1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="79px" android:layout_below="@+id/YES1" android:layout_toRightOf="@+id/line0" android:textColor="#000000"></TextView>
+ <TextView android:id="@+id/line2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_below="@+id/YES1" android:layout_toRightOf="@+id/line1" android:layout_marginLeft="80px" android:textColor="#000000"></TextView>     
+  <TextView android:id="@+id/line3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="80px" android:layout_below="@+id/YES1" android:layout_toRightOf="@+id/line2" android:textColor="#000000"></TextView>
+   <TextView android:id="@+id/line4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="80px" android:layout_below="@+id/YES1" android:layout_toRightOf="@+id/line3" android:textColor="#000000"></TextView>
+   <TextView android:id="@+id/line5" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="80px" android:layout_below="@+id/YES1" android:layout_toRightOf="@+id/line4" android:textColor="#000000"></TextView>
+      
+ <TextView android:id="@+id/line6" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="3px" android:layout_below="@+id/YES3" android:textColor="#000000"></TextView>    
+ <TextView android:id="@+id/line7" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="79px" android:layout_below="@+id/YES3" android:layout_toRightOf="@+id/line6" android:textColor="#000000"></TextView>
+ <TextView android:id="@+id/line8" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_below="@+id/YES3" android:layout_toRightOf="@+id/line7" android:layout_marginLeft="80px" android:textColor="#000000"></TextView>     
+  <TextView android:id="@+id/line9" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="80px" android:layout_below="@+id/YES3" android:layout_toRightOf="@+id/line8" android:textColor="#000000"></TextView>
+   <TextView android:id="@+id/line10" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="80px" android:layout_below="@+id/YES3" android:layout_toRightOf="@+id/line9" android:textColor="#000000"></TextView>
+   <TextView android:id="@+id/line11" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="|" android:textSize="20px" android:layout_marginLeft="80px" android:layout_below="@+id/YES3" android:layout_toRightOf="@+id/line10" android:textColor="#000000"></TextView>
+
+</RelativeLayout>   

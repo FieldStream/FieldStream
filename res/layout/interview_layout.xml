@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  
+Copyright (c) 2010, University of Memphis, Carnegie Mellon University
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided 
+that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and 
+      the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions 
+      and the following disclaimer in the documentation and/or other materials provided with the 
+      distribution.
+    * Neither the names of the University of Memphis and Carnegie Mellon University nor the names of its 
+      contributors may be used to endorse or promote products derived from this software without specific 
+      prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR 
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
+TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE.
+
+Authors: Brian French, Andrew Raij
+
+-->
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/ButtonLayout"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+
+		<RelativeLayout android:id="@+id/EMAIncentive" android:layout_width="fill_parent" 
+	              android:layout_height="wrap_content" 
+       	          android:background="#ffffffff"              
+		>
+			<TextView android:id="@+id/EMAIncentiveTotalEarned" 
+	              android:layout_width="wrap_content" 
+	              android:layout_height="wrap_content"
+	              android:text="Total Earned: "
+	              android:textSize="17sp"
+	              android:layout_alignParentLeft="true"  android:gravity="right|center_vertical"
+	              android:textColor="#ff000000"
+	              android:background="#ffffffff"              
+	              >
+	        </TextView>
+	
+			<TextView android:id="@+id/EMAIncentiveCurrent" 
+	              android:layout_width="wrap_content" 
+	              android:layout_height="wrap_content"
+	              android:text="This question: "
+	              android:textSize="17sp"
+	              android:layout_alignParentRight="true" android:gravity="left|center_vertical" 
+	              android:textColor="#ff000000"
+	              android:background="#ffffffff">
+	        </TextView>
+		</RelativeLayout>		
+				
+		<TextView android:id="@+id/Question" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content"
+              android:text="Question Text Here blah blah blah this should expand the text view size"
+              android:textSize="20sp"
+   			  android:layout_below="@+id/EMAIncentive"
+
+              >
+        </TextView>
+				 
+<!--		<GridView android:id="@+id/ButtonLayout"-->
+<!--				android:numColumns="2"-->
+<!--				android:minHeight="100"-->
+<!--				android:layout_width="fill_parent"-->
+<!--				android:layout_height="wrap_content">-->
+					
+		<Button android:id="@+id/BackButton"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:text="Back"
+				android:textSize="20sp"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentBottom="true"
+				android:minWidth="100px">
+<!--				android:minHeight="50px"-->
+<!--				android:maxHeight="50px">-->
+		</Button>
+				
+		<Button android:id="@+id/NextButton"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:text="Next" 
+				android:textSize="20sp"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentBottom="true"
+				android:minWidth="100px">
+<!--				android:minHeight="50px"-->
+<!--				android:maxHeight="50px">-->
+		</Button>		
+		
+		<ListView android:id="@+id/EMAResponseList"
+				android:clickable="true"
+				android:focusableInTouchMode="true"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/Question"
+				android:layout_above="@+id/BackButton"
+				android:paddingTop="0px" >
+		</ListView>
+		
+		<EditText android:id="@+id/EMAFreeResponse"
+				android:focusableInTouchMode="true"
+				android:focusable="true"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:lines="1"
+				android:layout_below="@+id/Question"
+				android:paddingTop="0px" 
+				android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+				android:visibility="invisible"
+				>
+		</EditText>
+		
+<!--		</GridView>-->
+</RelativeLayout>		    
+
