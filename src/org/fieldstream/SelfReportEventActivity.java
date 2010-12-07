@@ -37,7 +37,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import edu.cmu.ices.stress.phone.R;
 
 public class SelfReportEventActivity extends Activity{
 

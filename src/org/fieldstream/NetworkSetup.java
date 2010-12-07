@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.fieldstream.service.IInferrenceService;
 import org.fieldstream.service.logger.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,8 +46,6 @@ import org.w3c.dom.NodeList;
 
 import backport.android.bluetooth.BluetoothAdapter;
 import backport.android.bluetooth.BluetoothDevice;
-import edu.cmu.ices.stress.phone.R;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;

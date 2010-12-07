@@ -32,6 +32,8 @@ package org.fieldstream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import org.fieldstream.service.IInferrenceService;
+import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.FeatureBus;
@@ -53,7 +55,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
-import edu.cmu.ices.stress.phone.R;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -62,8 +63,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
-import edu.cmu.ices.stress.phone.service.IInferrenceServiceCallback;
 
 public class FeatureActivity extends Activity
 implements 

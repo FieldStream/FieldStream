@@ -31,6 +31,7 @@ package org.fieldstream.gui.ema;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.fieldstream.R;
 import org.fieldstream.service.logger.Log;
 
 import android.content.Context;
@@ -52,7 +53,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-import edu.cmu.ices.stress.phone.R;
 
 public class Interview extends AbstractInterview {
 	

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.fieldstream.Constants;
+import org.fieldstream.R;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.ContextBus;
@@ -41,7 +42,6 @@ import org.fieldstream.service.sensor.FeatureBus;
 
 import libsvm.*;
 import android.os.SystemClock;
-import edu.cmu.ices.stress.phone.R;
 
 /**
  * @author Sang Won Lee Read pre-constructed SVM model from /svmModel.txt Model

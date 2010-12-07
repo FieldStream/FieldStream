@@ -56,8 +56,6 @@ import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.os.PowerManager.WakeLock;
-import edu.cmu.ices.stress.phone.gui.ema.IInterviewCancellationCallback;
-import edu.cmu.ices.stress.phone.gui.ema.ISchedulerService;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;

@@ -42,6 +42,8 @@ import java.util.List;
 import org.fieldstream.Constants;
 import org.fieldstream.gui.ema.test.TestService;
 import org.fieldstream.incentives.EMAIncentiveManager;
+import org.fieldstream.service.IInferrenceService;
+import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.context.model.ActivityCalculation;
 import org.fieldstream.service.context.model.CommutingCalculation;
@@ -65,10 +67,6 @@ import android.os.SystemClock;
 import android.text.format.Time;
 import android.view.View;
 import android.widget.Toast;
-import edu.cmu.ices.stress.phone.gui.ema.IInterviewCancellationCallback;
-import edu.cmu.ices.stress.phone.gui.ema.ISchedulerService;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
-import edu.cmu.ices.stress.phone.service.IInferrenceServiceCallback;
 
 public class InterviewScheduler extends Service {
 	

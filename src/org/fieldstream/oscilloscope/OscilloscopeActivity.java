@@ -30,6 +30,7 @@ package org.fieldstream.oscilloscope;
 import java.util.HashMap;
 
 import org.fieldstream.Constants;
+import org.fieldstream.R;
 import org.fieldstream.service.StateManager;
 import org.fieldstream.service.logger.Log;
 
@@ -43,7 +44,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import edu.cmu.ices.stress.phone.R;
 import android.opengl.GLSurfaceView;
 
 public class OscilloscopeActivity extends Activity {

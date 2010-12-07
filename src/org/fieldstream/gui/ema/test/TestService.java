@@ -28,6 +28,8 @@
 
 package org.fieldstream.gui.ema.test;
 
+import org.fieldstream.service.IInferrenceService;
+import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.logger.Log;
 
 import android.app.Activity;
@@ -37,8 +39,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
-import edu.cmu.ices.stress.phone.service.IInferrenceServiceCallback;
 
 public class TestService extends Service {
 

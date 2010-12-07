@@ -50,7 +50,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import edu.cmu.ices.stress.phone.R;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;

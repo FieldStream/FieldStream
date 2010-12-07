@@ -50,6 +50,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.fieldstream.gui.ema.InterviewScheduler;
 import org.fieldstream.oscilloscope.ECGRIPOscilloscopeActivity;
 import org.fieldstream.oscilloscope.OscilloscopeActivity;
+import org.fieldstream.service.IInferrenceService;
+import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.logger.DatabaseLogger;
 import org.fieldstream.service.logger.Log;
@@ -62,9 +64,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import edu.cmu.ices.stress.phone.R;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
-import edu.cmu.ices.stress.phone.service.IInferrenceServiceCallback;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;

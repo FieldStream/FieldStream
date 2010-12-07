@@ -30,13 +30,12 @@
 package org.fieldstream;
 
 
+import org.fieldstream.service.IInferrenceService;
+import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.context.model.DataQualityCalculation;
 import org.fieldstream.service.logger.Log;
 
-import edu.cmu.ices.stress.phone.R;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
-import edu.cmu.ices.stress.phone.service.IInferrenceServiceCallback;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;

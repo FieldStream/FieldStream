@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.fieldstream.service.IInferrenceService;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,8 +41,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.AdapterView.OnItemClickListener;
-import edu.cmu.ices.stress.phone.R;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
 
 public class StressInferenceSetup extends Activity 
 {

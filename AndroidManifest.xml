@@ -29,7 +29,7 @@ Authors: Mishfaq Ahmed, Patrick Blitz, Brian French, Somnath Mitra, Mahbub Rahma
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="edu.cmu.ices.stress.phone" android:versionCode="1"
+	package="org.fieldstream" android:versionCode="1"
 	android:versionName="1.0">
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="true">

@@ -28,6 +28,8 @@ package org.fieldstream.gui.ema;
 
 import java.io.Serializable;
 
+import org.fieldstream.R;
+
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -37,7 +39,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import edu.cmu.ices.stress.phone.R;
 
 public class EODInterview extends AbstractInterview {
 

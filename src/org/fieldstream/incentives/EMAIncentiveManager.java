@@ -42,8 +42,6 @@ import org.fieldstream.service.logger.DatabaseLogger;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.logger.TextFileLogger;
 
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
-
 import android.database.Cursor;
 import android.os.Environment;
 import android.view.View;

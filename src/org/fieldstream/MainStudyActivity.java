@@ -46,6 +46,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.fieldstream.gui.ema.InterviewScheduler;
 import org.fieldstream.oscilloscope.ECGRIPOscilloscopeActivity;
 import org.fieldstream.oscilloscope.OscilloscopeActivity;
+import org.fieldstream.service.IInferrenceService;
+import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.context.model.DataQualityCalculation;
 import org.fieldstream.service.logger.Log;
@@ -76,8 +78,6 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.PowerManager.WakeLock;
 
-import edu.cmu.ices.stress.phone.R;
-
 import android.text.format.Time;
 
 
@@ -90,8 +90,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
-import edu.cmu.ices.stress.phone.service.IInferrenceServiceCallback;
 
 public class MainStudyActivity extends Activity implements BluetoothStateSubscriber {
 	// EMA stuff

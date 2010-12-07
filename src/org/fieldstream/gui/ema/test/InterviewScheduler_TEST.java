@@ -30,6 +30,7 @@ package org.fieldstream.gui.ema.test;
 import java.util.List;
 
 import org.fieldstream.Constants;
+import org.fieldstream.R;
 import org.fieldstream.gui.ema.InterviewScheduler;
 import org.fieldstream.service.logger.Log;
 
@@ -45,7 +46,6 @@ import android.os.PowerManager.WakeLock;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import edu.cmu.ices.stress.phone.R;
 
 public class InterviewScheduler_TEST extends Activity {
 

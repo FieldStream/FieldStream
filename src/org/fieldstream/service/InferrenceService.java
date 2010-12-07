@@ -50,8 +50,6 @@ import android.os.Debug;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
-import edu.cmu.ices.stress.phone.service.IInferrenceService;
-import edu.cmu.ices.stress.phone.service.IInferrenceServiceCallback;
 /**
  * 
  * @author Patrick Blitz

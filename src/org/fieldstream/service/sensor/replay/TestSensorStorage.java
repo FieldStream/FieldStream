@@ -32,9 +32,9 @@ package org.fieldstream.service.sensor.replay;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import org.fieldstream.R;
 import org.fieldstream.service.InferrenceService;
 
-import edu.cmu.ices.stress.phone.R;
 
 public class TestSensorStorage {
 	/**

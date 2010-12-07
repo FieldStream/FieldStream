@@ -28,6 +28,7 @@
 package org.fieldstream.oscilloscope;
 
 import org.fieldstream.Constants;
+import org.fieldstream.R;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -37,7 +38,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Spinner;
-import edu.cmu.ices.stress.phone.R;
 import android.opengl.GLSurfaceView;
 
 public class ECGRIPOscilloscopeActivity extends Activity {
