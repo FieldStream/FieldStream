@@ -301,7 +301,7 @@ public class hsslider extends Activity implements BluetoothStateSubscriber {
             
             NodeList nodeList = xmlroot.getElementsByTagName("bridge");
             Node node = nodeList.item(0);
-            currentDeviceAddress = node.getNodeValue();
+            currentDeviceAddress = node.getFirstChild().getNodeValue();
             Constants.moteAddress = currentDeviceAddress;
 
             ArrayList<Integer> sensorMotes = new ArrayList<Integer>();
