@@ -310,7 +310,7 @@ public class InferrenceService extends Service implements ContextSubscriber{
 		btStateManager.startUp();		
 		
         if (fm == null) {
-        	fm = new StateManager();  
+        	fm = StateManager.getInstance();  
         }
          
   		File root = Environment.getExternalStorageDirectory();

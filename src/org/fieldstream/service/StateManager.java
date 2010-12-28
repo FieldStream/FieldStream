@@ -37,6 +37,8 @@ import org.fieldstream.service.sensor.ContextBus;
 import org.fieldstream.service.sensor.ContextSubscriber;
 import org.fieldstream.service.sensors.api.AbstractFeature;
 import org.fieldstream.service.sensors.api.AbstractSensor;
+import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateManager;
+import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateSubscriber;
 
 
 /**
@@ -73,10 +75,19 @@ public class StateManager implements ContextSubscriber {
  */
 	public static ArrayList<Integer> SFlist;
 	private FeatureCalculation featureCalculation;
-	/**
-	 * Loads a hard coded first model and the corresponding features!
-	 */
-	public StateManager() {
+	
+	static private StateManager INSTANCE = null;
+	
+	public static StateManager getInstance()
+	{
+		if(INSTANCE == null)
+		{
+			INSTANCE = new StateManager();
+		}
+		return INSTANCE;
+	}	
+	
+	private StateManager() {
 		models = new HashMap<Integer, ModelCalculation>();
 		modelToSFMapping = new HashMap<Integer, ArrayList<Integer>>();
 		SFlist = new ArrayList<Integer>();
@@ -175,17 +186,17 @@ public class StateManager implements ContextSubscriber {
 	 * @param model
 	 * @return
 	 */
-	private ArrayList<Integer> loadSFtoModel(int model) {
+	public ArrayList<Integer> updateFeatureList(int model, ArrayList<Integer> newFeatures) {
 		ArrayList<Integer> newSF = new ArrayList<Integer>();
-		ArrayList<Integer> temp = models.get(model).getUsedFeatures();
-		modelToSFMapping.put(model, temp);
-		for (int i = 0;i<temp.size();i++) {
-			if (!SFlist.contains(temp.get(i))){ 
-				SFlist.add(temp.get(i));
-				newSF.add(temp.get(i));
+		modelToSFMapping.put(model, newFeatures);
+		for (int i = 0;i<newFeatures.size();i++) {
+			if (!SFlist.contains(newFeatures.get(i))){ 
+				SFlist.add(newFeatures.get(i));
+				newSF.add(newFeatures.get(i));
 			}
 		}
 		if (!newSF.isEmpty()) {
+			addFeatures(newSF);
 			return newSF;
 		} 
 		return null;
@@ -201,8 +212,7 @@ public class StateManager implements ContextSubscriber {
 			models.put(modelID, Factory.modelFactory(modelID));
 			
 			// load sensors for this model
-			ArrayList<Integer> newFeatures = loadSFtoModel(modelID);
-			addFeatures(newFeatures);
+			ArrayList<Integer> newFeatures = updateFeatureList(modelID, models.get(modelID).getUsedFeatures());
 			
 			Log.i("StateManager","loading Model "+((Integer)modelID).toString());
 		}
