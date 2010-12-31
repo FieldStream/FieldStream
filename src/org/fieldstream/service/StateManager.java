@@ -398,7 +398,12 @@ public class StateManager implements ContextSubscriber {
 		}
 	};
 
-	int lastContext = -1;
+	private HashMap<Integer, Integer> lastContext = new HashMap<Integer, Integer>() {
+		{
+			put(Constants.MODEL_ACTIVITY, -1);
+		}
+	};
+
 	int[] initbuffer = {-1, -1, -1, -1, -1};
 	HashMap<Integer, int[]> contextBuffers = new HashMap<Integer, int[]>() {
 		{
@@ -449,10 +454,10 @@ public class StateManager implements ContextSubscriber {
 			
 			// compute the majority from the buffer
 			int context = majority(buffer);		
-			if (context != -1 && context != lastContext) {
+			if (context != -1 && context != lastContext.get(modelID)) {
 				checkActivationRules(modelID, context);
 				checkDeactivationRules(modelID, context);
-				lastContext = context;
+				lastContext.put(modelID, context);
 			}
 		}
 	}
