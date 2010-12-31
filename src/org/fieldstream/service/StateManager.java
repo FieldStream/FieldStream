@@ -364,8 +364,8 @@ public class StateManager implements ContextSubscriber {
 		}
 	}
 
-		
-	// deactivation of contexts	
+
+	// activation/deactivation of contexts	
 	private HashMap<Integer, HashMap<Integer, ArrayList<Integer> > > activationTriggers = new HashMap<Integer, HashMap<Integer, ArrayList<Integer> > >() {
 		{
 			put(Constants.MODEL_ACTIVITY, new HashMap<Integer, ArrayList<Integer> >());
@@ -398,7 +398,7 @@ public class StateManager implements ContextSubscriber {
 		}
 	};
 
-	
+	int lastContext = -1;
 	int[] initbuffer = {-1, -1, -1, -1, -1};
 	HashMap<Integer, int[]> contextBuffers = new HashMap<Integer, int[]>() {
 		{
@@ -448,28 +448,44 @@ public class StateManager implements ContextSubscriber {
 				index = 0;
 			
 			// compute the majority from the buffer
-			int maj = majority(buffer);		
-			if (maj != -1) {
-				if (activationTriggers.containsKey(modelID)) {
-					HashMap<Integer, ArrayList<Integer> > modelRules = activationTriggers.get(modelID);
-					if (modelRules.containsKey(maj)) {
-						ArrayList<Integer> rules = modelRules.get(maj);
-						
-						for (Integer modelToActivate : rules) {
-							this.activate(modelToActivate);
-						}
-					}
-				}
+			int context = majority(buffer);		
+			if (context != -1 && context != lastContext) {
+				checkActivationRules(modelID, context);
+				checkDeactivationRules(modelID, context);
+				lastContext = context;
+			}
+		}
+	}
+
+	/**
+	 * @param modelID
+	 * @param context
+	 */
+	private void checkDeactivationRules(int modelID, int context) {
+		if (deactivationTriggers.containsKey(modelID)) {
+			HashMap<Integer, ArrayList<Integer> > modelRules = deactivationTriggers.get(modelID);
+			if (modelRules.containsKey(context)) {
+				ArrayList<Integer> rules = modelRules.get(context);
 				
-				if (deactivationTriggers.containsKey(modelID)) {
-					HashMap<Integer, ArrayList<Integer> > modelRules = activationTriggers.get(modelID);
-					if (modelRules.containsKey(maj)) {
-						ArrayList<Integer> rules = modelRules.get(maj);
-						
-						for (Integer modelToDeactivate : rules) {
-							this.deactivate(modelToDeactivate);
-						}
-					}
+				for (Integer modelToDeactivate : rules) {
+					this.deactivate(modelToDeactivate);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param modelID
+	 * @param context
+	 */
+	private void checkActivationRules(int modelID, int context) {
+		if (activationTriggers.containsKey(modelID)) {
+			HashMap<Integer, ArrayList<Integer> > modelRules = activationTriggers.get(modelID);
+			if (modelRules.containsKey(context)) {
+				ArrayList<Integer> rules = modelRules.get(context);
+				
+				for (Integer modelToActivate : rules) {
+					this.activate(modelToActivate);
 				}
 			}
 		}
