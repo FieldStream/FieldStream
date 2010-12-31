@@ -36,7 +36,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.fieldstream.Constants;
-import org.fieldstream.service.StateManager;
+import org.fieldstream.service.ActivationManager;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.FeatureBus;
 import org.fieldstream.service.sensor.FeatureBusSubscriber;
@@ -96,7 +96,7 @@ public abstract class ModelCalculation implements FeatureBusSubscriber{
 	}
 	
 	/**
-	 * gives the list of features used by this Model, used by  {@link StateManager} to know which features belong to which model
+	 * gives the list of features used by this Model, used by  {@link ActivationManager} to know which features belong to which model
 	 * 
 	 * Each implementation of this class should store an integer array of the used feature id's. A Feature ID is constructed from 
 	 * the FeatureID, for example {@link Constants#FEATURE_MEAN} and {@link Constants#SENSOR_ACCELPHONE} would be combined using

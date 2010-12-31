@@ -53,7 +53,7 @@ import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateSubscriber;
  *
  */
 
-public class StateManager implements ContextSubscriber {
+public class ActivationManager implements ContextSubscriber {
 /**
  * List that contains all available sensors
  */
@@ -76,18 +76,18 @@ public class StateManager implements ContextSubscriber {
 	public static ArrayList<Integer> SFlist;
 	private FeatureCalculation featureCalculation;
 	
-	static private StateManager INSTANCE = null;
+	static private ActivationManager INSTANCE = null;
 	
-	public static StateManager getInstance()
+	public static ActivationManager getInstance()
 	{
 		if(INSTANCE == null)
 		{
-			INSTANCE = new StateManager();
+			INSTANCE = new ActivationManager();
 		}
 		return INSTANCE;
 	}	
 	
-	private StateManager() {
+	private ActivationManager() {
 		models = new HashMap<Integer, ModelCalculation>();
 		modelToSFMapping = new HashMap<Integer, ArrayList<Integer>>();
 		SFlist = new ArrayList<Integer>();
