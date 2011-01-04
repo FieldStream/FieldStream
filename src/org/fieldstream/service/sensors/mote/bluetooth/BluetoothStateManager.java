@@ -41,8 +41,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import backport.android.bluetooth.BluetoothAdapter;
-import backport.android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 
 
 
