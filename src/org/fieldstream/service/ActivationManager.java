@@ -24,9 +24,17 @@
 //
 package org.fieldstream.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.fieldstream.Constants;
 import org.fieldstream.service.context.model.ActivityCalculation;
@@ -37,6 +45,16 @@ import org.fieldstream.service.sensor.ContextBus;
 import org.fieldstream.service.sensor.ContextSubscriber;
 import org.fieldstream.service.sensors.api.AbstractFeature;
 import org.fieldstream.service.sensors.api.AbstractSensor;
+import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateManager;
+import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateSubscriber;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import android.os.Environment;
 
 
 /**
@@ -51,7 +69,7 @@ import org.fieldstream.service.sensors.api.AbstractSensor;
  *
  */
 
-public class StateManager implements ContextSubscriber {
+public class ActivationManager implements ContextSubscriber {
 /**
  * List that contains all available sensors
  */
@@ -73,10 +91,19 @@ public class StateManager implements ContextSubscriber {
  */
 	public static ArrayList<Integer> SFlist;
 	private FeatureCalculation featureCalculation;
-	/**
-	 * Loads a hard coded first model and the corresponding features!
-	 */
-	public StateManager() {
+	
+	static private ActivationManager INSTANCE = null;
+	
+	public static ActivationManager getInstance()
+	{
+		if(INSTANCE == null)
+		{
+			INSTANCE = new ActivationManager();
+		}
+		return INSTANCE;
+	}	
+	
+	private ActivationManager() {
 		models = new HashMap<Integer, ModelCalculation>();
 		modelToSFMapping = new HashMap<Integer, ArrayList<Integer>>();
 		SFlist = new ArrayList<Integer>();
@@ -87,6 +114,8 @@ public class StateManager implements ContextSubscriber {
 		
 //		ContextBus.getInstance().subscribe(this);		
 		db = DatabaseLogger.getInstance(this);
+		
+		loadConfigFromFile();
 	}
 	
 
@@ -175,17 +204,17 @@ public class StateManager implements ContextSubscriber {
 	 * @param model
 	 * @return
 	 */
-	private ArrayList<Integer> loadSFtoModel(int model) {
+	public ArrayList<Integer> updateFeatureList(int model, ArrayList<Integer> newFeatures) {
 		ArrayList<Integer> newSF = new ArrayList<Integer>();
-		ArrayList<Integer> temp = models.get(model).getUsedFeatures();
-		modelToSFMapping.put(model, temp);
-		for (int i = 0;i<temp.size();i++) {
-			if (!SFlist.contains(temp.get(i))){ 
-				SFlist.add(temp.get(i));
-				newSF.add(temp.get(i));
+		modelToSFMapping.put(model, newFeatures);
+		for (int i = 0;i<newFeatures.size();i++) {
+			if (!SFlist.contains(newFeatures.get(i))){ 
+				SFlist.add(newFeatures.get(i));
+				newSF.add(newFeatures.get(i));
 			}
 		}
 		if (!newSF.isEmpty()) {
+			addFeatures(newSF);
 			return newSF;
 		} 
 		return null;
@@ -201,13 +230,32 @@ public class StateManager implements ContextSubscriber {
 			models.put(modelID, Factory.modelFactory(modelID));
 			
 			// load sensors for this model
-			ArrayList<Integer> newFeatures = loadSFtoModel(modelID);
-			addFeatures(newFeatures);
+			ArrayList<Integer> newFeatures = updateFeatureList(modelID, models.get(modelID).getUsedFeatures());
 			
 			Log.i("StateManager","loading Model "+((Integer)modelID).toString());
 		}
 	}
 
+	public void activate(String modelName) {
+		try {
+			Field field = Constants.class.getField(modelName);
+			int modelID = field.getInt(null);
+			this.activate(modelID);
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * deactivate a specific model. All Features and sensors that are only needed by this model will be turned off/deactivated
 	 * @param modelID the IntegerID of a Model as defined in {@link Constants}
@@ -342,6 +390,26 @@ public class StateManager implements ContextSubscriber {
             }              
     }
     
+	public void activateSensor(String sensorName) {
+		try {
+			Field field = Constants.class.getField(sensorName);
+			int sensorID = field.getInt(null);
+			this.activateSensor(sensorID);
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}    
+    
 	/**
 	 * publish a new ground truth label (from EMA for example) to the model
 	 * @param modelStress
@@ -354,41 +422,18 @@ public class StateManager implements ContextSubscriber {
 		}
 	}
 
-		
-	// deactivation of contexts	
-	private HashMap<Integer, HashMap<Integer, ArrayList<Integer> > > activationTriggers = new HashMap<Integer, HashMap<Integer, ArrayList<Integer> > >() {
-		{
-			put(Constants.MODEL_ACTIVITY, new HashMap<Integer, ArrayList<Integer> >());
-			get(Constants.MODEL_ACTIVITY).put(ActivityCalculation.SIT, new ArrayList<Integer>());
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.SIT).add(Constants.MODEL_DATAQUALITY);
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.SIT).add(Constants.MODEL_STRESS);
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.SIT).add(Constants.MODEL_ACCUMULATION);
-			
-			get(Constants.MODEL_ACTIVITY).put(ActivityCalculation.STAND, new ArrayList<Integer>());			
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.STAND).add(Constants.MODEL_DATAQUALITY);
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.STAND).add(Constants.MODEL_STRESS);
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.STAND).add(Constants.MODEL_ACCUMULATION);
-
-			get(Constants.MODEL_ACTIVITY).put(ActivityCalculation.WALK, new ArrayList<Integer>());						
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.WALK).add(Constants.MODEL_COMMUTING);
-		}
-	};
-
-	private HashMap<Integer, HashMap<Integer, ArrayList<Integer> > > deactivationTriggers = new HashMap<Integer, HashMap<Integer, ArrayList<Integer> > >() {
-		{
-			put(Constants.MODEL_ACTIVITY, new HashMap<Integer, ArrayList<Integer> >());
-			get(Constants.MODEL_ACTIVITY).put(ActivityCalculation.WALK, new ArrayList<Integer>());									
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.WALK).add(Constants.MODEL_DATAQUALITY);
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.WALK).add(Constants.MODEL_STRESS);
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.WALK).add(Constants.MODEL_ACCUMULATION);
-			get(Constants.MODEL_ACTIVITY).put(ActivityCalculation.SIT, new ArrayList<Integer>());									
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.SIT).add(Constants.MODEL_COMMUTING);			
-			get(Constants.MODEL_ACTIVITY).put(ActivityCalculation.STAND, new ArrayList<Integer>());									
-			get(Constants.MODEL_ACTIVITY).get(ActivityCalculation.STAND).add(Constants.MODEL_COMMUTING);						
-		}
-	};
-
 	
+	// code for 
+
+	private HashMap<Integer, HashMap<Integer, ArrayList<Integer> > > activationTriggers = new HashMap<Integer, HashMap<Integer, ArrayList<Integer> > >();
+	private HashMap<Integer, HashMap<Integer, ArrayList<Integer> > > deactivationTriggers = new HashMap<Integer, HashMap<Integer, ArrayList<Integer> > >();
+
+	private HashMap<Integer, Integer> lastContext = new HashMap<Integer, Integer>() {
+		{
+			put(Constants.MODEL_ACTIVITY, -1);
+		}
+	};
+
 	int[] initbuffer = {-1, -1, -1, -1, -1};
 	HashMap<Integer, int[]> contextBuffers = new HashMap<Integer, int[]>() {
 		{
@@ -438,33 +483,195 @@ public class StateManager implements ContextSubscriber {
 				index = 0;
 			
 			// compute the majority from the buffer
-			int maj = majority(buffer);		
-			if (maj != -1) {
-				if (activationTriggers.containsKey(modelID)) {
-					HashMap<Integer, ArrayList<Integer> > modelRules = activationTriggers.get(modelID);
-					if (modelRules.containsKey(maj)) {
-						ArrayList<Integer> rules = modelRules.get(maj);
-						
-						for (Integer modelToActivate : rules) {
-							this.activate(modelToActivate);
-						}
-					}
-				}
+			int context = majority(buffer);		
+			if (context != -1 && context != lastContext.get(modelID)) {
+				checkActivationRules(modelID, context);
+				checkDeactivationRules(modelID, context);
+				lastContext.put(modelID, context);
+			}
+		}
+	}
+
+	/**
+	 * @param modelID
+	 * @param context
+	 */
+	private void checkDeactivationRules(int modelID, int context) {
+		if (deactivationTriggers.containsKey(modelID)) {
+			HashMap<Integer, ArrayList<Integer> > modelRules = deactivationTriggers.get(modelID);
+			if (modelRules.containsKey(context)) {
+				ArrayList<Integer> rules = modelRules.get(context);
 				
-				if (deactivationTriggers.containsKey(modelID)) {
-					HashMap<Integer, ArrayList<Integer> > modelRules = activationTriggers.get(modelID);
-					if (modelRules.containsKey(maj)) {
-						ArrayList<Integer> rules = modelRules.get(maj);
-						
-						for (Integer modelToDeactivate : rules) {
-							this.deactivate(modelToDeactivate);
-						}
-					}
+				for (Integer modelToDeactivate : rules) {
+					this.deactivate(modelToDeactivate);
 				}
 			}
 		}
 	}
 
+	/**
+	 * @param modelID
+	 * @param context
+	 */
+	private void checkActivationRules(int modelID, int context) {
+		if (activationTriggers.containsKey(modelID)) {
+			HashMap<Integer, ArrayList<Integer> > modelRules = activationTriggers.get(modelID);
+			if (modelRules.containsKey(context)) {
+				ArrayList<Integer> rules = modelRules.get(context);
+				
+				for (Integer modelToActivate : rules) {
+					this.activate(modelToActivate);
+				}
+			}
+		}
+	}
+
+	
+	void loadConfigFromFile() {		
+		File root = Environment.getExternalStorageDirectory();
+
+		File dir = new File(root+"/"+Constants.CONFIG_DIR);
+		dir.mkdirs();
+
+		File setupFile = new File(dir, Constants.ACTIVATION_CONFIG_FILENAME);
+		if (!setupFile.exists())
+			return;
+		
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = null;
+		try {
+			builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        Document dom = null;
+		try {
+			dom = builder.parse(setupFile);
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        Element xmlroot = dom.getDocumentElement();		
+        
+        NodeList nodeList = xmlroot.getElementsByTagName("startup");
+        if (nodeList.getLength() > 0) {
+        	Element element = (Element)nodeList.item(0);
+        	loadStartupConfig(element);
+        }
+        
+        nodeList = xmlroot.getElementsByTagName("runtime");
+        if (nodeList.getLength() > 0) {
+        	Element element = (Element)nodeList.item(0);
+        	loadRuntimeRules(element);
+        }
+	}
+	
+	void loadStartupConfig(Element startupElement) {
+		
+		// load models
+        NodeList nodeList = startupElement.getElementsByTagName("model");
+        for (int i=0; i < nodeList.getLength(); i++) {
+        	Element element = (Element)nodeList.item(i);
+        	String modelToActivate = element.getFirstChild().getNodeValue();
+        	this.activate(modelToActivate);        	
+        }
+
+		// load models
+        nodeList = startupElement.getElementsByTagName("sensor");
+        for (int i=0; i < nodeList.getLength(); i++) {
+        	Element element = (Element)nodeList.item(i);
+        	String sensorToActivate = element.getFirstChild().getNodeValue();
+        	this.activateSensor(sensorToActivate);        	
+        }        
+	}
+	
+	
+	void loadRuntimeRules(Element runtimeRules) {
+
+        NodeList ruleList = runtimeRules.getElementsByTagName("trigger");
+        for (int i=0; i < ruleList.getLength(); i++) {
+        	Element rule = (Element)ruleList.item(i);
+
+        	// extract the model and output that triggers an action
+        	String modelTrigger = rule.getAttribute("model");
+        	String outputTrigger = rule.getAttribute("output");
+        	
+        	// extract the actions triggered by model and output
+        	NodeList actions = rule.getChildNodes();
+        	for (int j=0; j < actions.getLength(); j++) {
+        		Element action = (Element)actions.item(j);
+            	String modelToActivate = action.getFirstChild().getNodeValue();
+            	addActivationRule(modelTrigger, outputTrigger, modelToActivate, action.getNodeName().equals("activate"));
+        	}	
+        }
+	}
+
+	private void addActivationRule(int modelTrigger, int outputTrigger,
+			int modelToActivate, boolean activate) {
+		
+		HashMap<Integer, HashMap<Integer, ArrayList<Integer> > > triggers = null;
+
+		if (activate) {
+			triggers = activationTriggers;
+		}
+		else {
+			triggers = deactivationTriggers;
+		}
+		
+		HashMap<Integer, ArrayList<Integer> > outputTriggers = triggers.get(modelTrigger);
+		if (outputTriggers == null) {
+			outputTriggers = new HashMap<Integer, ArrayList<Integer> >();
+			triggers.put(modelTrigger, outputTriggers);
+		}
+
+		ArrayList<Integer> modelsToActivate = outputTriggers.get(outputTrigger);
+		if (modelsToActivate == null) {
+			modelsToActivate = new ArrayList<Integer>();
+			outputTriggers.put(outputTrigger, modelsToActivate);
+		}
+
+		if (!modelsToActivate.contains(modelToActivate)) {
+			modelsToActivate.add(modelToActivate);
+		}
+		
+		
+	}
+	
+	private void addActivationRule(String mt, String ot,
+			String mta, boolean activate) {
+
+		int modelTrigger=-1,modelToActivate=-1, outputTrigger=-1;
+		try {
+			modelTrigger = Constants.class.getField(mt).getInt(null);
+			modelToActivate = Constants.class.getField(mta).getInt(null);
+			outputTrigger = Integer.parseInt(ot);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		if (modelTrigger == -1)
+			return;
+		
+		addActivationRule(modelTrigger, outputTrigger, modelToActivate, activate);
+		
+	}
+	
 	
 	
 	

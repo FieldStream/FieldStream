@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 import org.fieldstream.Constants;
 import org.fieldstream.R;
-import org.fieldstream.service.StateManager;
+import org.fieldstream.service.ActivationManager;
 import org.fieldstream.service.logger.Log;
 
 import android.app.Activity;
@@ -132,8 +132,8 @@ public class OscilloscopeActivity extends Activity {
 
 
 	private void addFeatureToListIfAvailable(int featureID) {
-		if (StateManager.SFlist != null) {
-			if (StateManager.SFlist.contains(featureID)) {
+		if (ActivationManager.SFlist != null) {
+			if (ActivationManager.SFlist.contains(featureID)) {
 				if (!spinnerIndexToSignalID.containsValue(featureID)) {
 					spinnerIndexToSignalID.put(spinnerArrayAdapter.getCount(), featureID);
 					
@@ -147,8 +147,8 @@ public class OscilloscopeActivity extends Activity {
     
 	
 	private void addSensorToListIfAvailable(int sensorID) {
-		if (StateManager.sensors != null) {		
-			if (StateManager.sensors.containsKey(sensorID)) {
+		if (ActivationManager.sensors != null) {		
+			if (ActivationManager.sensors.containsKey(sensorID)) {
 				if (!spinnerIndexToSignalID.containsValue(sensorID)) {
 					spinnerIndexToSignalID.put(spinnerArrayAdapter.getCount(), sensorID);
 					spinnerArrayAdapter.add(Constants.getSensorDescription(sensorID));

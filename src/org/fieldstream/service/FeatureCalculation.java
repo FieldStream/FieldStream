@@ -44,7 +44,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 /**
- * FeatureCalculation Class that executes the features for Sensors. Initialized by the {@link StateManager}.
+ * FeatureCalculation Class that executes the features for Sensors. Initialized by the {@link ActivationManager}.
  * @author blitz
  *
  */

@@ -40,7 +40,7 @@ import org.fieldstream.gui.ema.EMALogConstants;
 import org.fieldstream.gui.ema.IContent;
 import org.fieldstream.gui.ema.InterviewScheduler;
 import org.fieldstream.incentives.AbstractIncentivesManager;
-import org.fieldstream.service.StateManager;
+import org.fieldstream.service.ActivationManager;
 import org.fieldstream.service.context.model.ModelCalculation;
 import org.fieldstream.service.logger.Log;
 
@@ -568,7 +568,7 @@ public class DatabaseLogger extends AbstractLogger  {
 		    values.put("table_name", tableName);
 		    values.put("model_desc", Constants.getModelDescription(modelID));	    
 		    
-		    ModelCalculation model = StateManager.models.get(modelID);
+		    ModelCalculation model = ActivationManager.models.get(modelID);
 		    Iterator<Entry<Integer,String>> itr = model.getOutputDescription().entrySet().iterator();
 		    String outputs = "";
 		    while(itr.hasNext()) {
