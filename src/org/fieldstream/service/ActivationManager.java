@@ -109,13 +109,7 @@ public class ActivationManager implements ContextSubscriber {
 		SFlist = new ArrayList<Integer>();
 		sensors = new HashMap<Integer, AbstractSensor>();
 		sensorFeature = new HashMap<Integer, ArrayList<Integer>>();
-		features = new HashMap<Integer, AbstractFeature>();
-		featureCalculation = FeatureCalculation.getInstance();
-		
-//		ContextBus.getInstance().subscribe(this);		
-		db = DatabaseLogger.getInstance(this);
-		
-		loadConfigFromFile();
+		features = new HashMap<Integer, AbstractFeature>();	
 	}
 	
 
@@ -288,10 +282,30 @@ public class ActivationManager implements ContextSubscriber {
 	}
 		
 	/**
-	 * deactivates all currently loaded models
+	 * 
 	 */
-	public void deactivate() {
-//		ContextBus.getInstance().unsubscribe(this);
+	
+	boolean initialized = false;
+	
+	public void init() {
+		if (initialized)
+			return;
+
+		featureCalculation = FeatureCalculation.getInstance();
+		
+		ContextBus.getInstance().subscribe(this);		
+		db = DatabaseLogger.getInstance(this);
+		
+		loadConfigFromFile();
+		
+		initialized = true;
+	}	
+	
+	public void destroy() {
+		if (!initialized)
+			return;
+		
+		ContextBus.getInstance().unsubscribe(this);
 		DatabaseLogger.releaseInstance(this);
 		HashMap<Integer, ModelCalculation> tempModels = new HashMap<Integer, ModelCalculation>();
 		tempModels.putAll(models);
@@ -301,7 +315,7 @@ public class ActivationManager implements ContextSubscriber {
 		featureCalculation.finalize();
 		featureCalculation=null;
 		db = null;
-
+		initialized = false;
 	}
 	/**
 	 * dynamicly add/delete a sensor / feature combination (from a model),<br /> the model has to be loaded already
@@ -569,6 +583,11 @@ public class ActivationManager implements ContextSubscriber {
         	Element element = (Element)nodeList.item(0);
         	loadRuntimeRules(element);
         }
+        
+        printActiveModels();
+        printActiveSensors();
+        printRuntimeRules();
+        
 	}
 	
 	void loadStartupConfig(Element startupElement) {
@@ -604,9 +623,19 @@ public class ActivationManager implements ContextSubscriber {
         	// extract the actions triggered by model and output
         	NodeList actions = rule.getChildNodes();
         	for (int j=0; j < actions.getLength(); j++) {
-        		Element action = (Element)actions.item(j);
-            	String modelToActivate = action.getFirstChild().getNodeValue();
-            	addActivationRule(modelTrigger, outputTrigger, modelToActivate, action.getNodeName().equals("activate"));
+        		Node action = actions.item(j);
+        		
+        		if (action.getNodeName().equals("activate")) {
+        			String modelToActivate = action.getFirstChild().getNodeValue();
+        			addActivationRule(modelTrigger, outputTrigger, modelToActivate, true);
+        		}
+        		else if (action.getNodeName().equals("deactivate")) {
+        			String modelToDeactivate = action.getFirstChild().getNodeValue();
+        			addActivationRule(modelTrigger, outputTrigger, modelToDeactivate, false);
+        		}
+        		else {
+        			//ignore #text
+        		}
         	}	
         }
 	}
@@ -665,7 +694,7 @@ public class ActivationManager implements ContextSubscriber {
 		}
 
 		
-		if (modelTrigger == -1)
+		if (modelTrigger == -1 || outputTrigger == -1 || modelToActivate == -1)
 			return;
 		
 		addActivationRule(modelTrigger, outputTrigger, modelToActivate, activate);
@@ -673,6 +702,40 @@ public class ActivationManager implements ContextSubscriber {
 	}
 	
 	
+	void printActiveModels() {
+		for (int m : models.keySet()) {
+			Log.d("ActivationManager", "model " + m + " active");
+		}
+	}
+
+	void printActiveSensors() {
+		for (int s : sensors.keySet()) {
+			Log.d("ActivationManager", "sensor " + s + " active");
+		}		
+	}
 	
-	
+	void printRuntimeRules() {
+		for (int triggerModel : activationTriggers.keySet()) {
+			for (int triggerOutput : activationTriggers.get(triggerModel).keySet()) {
+				String str = "Activate [ ";
+				for (int action : activationTriggers.get(triggerModel).get(triggerOutput)) {
+					str += action + " ";
+				}
+				str += "] when " + triggerModel + " produces " + triggerOutput;
+				
+				Log.d("ActivationManager", str);
+			}
+		}
+
+		for (int triggerModel : deactivationTriggers.keySet()) {
+			for (int triggerOutput : deactivationTriggers.get(triggerModel).keySet()) {
+				String str = "Deactivate [";
+				for (int action : deactivationTriggers.get(triggerModel).get(triggerOutput)) {
+					str += action + " ";
+				}
+				str += "] when " + triggerModel + " produces " + triggerOutput;
+				Log.d("ActivationManager", str);
+			}
+		}
+	}
 }

@@ -311,6 +311,7 @@ public class InferrenceService extends Service implements ContextSubscriber{
 		
         if (fm == null) {
         	fm = ActivationManager.getInstance();  
+        	fm.init();
         }
          
   		File root = Environment.getExternalStorageDirectory();
@@ -345,7 +346,7 @@ public class InferrenceService extends Service implements ContextSubscriber{
 //			if (http != null)
 //				http.shutdown();		
 			
-			fm.deactivate();
+			fm.destroy();
 			fm=null;
 			dataLogger = null;
 			DatabaseLogger.releaseInstance(this);
