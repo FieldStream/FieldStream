@@ -94,6 +94,7 @@ public class ActivationManager implements ContextSubscriber {
 	
 	static private ActivationManager INSTANCE = null;
 	
+	//this was not present in the statemanager before.
 	public static ActivationManager getInstance()
 	{
 		if(INSTANCE == null)
