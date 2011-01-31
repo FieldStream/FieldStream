@@ -54,11 +54,11 @@ package org.fieldstream.service.sensor.virtual;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 
 import org.fieldstream.Constants;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.features.Percentile;
+import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
 import org.fieldstream.service.sensors.mote.MoteSensorManager;
@@ -73,6 +73,7 @@ import android.util.Log;
  *
  */
 public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateSubscriber, SensorBusSubscriber {
+//public class  StretchVirtualSensor extends AbstractSensor implements SensorBusSubscriber {  //now it should get data from the sensorbus. so it is a subscriber of sensorbus only
 
 	private static final int FRAMERATE = 60;
 	/**
@@ -275,12 +276,15 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 		//		} else {
 		//			MoteSensorManager.getInstance().registerListener(this);
 		//		}
-		MoteSensorManager.getInstance().registerListener(this);
+		
+		//MoteSensorManager.getInstance().registerListener(this);   //for MoteBusSubscriber
+		SensorBus.getInstance().subscribe(this);   //for SEnsorBus subscribing
 		// as this depends on the ECG sensor to be active, i need to load it to make sure it's there!
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_REPLAY_RESP);
 		} else {
 			InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_RIP);
+			//InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_ACCELPHONEZ);
 		}
 
 	}
@@ -302,12 +306,13 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 		//		} else {
 		//			MoteSensorManager.getInstance().unregisterListener(this);
 		//		}
-		//SensorBus.getInstance().unsubscribe(this);
-		MoteSensorManager.getInstance().unregisterListener(this);
+		SensorBus.getInstance().unsubscribe(this);
+		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {
-			InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_REPLAY_ECK);
+			InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_REPLAY_RESP);
 		} else {
-			InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_ECK);	
+			InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_RIP);	
+			//InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_ACCELPHONEZ);	
 		}
 
 		active = false;
@@ -347,7 +352,13 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 	}
 
 	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
-		if(SensorID == Constants.SENSOR_RIP)
+		if(SensorID==Constants.SENSOR_ACCELPHONEZ) 
+			Log.d("StretchVirtualSensor","Received ACCELPHONEZ from MoteBus");
+		if(SensorID==Constants.SENSOR_RIP) 
+			Log.d("StretchVirtualSensor","Received RIP from MoteBus");
+		
+	}
+		/*		if(SensorID == Constants.SENSOR_RIP)
 		{
 			//all for the debugging
 //			String str="";
@@ -390,13 +401,31 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 			//			Log.d("StretchVirtualSensor","raw RIP data timestamp= "+checktimestamp);
 //			timestamp_check=timestamp;
 		}
-	}
+	}*/
 
 	public void receiveBuffer(int sensorID, int[] data, long[] timestamps,
 			int startNewData, int endNewData) {
 		if (sensorID==Constants.SENSOR_REPLAY_RESP) {
 			addValue(data, timestamps);
 
+		}
+		if(sensorID==Constants.SENSOR_ACCELPHONEZ) 
+			Log.d("StretchVirtualSensor","Received ACCELPHONEZ");
+		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
+		{
+			addValue(data, timestamps);
+			String ripData="";
+			for(int i=0;i<data.length;i++)
+			{
+				ripData+=data[i]+",";
+			}
+			String checktimestamp="";
+			for(int i=0;i<timestamps.length;i++)
+			{
+				checktimestamp+=timestamps[i]+",";
+			}
+			Log.d("StretchVirtualSensor", "raw RIP data for Stretch= "+ripData);
+			Log.d("StretchVirtualSensor","raw RIP data timestamp for stretch= "+checktimestamp);
 		}
 	}
 }
