@@ -59,8 +59,6 @@ public class ConversationDetectionModel extends ModelCalculation{
 	}
 	
 	public ArrayList<Integer> getUsedFeatures() {
-		//test change
-		//again test
 		//Log.d("getUsedFeature","getUsedFeature");
 		featureLabels = new ArrayList<Integer>();
 		featureLabels.add(Constants.getId(Constants.FEATURE_NINETIETH_PERCENTILE, Constants.SENSOR_VIRTUAL_INHALATION));		//is it from virtual sensor or what???//1
