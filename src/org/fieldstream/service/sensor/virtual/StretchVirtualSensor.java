@@ -409,8 +409,8 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 			addValue(data, timestamps);
 
 		}
-		if(sensorID==Constants.SENSOR_ACCELPHONEZ) 
-			Log.d("StretchVirtualSensor","Received ACCELPHONEZ");
+//		if(sensorID==Constants.SENSOR_ACCELPHONEZ) 
+//			Log.d("StretchVirtualSensor","Received ACCELPHONEZ");
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);
