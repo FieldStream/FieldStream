@@ -70,17 +70,9 @@ public class Constants {
 	public static final int SENSOR_ECK = 12;
 	public static final int SENSOR_BODY_TEMP = 13;
 	public static final int SENSOR_AMBIENT_TEMP = 14;
-	public static final int SENSOR_ACCELPHONEY = 31;
-	public static final int SENSOR_ACCELPHONEX = 30;
-	public static final int SENSOR_ACCELPHONEZ = 32;
-	public static final int SENSOR_ACCELPHONEMAG = 33;
-	public static final int SENSOR_COMPASSPHONEX = 34;
-	public static final int SENSOR_COMPASSPHONEY = 35;
-	public static final int SENSOR_COMPASSPHONEZ = 36;
-	public static final int SENSOR_COMPASSPHONEMAG = 37;
-	public static final int SENSOR_ACCELCHESTMAG = 41;
 	public static final int SENSOR_ACCELCHESTX = 18;
 	public static final int SENSOR_ACCELCHESTY = 19;
+
 	public static final int SENSOR_ACCELCHESTZ = 20;
 	public static final int SENSOR_RIP = 21;
 	public static final int SENSOR_VIRTUAL_RR = 22;
@@ -89,6 +81,33 @@ public class Constants {
 	public static final int SENSOR_LOCATIONSPEED = 25;
 	public static final int SENSOR_BATTERY_LEVEL = 26;
 	public static final int SENSOR_ALCOHOL = 27;
+
+	public static final int SENSOR_ACCELPHONEX = 30;
+	public static final int SENSOR_ACCELPHONEY = 31;
+	public static final int SENSOR_ACCELPHONEZ = 32;
+	public static final int SENSOR_ACCELPHONEMAG = 33;
+	public static final int SENSOR_COMPASSPHONEX = 34;
+	public static final int SENSOR_COMPASSPHONEY = 35;
+	public static final int SENSOR_COMPASSPHONEZ = 36;
+	public static final int SENSOR_COMPASSPHONEMAG = 37;
+	
+	public static final int SENSOR_ACCELCHESTMAG = 40;
+	public static final int SENSOR_ZEPHYR_ECG = 41;
+	public static final int SENSOR_ZEPHYR_RSP = 42;
+	public static final int SENSOR_ZEPHYR_TMP = 43;
+	public static final int SENSOR_ZEPHYR_ACL = 44;
+	public static final int SENSOR_VIRTUAL_ECK_QUALITY = 45;
+	public static final int SENSOR_VIRTUAL_RIP_QUALITY = 46;
+	public static final int SENSOR_VIRTUAL_TEMP_QUALITY = 47;
+	public static final int SENSOR_VIRTUAL_ACCELCOMMUTING = 48;
+	
+	public static final int SENSOR_VIRTUAL_FIRSTDIFF_EXHALATION_NEW = 50;
+
+	public static final int SENSOR_VIRTUAL_MINUTEVENTILATION = 87;
+	public static final int SENSOR_VIRTUAL_RESPIRATION = 88;
+	public static final int SENSOR_VIRTUAL_EXHALATION_FIRSTDIFF = 89;
+
+	public static final int SENSOR_VIRTUAL_BDURATION = 90;	
 	public static final int SENSOR_REPLAY_GSR = 91;
 	public static final int SENSOR_REPLAY_ECK = 92;
 	public static final int SENSOR_REPLAY_TEMP = 93;
@@ -99,28 +118,12 @@ public class Constants {
 	public static final int SENSOR_VIRTUAL_IERATIO = 97;
 	public static final int SENSOR_VIRTUAL_REALPEAKVALLEY = 98;
 	public static final int SENSOR_VIRTUAL_STRETCH = 99;
-	public static final int SENSOR_VIRTUAL_BDURATION = 90;	
-	public static final int SENSOR_VIRTUAL_EXHALATION_FIRSTDIFF = 89;
-	public static final int SENSOR_VIRTUAL_RESPIRATION = 88;
-	public static final int SENSOR_VIRTUAL_MINUTEVENTILATION = 87;
-	
-	public static final int SENSOR_ZEPHYR_ECG = 41;
-	public static final int SENSOR_ZEPHYR_RSP = 42;
-	public static final int SENSOR_ZEPHYR_TMP = 43;
-	public static final int SENSOR_ZEPHYR_ACL = 44;
-	public static final int SENSOR_VIRTUAL_ECK_QUALITY = 45;
-	public static final int SENSOR_VIRTUAL_RIP_QUALITY = 46;
-	public static final int SENSOR_VIRTUAL_TEMP_QUALITY = 47;
-	public static final int SENSOR_VIRTUAL_FIRSTDIFF_EXHALATION_NEW = 50;
-	
-	
+
 	// ema constants
 	public static final String quietStart = "STRESSOR_START";
 	public static final String quietEnd = "STRESSOR_STOP";
 	public static final String sleepStart = "EOD";
 	public static final String sleepEnd = "SOD";
-
-	
 	
 	private final static HashMap<Integer, String> sensorDescriptions = new HashMap<Integer, String>() {
 		{
@@ -160,21 +163,23 @@ public class Constants {
 			put(SENSOR_VIRTUAL_EXHALATION_FIRSTDIFF, "Virtual Sensor for Calculating First Difference of Exhalation");
 			put(SENSOR_VIRTUAL_FIRSTDIFF_EXHALATION_NEW, "Virtual Sensor for Calculating First Difference of Exhalation");
 			put(SENSOR_ALCOHOL, "Alcohol Consumption");			
+			put(SENSOR_VIRTUAL_ACCELCOMMUTING, "Virtual sensor for commuting detection using phone accelerometer");			
 		}
 	};			
 	
+	public static final int FEATURE_MAX = 109;	
+
+	public static final int FEATURE_NULL = 110;
 	public static final int FEATURE_MAD = 111;
 	public static final int FEATURE_MEAN = 112;
 	public static final int FEATURE_RMS = 113;
 	public static final int FEATURE_VAR = 114;
+	public static final int FEATURE_MEANCROSS = 115;
+	public static final int FEATURE_ZEROCROSS = 116;
 	public static final int FEATURE_SD = 117;
 	public static final int FEATURE_MEDIAN = 118;
 	public static final int FEATURE_MIN = 119;
-	public static final int FEATURE_MAX = 109;	
 	
-	public static final int FEATURE_NULL = 110;
-	public static final int FEATURE_MEANCROSS = 115;
-	public static final int FEATURE_ZEROCROSS = 116;
 	public static final int FEATURE_HR = 120;
 	public static final int FEATURE_HR_LF = 121;
 	public static final int FEATURE_HR_RSA = 122;
@@ -193,7 +198,6 @@ public class Constants {
 	public static final int FEATURE_RESP_RATE = 140;
 	public static final int FEATURE_RAMP = 141;
 	public static final int FEATURE_RESP_SD = 142;
-	
 	public static final int FEATURE_SECOND_BEST=143;
 	public static final int FEATURE_NINETIETH_PERCENTILE=144;
 	public static final int FEATURE_QRDEV=145;
@@ -238,15 +242,17 @@ public class Constants {
 		}
 	};		
 	
+	public static final int MODEL_TEST = 0;
 	public static final int MODEL_ACTIVITY = 1;
 	public static final int MODEL_STRESS = 2;
-	public static final int MODEL_TEST = 0;
 	public static final int MODEL_DATAQUALITY = 4;
 	public static final int MODEL_CONVERSATION=5;
 	public static final int MODEL_COMMUTING=6;
 	public static final int MODEL_STRESS_OLD = 7;
 	public static final int MODEL_ACCUMULATION = 8;
+	public static final int MODEL_ACCELCOMMUTING = 9;
 
+	
 // New model added for user self report
 	
 	public static final int MODEL_SELF_DRINKING = 21;
@@ -264,6 +270,7 @@ public class Constants {
 			put(MODEL_SELF_DRINKING,"User self reported drinking event recording");
 			put(MODEL_SELF_SMOKING,"User self reported smoking event recording");
 			put(MODEL_ACCUMULATION,"Accumulation and Decay ofs Perceived Stress");
+			put(MODEL_ACCELCOMMUTING,"Commuting detection from phone accelerometer");
 		}
 	};			
 	

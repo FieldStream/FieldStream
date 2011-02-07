@@ -65,7 +65,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 
 
-public class EckQualityVirtualSensor extends AbstractSensor implements MoteUpdateSubscriber, SensorBusSubscriber {
+public class EckQualityVirtualSensor extends AbstractSensor implements SensorBusSubscriber {
 	private static final String TAG = "EckQualityVirtualSensor";
 	private static final Boolean REPLAY_SENSOR = false;
 	private EckQualityRunner runner = new EckQualityRunner(); 
@@ -162,8 +162,8 @@ public class EckQualityVirtualSensor extends AbstractSensor implements MoteUpdat
 		if (Log.DEBUG) Log.d(TAG, "activate");
 		ECKThread = new Thread(runner);
 		ECKThread.start();
-		//SensorBus.getInstance().subscribe(this);
-		MoteSensorManager.getInstance().registerListener(this);
+		SensorBus.getInstance().subscribe(this);
+		//MoteSensorManager.getInstance().registerListener(this);
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_REPLAY_ECK);
 		} else {
@@ -173,8 +173,8 @@ public class EckQualityVirtualSensor extends AbstractSensor implements MoteUpdat
 
 	@Override
 	public void deactivate() {
-		//SensorBus.getInstance().unsubscribe(this);
-		MoteSensorManager.getInstance().unregisterListener(this);
+		SensorBus.getInstance().unsubscribe(this);
+		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_REPLAY_ECK);
 		} else {
@@ -223,20 +223,20 @@ public class EckQualityVirtualSensor extends AbstractSensor implements MoteUpdat
 
 	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
 		//if(Log.DEBUG) Log.d(TAG, "onReceiveData(): got a buffer from " + SensorID+" "+data.length+" "+timestamp);
-		if(SensorID == Constants.SENSOR_ECK)
+		/*if(SensorID == Constants.SENSOR_ECK)
 		{
 			if(Log.DEBUG) Log.d(TAG, "onReceiveData(): got a buffer from " + SensorID+", "+data.length);
 			//long[] timeStamps = new long[data.length];
 			//Arrays.fill(timeStamps, 0, data.length, timestamp);
 			addValue(data, timeStamps);	
-		}
+		}*/
 	}
 	
 	public void receiveBuffer(int sensorID, int[] data, long[] timestamps, int startNewData, int endNewData) {
 		//if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
 		if (sensorID == Constants.SENSOR_RIP) {
-			//if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
-			//addValue(data, timestamps);
+			if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
+			addValue(data, timestamps);
 		}
 	}
 }

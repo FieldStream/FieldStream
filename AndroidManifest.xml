@@ -80,12 +80,14 @@ Authors: Mishfaq Ahmed, Patrick Blitz, Brian French, Somnath Mitra, Mahbub Rahma
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+<!-- 
 		<activity android:name=".stressInference" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+-->
 		<activity android:name=".gui.ema.Interview" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
@@ -98,13 +100,14 @@ Authors: Mishfaq Ahmed, Patrick Blitz, Brian French, Somnath Mitra, Mahbub Rahma
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
+<!-- 
 		<activity android:name=".gui.ema.SetTime" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-
+-->
 		<activity android:name=".oscilloscope.OscilloscopeActivity" android:label="Oscilloscope">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />

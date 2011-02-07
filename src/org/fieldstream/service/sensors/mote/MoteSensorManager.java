@@ -115,7 +115,7 @@ public class MoteSensorManager {
         if (nm == null) {
         	nm=( NotificationManager ) InferrenceService.INSTANCE.getSystemService( InferrenceService.NOTIFICATION_SERVICE );
         }
-        nm.notify(1, notif);
+       //    nm.notify(1, notif);
         
 		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
 		{
