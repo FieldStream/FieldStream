@@ -302,7 +302,8 @@ public class DatabaseLogger extends AbstractLogger  {
 
 	/* (non-Javadoc)
 	 * @see edu.cmu.ices.stress.phone.service.logger.ILogger#logSensorData(int, long[], int[])
-	 */				
+	 */
+
 	public void logSensorData(int sensorID, long[] timestamps, int[] buffer, int startNewData, int endNewData){
 		if (timestamps.length <=0 || buffer.length <= 0)
 			return;		
@@ -1304,6 +1305,54 @@ public class DatabaseLogger extends AbstractLogger  {
 		}	    
 	    return null;		
 	}	
+	// Lab Study LOGGING
+	// -------------------------
+
+	/**
+	 * Creates a table for logging lab study events.  This should only get called if the table does not exist already.
+	 */		
+
 	
-	
+	public void logLabStudy_mark(String tableName, String sessionname, String eventname,long starttime,long endtime) {
+		if (db == null)
+			return;
+		
+		// check if the table for this data exists
+		if (!tableExists(tableName)) {
+			// if not, create the table
+			createLabStudy_markTable(tableName); 
+		}		
+		
+		// write to the db
+		ContentValues values = new ContentValues();
+		values.put("sessionname",sessionname);
+		values.put("eventname", eventname);
+		values.put("starttime", starttime);
+		values.put("endtime", endtime);
+
+		try{
+			db.insertOrThrow(tableName, null, values);
+		}
+		catch (SQLiteException e) {
+			Log.e(TAG, "Could not write generic entry to table " + tableName + ": " + e.getMessage());
+		}						
+	}
+
+	protected Boolean createLabStudy_markTable(String tableName) {
+		if (db == null)
+			return null;
+											
+	    // create the table 
+	    String create = "CREATE TABLE " + tableName + 
+        				" (_id INTEGER PRIMARY KEY, sessionname TEXT, eventname TEXT, starttime INTEGER, endtime INTEGER);";
+
+	    try {
+		    db.execSQL(create);
+		    tableExistsCache.put(tableName, true);	    
+	    }
+		catch (SQLiteException e) {
+			Log.e(TAG, "Could not create anything table " + tableName + ": " + e.getMessage());
+		}	    
+	    return null;		
+	}
 };

@@ -64,7 +64,7 @@ public class Constants {
 	public static final String CONFIG_DIR = APP_DIR + "/config";
 	public static final String NETWORK_CONFIG_FILENAME = "network.xml";
 	public static final String DEAD_PERIOD_CONFIG_FILENAME = "dead_periods.xml";	
-	
+	public static final String LABSTUDY_CONFIG_FILENAME = "labstudy.xml";
 	
 	public static final int SENSOR_GSR = 11;
 	public static final int SENSOR_ECK = 12;
