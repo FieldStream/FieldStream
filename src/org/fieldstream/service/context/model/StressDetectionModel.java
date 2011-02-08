@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.fieldstream.Constants;
+import org.fieldstream.service.ActivationManager;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.ContextBus;
 
@@ -180,6 +181,8 @@ public class StressDetectionModel extends ModelCalculation{
 		if (Log.DEBUG) Log.d("ConersationClassification","New Classification: "+((Integer)stressClassification).toString());
 		//initialize all the flags to 0
 		Arrays.fill(featureFlag, 0);
+		
+		ActivationManager.getInstance().updateFeatureList(getID(), getUsedFeatures());
 
 	}
 	

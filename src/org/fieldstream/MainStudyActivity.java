@@ -113,7 +113,7 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 	
 	private Button selfReportButton;
 	private Intent selfReportIntent;
-	
+	//test
 	private final static String EXIT_CODE = "7556";
 	private final static String OSCOPE_CODE ="6557";
 	private final static String ECGRIP_DEMO_CODE ="3366";

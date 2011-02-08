@@ -217,7 +217,9 @@ public abstract class AbstractSensor {
 
 		// send it for any subscribers
 		SensorBus.getInstance().receiveBuffer(ID, toSendSamples, toSendTimestamps, startNewData, endNewData);
-		if (Log.DEBUG) Log.d(TAG,"time from the beginnging of sendBuffer: "+(SystemClock.uptimeMillis()-currentTime)  );		
+		if (Log.DEBUG) Log.d(TAG,"time from the beginnging of sendBuffer: "+(SystemClock.uptimeMillis()-currentTime)  );
+		if (Log.DEBUG) Log.d(TAG,"SensorID: "+ID );
+		
 	}
 
 	protected void setUpTimer() {
