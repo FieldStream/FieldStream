@@ -34,16 +34,22 @@ Authors: Mishfaq Ahmed, Patrick Blitz, Brian French, Somnath Mitra, Mahbub Rahma
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="true">
 		
+		<activity android:name=".MainStudyActivity"	android:label="AutoSenseStudy">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		
 		<activity android:name=".hsslider" android:label="SILab"  android:screenOrientation="landscape">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 		<activity android:name=".MainStudyActivity" android:label="SIStudy"  android:screenOrientation="portrait">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 		<activity android:name=".SelfReportEventActivity"	android:label="User self Report page">

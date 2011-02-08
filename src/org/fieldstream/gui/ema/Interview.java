@@ -84,8 +84,8 @@ public class Interview extends AbstractInterview {
         nextButton = (Button) findViewById(R.id.NextButton);
     	
     	// instantiate content before calling super or else null pointer creating entry
-    	content = AutoSenseStudyInterviewContent.getInstance();
-    	    	
+    	//content = AutoSenseStudyInterviewContent.getInstance();
+    	content = InterviewContent.getInstance();    	
     	initResponseView();
             	
     	super.onCreate(savedInstanceState);

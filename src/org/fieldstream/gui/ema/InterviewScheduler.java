@@ -116,7 +116,8 @@ public class InterviewScheduler extends Service {
 	boolean withinGracePeriod;	
 	
 	static public IContent getContent() {
-		IContent content = AutoSenseStudyInterviewContent.getInstance();
+		//IContent content = AutoSenseStudyInterviewContent.getInstance();
+		IContent content = InterviewContent.getInstance();
 		return content;
 	}
 
@@ -1538,12 +1539,12 @@ public class InterviewScheduler extends Service {
 		
 		// speaking, smoking, walking, commuting, other
 		budgeter.addOrUpdateItem("" + Constants.MODEL_CONVERSATION + ":" + ConversationPrediction.SPEAKING, 2);		
-		budgeter.addOrUpdateItem("" + Constants.MODEL_CONVERSATION + ":" + ConversationPrediction.SMOKING, 2);
+		//budgeter.addOrUpdateItem("" + Constants.MODEL_CONVERSATION + ":" + ConversationPrediction.SMOKING, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_ACTIVITY + ":" + ActivityCalculation.WALK, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_ACCUMULATION, 4);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_COMMUTING + ":" + CommutingCalculation.COMMUTING, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_DRINKING,1);
-		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_SMOKING, 4);
+		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_SMOKING, 3);
 		
 		budgeter.addOrUpdateItem("other", 16);
 		
