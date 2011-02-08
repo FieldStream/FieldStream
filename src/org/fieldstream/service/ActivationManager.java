@@ -442,29 +442,16 @@ public class ActivationManager implements ContextSubscriber {
 
 	private HashMap<Integer, HashMap<Integer, ArrayList<Integer> > > activationTriggers = new HashMap<Integer, HashMap<Integer, ArrayList<Integer> > >();
 	private HashMap<Integer, HashMap<Integer, ArrayList<Integer> > > deactivationTriggers = new HashMap<Integer, HashMap<Integer, ArrayList<Integer> > >();
+	private HashMap<Integer, int[]> contextBuffers = new HashMap<Integer, int[]>();
+	private HashMap<Integer, Integer> contextBuffersIndex = new HashMap<Integer, Integer>(); 
+	private HashMap<Integer, Integer> lastContext = new HashMap<Integer, Integer>();
 
-	private HashMap<Integer, Integer> lastContext = new HashMap<Integer, Integer>() {
-		{
-			put(Constants.MODEL_ACTIVITY, -1);
-		}
-	};
-
-	int[] initbuffer = {-1, -1, -1, -1, -1};
-	HashMap<Integer, int[]> contextBuffers = new HashMap<Integer, int[]>() {
-		{
-			put(Constants.MODEL_ACTIVITY, initbuffer.clone());
-		}
-	};
 	
-	HashMap<Integer, Integer> contextBuffersIndex = new HashMap<Integer, Integer>() {
-		{
-			put(Constants.MODEL_ACTIVITY, 0);
-		}
-	};
 	
 	// MJRTY linear time majority function, from Boyer and Moore
 	private int majority(int[] contexts) {
 		int maj = -1, cnt = 0;
+				
 		for (int i=0; i<contexts.length; i++) {
 			// buffer hasn't been filled yet
 			if (contexts[i] == -1) {
@@ -494,11 +481,13 @@ public class ActivationManager implements ContextSubscriber {
 			Integer index = contextBuffersIndex.get(modelID);
 			buffer[index] = label;
 			index++;
-			if (index == initbuffer.length)
+			if (index == buffer.length) {
 				index = 0;
+			}			
+			contextBuffersIndex.put(modelID, index);
 			
 			// compute the majority from the buffer
-			int context = majority(buffer);		
+			int context = majority(buffer);	
 			if (context != -1 && context != lastContext.get(modelID)) {
 				checkActivationRules(modelID, context);
 				checkDeactivationRules(modelID, context);
@@ -518,6 +507,7 @@ public class ActivationManager implements ContextSubscriber {
 				ArrayList<Integer> rules = modelRules.get(context);
 				
 				for (Integer modelToDeactivate : rules) {
+					Log.d("ActivationManager", "Deactivating model " + modelToDeactivate);
 					this.deactivate(modelToDeactivate);
 				}
 			}
@@ -535,6 +525,7 @@ public class ActivationManager implements ContextSubscriber {
 				ArrayList<Integer> rules = modelRules.get(context);
 				
 				for (Integer modelToActivate : rules) {
+					Log.d("ActivationManager", "Activating model " + modelToActivate);
 					this.activate(modelToActivate);
 				}
 			}
@@ -620,6 +611,7 @@ public class ActivationManager implements ContextSubscriber {
         	// extract the model and output that triggers an action
         	String modelTrigger = rule.getAttribute("model");
         	String outputTrigger = rule.getAttribute("output");
+        	String majorityBufferSize = rule.getAttribute("majority_buffer_size");
         	
         	// extract the actions triggered by model and output
         	NodeList actions = rule.getChildNodes();
@@ -628,11 +620,11 @@ public class ActivationManager implements ContextSubscriber {
         		
         		if (action.getNodeName().equals("activate")) {
         			String modelToActivate = action.getFirstChild().getNodeValue();
-        			addActivationRule(modelTrigger, outputTrigger, modelToActivate, true);
+        			addActivationRule(modelTrigger, outputTrigger, majorityBufferSize, modelToActivate, true);
         		}
         		else if (action.getNodeName().equals("deactivate")) {
         			String modelToDeactivate = action.getFirstChild().getNodeValue();
-        			addActivationRule(modelTrigger, outputTrigger, modelToDeactivate, false);
+        			addActivationRule(modelTrigger, outputTrigger, majorityBufferSize, modelToDeactivate, false);
         		}
         		else {
         			//ignore #text
@@ -673,13 +665,14 @@ public class ActivationManager implements ContextSubscriber {
 	}
 	
 	private void addActivationRule(String mt, String ot,
-			String mta, boolean activate) {
+			String mta, String mbs, boolean activate) {
 
-		int modelTrigger=-1,modelToActivate=-1, outputTrigger=-1;
+		int modelTrigger=-1,modelToActivate=-1, outputTrigger=-1, majBufferSize=5; //default size is 5
 		try {
 			modelTrigger = Constants.class.getField(mt).getInt(null);
 			modelToActivate = Constants.class.getField(mta).getInt(null);
 			outputTrigger = Integer.parseInt(ot);
+			majBufferSize = Integer.parseInt(mbs);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -697,6 +690,15 @@ public class ActivationManager implements ContextSubscriber {
 		
 		if (modelTrigger == -1 || outputTrigger == -1 || modelToActivate == -1)
 			return;
+		
+		// if this is the first time we've seen this model as a trigger
+		if (!lastContext.containsKey(modelTrigger)) {
+			lastContext.put(modelTrigger, -1);
+			int[] buffer = new int[majBufferSize];
+			Arrays.fill(buffer, -1);
+			contextBuffers.put(modelTrigger, buffer);
+			contextBuffersIndex.put(modelTrigger, 0);			
+		}
 		
 		addActivationRule(modelTrigger, outputTrigger, modelToActivate, activate);
 		
