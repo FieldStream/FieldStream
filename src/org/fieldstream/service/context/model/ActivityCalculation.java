@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.fieldstream.Constants;
+import org.fieldstream.service.ActivationManager;
 import org.fieldstream.service.context.model.ModelCalculation.FeatureSet;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.ContextBus;
@@ -89,7 +90,6 @@ public class ActivityCalculation extends ModelCalculation {
 		if (Log.DEBUG) Log.d("ActivityClassification","New Classification: "+((Integer)activityClassification).toString());
 		//initialize all the flags to 0
 		Arrays.fill(featureFlag, 0);
-
 	}
 	
 	private boolean isFullFeatureSet(){
