@@ -68,8 +68,15 @@ public class EMATriggerer {
 	
 	public boolean trigger(int modelID, long currentTimeMillis) {
 		Log.d("Triggering","Entering the EMATrigger::trigger for model"+modelID);
-		
-		numberobservedtoday.put(""+modelID, numberobservedtoday.get(""+modelID)+1);
+
+		if (!numberobservedtoday.containsKey(""+modelID)) {
+			numberobservedtoday.put(""+modelID, 0);
+		}
+		if (!estimates.containsKey(""+modelID)) {
+			estimates.put(""+modelID, 0);
+		}
+			
+		numberobservedtoday.put(""+modelID, numberobservedtoday.get(""+modelID)+1);			
 		int estimation = estimates.get(""+modelID);
 		
 		String itemDesc = ""+modelID;
