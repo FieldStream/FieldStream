@@ -620,11 +620,11 @@ public class ActivationManager implements ContextSubscriber {
         		
         		if (action.getNodeName().equals("activate")) {
         			String modelToActivate = action.getFirstChild().getNodeValue();
-        			addActivationRule(modelTrigger, outputTrigger, majorityBufferSize, modelToActivate, true);
+        			addActivationRule(modelTrigger, outputTrigger, modelToActivate, majorityBufferSize, true);
         		}
         		else if (action.getNodeName().equals("deactivate")) {
         			String modelToDeactivate = action.getFirstChild().getNodeValue();
-        			addActivationRule(modelTrigger, outputTrigger, majorityBufferSize, modelToDeactivate, false);
+        			addActivationRule(modelTrigger, outputTrigger, modelToDeactivate, majorityBufferSize, false);
         		}
         		else {
         			//ignore #text
