@@ -1473,7 +1473,7 @@ public class InterviewScheduler extends Service {
 		budgeter.addOrUpdateItem("" + Constants.MODEL_CONVERSATION + ":" + ConversationPrediction.SMOKING, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_ACTIVITY + ":" + ActivityCalculation.WALK, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_ACCUMULATION, 4);
-		budgeter.addOrUpdateItem("" + Constants.MODEL_COMMUTING + ":" + CommutingCalculation.COMMUTING, 2);
+		budgeter.addOrUpdateItem("" + Constants.MODEL_GPSCOMMUTING + ":" + CommutingCalculation.COMMUTING, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_DRINKING,1);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_SMOKING, 4);
 		

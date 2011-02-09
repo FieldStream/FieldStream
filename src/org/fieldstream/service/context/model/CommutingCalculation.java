@@ -69,7 +69,7 @@ public class CommutingCalculation extends ModelCalculation {
 	 * @see edu.cmu.ices.stress.phone.service.context.model.ModelCalculation#getID()
 	 */
 	public int getID() {
-		return Constants.MODEL_COMMUTING;
+		return Constants.MODEL_GPSCOMMUTING;
 	}
 	
 	private final static HashMap<Integer, String> outputDescription = new HashMap<Integer, String>() {

@@ -244,7 +244,7 @@ public class Constants {
 	public static final int MODEL_TEST = 0;
 	public static final int MODEL_DATAQUALITY = 4;
 	public static final int MODEL_CONVERSATION=5;
-	public static final int MODEL_COMMUTING=6;
+	public static final int MODEL_GPSCOMMUTING=6;
 	public static final int MODEL_STRESS_OLD = 7;
 	public static final int MODEL_ACCUMULATION = 8;
 	public static final int MODEL_ACCELCOMMUTING = 9;
@@ -261,7 +261,7 @@ public class Constants {
 			put(MODEL_TEST, "NULL");
 			put(MODEL_DATAQUALITY, "Data Quality Assessments");	
 			put(MODEL_CONVERSATION,"Detect Conversation Based on Respiration Signal");
-			put(MODEL_COMMUTING,"Commuting");
+			put(MODEL_GPSCOMMUTING,"Commuting detection from GPS");
 			put(MODEL_STRESS, "Minute Classifier of Stress");
 			put(MODEL_SELF_DRINKING,"User self reported drinking event recording");
 			put(MODEL_SELF_SMOKING,"User self reported smoking event recording");

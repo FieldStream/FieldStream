@@ -250,7 +250,7 @@ public class Factory {
 		case Constants.MODEL_DATAQUALITY:
 			model = new DataQualityCalculation();
 			break;
-		case Constants.MODEL_COMMUTING:
+		case Constants.MODEL_GPSCOMMUTING:
 			model = new CommutingCalculation();
 			break;
 		// added drinking and smoking models
