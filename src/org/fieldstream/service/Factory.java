@@ -40,7 +40,7 @@ import org.fieldstream.Constants;
 import org.fieldstream.service.context.model.AccelCommutingModel;
 import org.fieldstream.service.context.model.AccumulationModel;
 import org.fieldstream.service.context.model.ActivityCalculation;
-import org.fieldstream.service.context.model.CommutingCalculation;
+import org.fieldstream.service.context.model.GPSCommutingCalculation;
 import org.fieldstream.service.context.model.ConversationDetectionModel;
 import org.fieldstream.service.context.model.DataQualityCalculation;
 import org.fieldstream.service.context.model.ModelCalculation;
@@ -251,7 +251,7 @@ public class Factory {
 			model = new DataQualityCalculation();
 			break;
 		case Constants.MODEL_GPSCOMMUTING:
-			model = new CommutingCalculation();
+			model = new GPSCommutingCalculation();
 			break;
 		// added drinking and smoking models
 		case Constants.MODEL_SELF_DRINKING:

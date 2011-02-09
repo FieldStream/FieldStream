@@ -46,7 +46,7 @@ import org.fieldstream.service.IInferrenceService;
 import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.context.model.ActivityCalculation;
-import org.fieldstream.service.context.model.CommutingCalculation;
+import org.fieldstream.service.context.model.GPSCommutingCalculation;
 import org.fieldstream.service.context.model.ConversationDetectionModel;
 import org.fieldstream.service.context.model.ConversationPrediction;
 import org.fieldstream.service.context.model.DataQualityCalculation;
@@ -1473,7 +1473,7 @@ public class InterviewScheduler extends Service {
 		budgeter.addOrUpdateItem("" + Constants.MODEL_CONVERSATION + ":" + ConversationPrediction.SMOKING, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_ACTIVITY + ":" + ActivityCalculation.WALK, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_ACCUMULATION, 4);
-		budgeter.addOrUpdateItem("" + Constants.MODEL_GPSCOMMUTING + ":" + CommutingCalculation.COMMUTING, 2);
+		budgeter.addOrUpdateItem("" + Constants.MODEL_GPSCOMMUTING + ":" + GPSCommutingCalculation.COMMUTING, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_DRINKING,1);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_SMOKING, 4);
 		
