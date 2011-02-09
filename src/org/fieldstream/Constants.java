@@ -59,7 +59,7 @@ public class Constants {
 	/**
 	 * file that is used to read and write the configuration
 	 */
-	public final static String APP_DIR="StressInferencePhone";
+	public final static String APP_DIR="FieldStream";
 	public static final String LOG_DIR = APP_DIR + "/logs";
 	public static final String CONFIG_DIR = APP_DIR + "/config";
 	public static final String NETWORK_CONFIG_FILENAME = "network.xml";

@@ -27,9 +27,13 @@
 package org.fieldstream.service.sensors.phone;
 
 
+import java.io.File;
+
 import org.fieldstream.Constants;
 import org.fieldstream.service.InferrenceService;
+import org.fieldstream.service.logger.DatabaseLogger;
 import org.fieldstream.service.logger.SimpleFileLogger;
+import org.fieldstream.service.logger.TextFileLogger;
 import org.fieldstream.service.sensors.api.AbstractSensor;
 
 import android.content.Context;
@@ -37,6 +41,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.os.Environment;
 
 /**
  * Wrapper class that manages the communication with the phone gps. has the actual sensors (instances of {@link AbstractSensor}) as inner classes.
@@ -146,12 +151,16 @@ public class LocatioN {
 		boolean mValid = false;
 		String mProvider;
 		SimpleFileLogger locationLog;
-		String locationLogFileName = "/sdcard/LOCATION_LOG";
-		
+
+  				
 		public LocationListener(String provider)
 		{
 		mProvider = provider;
 		mLastLocation = new Location(mProvider);
+		
+  		File root = Environment.getExternalStorageDirectory();
+  		String locationLogFileName = root + "/" + Constants.LOG_DIR + "/LOCATION_LOG";
+		
 		locationLog = new SimpleFileLogger(locationLogFileName+Long.toString(System.currentTimeMillis()));
 		}
 		
