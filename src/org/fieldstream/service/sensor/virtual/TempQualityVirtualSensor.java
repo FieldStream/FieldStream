@@ -66,7 +66,8 @@ import android.app.NotificationManager;
 import android.content.Context;
 
 
-public class TempQualityVirtualSensor extends AbstractSensor implements MoteUpdateSubscriber, SensorBusSubscriber {
+//public class TempQualityVirtualSensor extends AbstractSensor implements MoteUpdateSubscriber, SensorBusSubscriber {
+public class TempQualityVirtualSensor extends AbstractSensor implements SensorBusSubscriber {
 	private static final String TAG = "TempQualityVirtualSensor";
 	private static final Boolean REPLAY_SENSOR = false;
 	private TempQualityRunner runner = new TempQualityRunner(); 
@@ -118,21 +119,21 @@ public class TempQualityVirtualSensor extends AbstractSensor implements MoteUpda
 								notif.flags |= Notification.FLAG_SHOW_LIGHTS;
 								//long[] vibrate = {0,100,300,500};
 								//notif.vibrate = vibrate;
-								nm.notify(1, notif);
+								//			nm.notify(1, notif);
 							}else if(currentQuality==2){
 								if(Log.DEBUG) Log.d(TAG,"Runner: blinking LED");
 								notif.ledARGB = 0xFF0000FF;
 								notif.ledOnMS = 1000; 
 								notif.ledOffMS = 1000; 
 								notif.flags |= Notification.FLAG_SHOW_LIGHTS;
-								nm.notify(1, notif);
+								//			nm.notify(1, notif);
 							}else{
 								if(Log.DEBUG) Log.d(TAG,"Runner: LED OFF");
 								notif.ledARGB = 0xFFFFFF00;
 								notif.ledOnMS = 1; 
 								notif.ledOffMS = 0; 
 								notif.flags |= Notification.FLAG_SHOW_LIGHTS;
-								nm.notify(1, notif);
+								//			nm.notify(1, notif);
 							}
 						}
 					}
@@ -170,8 +171,8 @@ public class TempQualityVirtualSensor extends AbstractSensor implements MoteUpda
 		if (Log.DEBUG) Log.d(TAG, "activate");
 		RipThread = new Thread(runner);
 		RipThread.start();
-		//SensorBus.getInstance().subscribe(this);
-		MoteSensorManager.getInstance().registerListener(this);
+		SensorBus.getInstance().subscribe(this);
+		//MoteSensorManager.getInstance().registerListener(this);
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_REPLAY_TEMP);
 		} else {
@@ -181,8 +182,8 @@ public class TempQualityVirtualSensor extends AbstractSensor implements MoteUpda
 
 	@Override
 	public void deactivate() {
-		//SensorBus.getInstance().unsubscribe(this);
-		MoteSensorManager.getInstance().unregisterListener(this);
+		SensorBus.getInstance().unsubscribe(this);
+		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_REPLAY_TEMP);
 		} else {
@@ -231,7 +232,7 @@ public class TempQualityVirtualSensor extends AbstractSensor implements MoteUpda
 
 	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
 		//if(Log.DEBUG) Log.d(TAG, "onReceiveData(): got a buffer from " + SensorID+" "+data.length+" "+timestamp);
-		if(SensorID == Constants.SENSOR_BODY_TEMP)
+		/*if(SensorID == Constants.SENSOR_BODY_TEMP)
 		{
 			double avg=0;
 			for(int i=0;i<data.length;i++) avg+=data[i];
@@ -240,14 +241,14 @@ public class TempQualityVirtualSensor extends AbstractSensor implements MoteUpda
 			//long[] timeStamps = new long[data.length];
 			//Arrays.fill(timeStamps, 0, data.length, timestamp);
 			addValue(data, timeStamps);	
-		}
+		}*/
 	}
 	
 	public void receiveBuffer(int sensorID, int[] data, long[] timestamps, int startNewData, int endNewData) {
 		//if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
 		if (sensorID == Constants.SENSOR_BODY_TEMP) {
-			//if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
-			//addValue(data, timestamps);
+			if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
+			addValue(data, timestamps);
 		}
 	}
 }

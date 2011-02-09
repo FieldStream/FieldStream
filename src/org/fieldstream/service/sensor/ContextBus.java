@@ -114,7 +114,7 @@ public class ContextBus {
         if (nm == null) {
         	nm=( NotificationManager ) InferrenceService.INSTANCE.getSystemService( InferrenceService.NOTIFICATION_SERVICE );
         }
-        nm.notify(1, notif);
+        //		nm.notify(1, notif);
 	}
 	
 	public void pushNewContext(int modelID, int label, long startTime, long endTime) {

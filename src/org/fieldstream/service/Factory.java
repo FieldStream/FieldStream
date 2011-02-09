@@ -37,6 +37,7 @@ package org.fieldstream.service;
 import java.security.InvalidParameterException;
 
 import org.fieldstream.Constants;
+import org.fieldstream.service.context.model.AccelCommutingModel;
 import org.fieldstream.service.context.model.AccumulationModel;
 import org.fieldstream.service.context.model.ActivityCalculation;
 import org.fieldstream.service.context.model.CommutingCalculation;
@@ -80,6 +81,7 @@ import org.fieldstream.service.features.Variance;
 import org.fieldstream.service.features.meanCrossings;
 import org.fieldstream.service.features.zeroCrossings;
 import org.fieldstream.service.sensor.replay.TestSensor;
+import org.fieldstream.service.sensor.virtual.AccelCommutingVirtualSensor;
 import org.fieldstream.service.sensor.virtual.BdurationVirtualSensor;
 import org.fieldstream.service.sensor.virtual.EckQualityVirtualSensor;
 import org.fieldstream.service.sensor.virtual.ExhalationFirstDiffVirtualSensor;
@@ -261,6 +263,9 @@ public class Factory {
 		case Constants.MODEL_ACCUMULATION:
 			model = new AccumulationModel();
 			break;
+		case Constants.MODEL_ACCELCOMMUTING:
+			model = new AccelCommutingModel();
+			break;
 
 		default:
 			throw new InvalidParameterException("Wrong/Non-Existing Feature ID");
@@ -374,6 +379,9 @@ public class Factory {
 			break;
 		case Constants.SENSOR_BATTERY_LEVEL:
 			sensor = new BatteryLevelSensor(sensorID);
+			break;
+		case Constants.SENSOR_VIRTUAL_ACCELCOMMUTING:
+			sensor = new AccelCommutingVirtualSensor(sensorID);
 			break;
 		default:
 			throw new InvalidParameterException("Wrong/Non-Existing Sensor ID");

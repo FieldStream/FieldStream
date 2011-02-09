@@ -66,7 +66,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 
 
-public class RipQualityVirtualSensor extends AbstractSensor implements MoteUpdateSubscriber, SensorBusSubscriber {
+public class RipQualityVirtualSensor extends AbstractSensor implements SensorBusSubscriber {
 	private static final String TAG = "RipQualityVirtualSensor";
 	private static final Boolean REPLAY_SENSOR = false;
 	private RipQualityRunner runner = new RipQualityRunner(); 
@@ -166,8 +166,8 @@ public class RipQualityVirtualSensor extends AbstractSensor implements MoteUpdat
 		if (Log.DEBUG) Log.d(TAG, "activate");
 		RipThread = new Thread(runner);
 		RipThread.start();
-		//SensorBus.getInstance().subscribe(this);
-		MoteSensorManager.getInstance().registerListener(this);
+		SensorBus.getInstance().subscribe(this);
+		//MoteSensorManager.getInstance().registerListener(this);
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_REPLAY_RESP);
 		} else {
@@ -177,8 +177,8 @@ public class RipQualityVirtualSensor extends AbstractSensor implements MoteUpdat
 
 	@Override
 	public void deactivate() {
-		//SensorBus.getInstance().unsubscribe(this);
-		MoteSensorManager.getInstance().unregisterListener(this);
+		SensorBus.getInstance().unsubscribe(this);
+		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_REPLAY_RESP);
 		} else {
@@ -228,21 +228,21 @@ public class RipQualityVirtualSensor extends AbstractSensor implements MoteUpdat
 	// RECEIVE DATA FROM MOTE BUS
 	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
 		//if(Log.DEBUG) Log.d(TAG, "onReceiveData(): got a buffer from " + SensorID+" "+data.length+" "+timestamp);
-		if(SensorID == Constants.SENSOR_RIP)
+		/*if(SensorID == Constants.SENSOR_RIP)
 		{
 			if(Log.DEBUG) Log.d(TAG, "onReceiveData(): got a buffer from " + SensorID+" "+data[0]+" "+data[1]+" "+data[2]+" "+data[3]+" "+data[4]);
 			//long[] timeStamps = new long[data.length];
 			//Arrays.fill(timeStamps, 0, data.length, timestamp);
 			addValue(data, timeStamps);	
-		}
+		}*/
 	}
 	
 	// RECEIVE DATA FROM SENSOR BUS
 	public void receiveBuffer(int sensorID, int[] data, long[] timestamps, int startNewData, int endNewData) {
 		//if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
 		if (sensorID == Constants.SENSOR_RIP) {
-			//if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
-			//addValue(data, timestamps);
+			if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
+			addValue(data, timestamps);
 		}
 	}
 }

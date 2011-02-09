@@ -476,6 +476,7 @@ public class hsslider extends Activity implements BluetoothStateSubscriber {
 				//				inferenceService.activateModel(Constants.MODEL_DATAQUALITY);
 				//				inferenceService.activateModel(Constants.MODEL_CONVERSATION);
 				//				inferenceService.activateModel(Constants.MODEL_ACTIVITY);
+				inferenceService.activateModel(Constants.MODEL_ACCELCOMMUTING);
 			
 			} catch (RemoteException e) {
 				e.printStackTrace();

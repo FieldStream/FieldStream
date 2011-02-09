@@ -112,7 +112,7 @@ public class Constants {
 	public static final int SENSOR_VIRTUAL_RIP_QUALITY = 46;
 	public static final int SENSOR_VIRTUAL_TEMP_QUALITY = 47;
 	public static final int SENSOR_VIRTUAL_FIRSTDIFF_EXHALATION_NEW = 50;
-	
+	public static final int SENSOR_VIRTUAL_ACCELCOMMUTING = 48;
 	
 	// ema constants
 	public static final String quietStart = "STRESSOR_START";
@@ -160,6 +160,7 @@ public class Constants {
 			put(SENSOR_VIRTUAL_EXHALATION_FIRSTDIFF, "Virtual Sensor for Calculating First Difference of Exhalation");
 			put(SENSOR_VIRTUAL_FIRSTDIFF_EXHALATION_NEW, "Virtual Sensor for Calculating First Difference of Exhalation");
 			put(SENSOR_ALCOHOL, "Alcohol Consumption");			
+			put(SENSOR_VIRTUAL_ACCELCOMMUTING, "Virtual sensor for commuting detection using phone accelerometer");			
 		}
 	};			
 	
@@ -246,6 +247,7 @@ public class Constants {
 	public static final int MODEL_COMMUTING=6;
 	public static final int MODEL_STRESS_OLD = 7;
 	public static final int MODEL_ACCUMULATION = 8;
+	public static final int MODEL_ACCELCOMMUTING = 9;
 
 // New model added for user self report
 	
@@ -264,6 +266,7 @@ public class Constants {
 			put(MODEL_SELF_DRINKING,"User self reported drinking event recording");
 			put(MODEL_SELF_SMOKING,"User self reported smoking event recording");
 			put(MODEL_ACCUMULATION,"Accumulation and Decay ofs Perceived Stress");
+			put(MODEL_ACCELCOMMUTING,"Commuting detection from phone accelerometer");
 		}
 	};			
 	
