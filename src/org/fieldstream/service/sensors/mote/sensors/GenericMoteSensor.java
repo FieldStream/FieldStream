@@ -27,15 +27,15 @@
 // @author Somnath Mitra
 // @author Andrew Raij
 
-package org.fieldstream.service.sensors.mote;
-
-import java.util.Arrays;
+package org.fieldstream.service.sensors.mote.sensors;
 
 import org.fieldstream.Constants;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensors.api.AbstractSensor;
+import org.fieldstream.service.sensors.mote.ChannelToSensorMapping;
+import org.fieldstream.service.sensors.mote.MoteDeviceManager;
 
-import android.text.InputFilter.LengthFilter;
+import android.os.Handler;
 
 
 
@@ -72,6 +72,9 @@ public class GenericMoteSensor extends AbstractSensor implements
 	private static final int ALCOHOLFRAMERATE = 1;
 	private static final int ALCOHOLWINDOWSIZE = 60 * ALCOHOLFRAMERATE; // 
 	
+	private long timeOutDefault = 1 * 60 * 1000;
+	private long timeOut = timeOutDefault;
+	private Handler timeOutHandler;
 	
 	public GenericMoteSensor(int SensorID) {
 		super(SensorID);
@@ -124,7 +127,46 @@ public class GenericMoteSensor extends AbstractSensor implements
 				addValue(data, timeStamps);
 		//	addFreeTextLog(((Integer)counter).toString());
 		}
+		// first cancel the existing timer
+		cancelTimeOutTimer();
 		
+		// now set up the new timer
+		setUpTimeOutTimer();
+		
+	}
+	
+	private Runnable timeOutRun = new Runnable() {
+		public void run() {
+			// time out happened
+			
+			// request the mote device manager to generate certain number of packets
+			// calculate the number of packets to generate
+			int numberOfPacketsToGenerate = (int) (timeOut / getFrameRate(sensorID) + 1);
+			
+			// now ask the mote device manager to generate some
+			// packets of particular mote type that this sensor belongs to 
+			int moteType = ChannelToSensorMapping.getSensorToMoteTypeMap(sensorID);
+			
+			MoteDeviceManager.getInstance().sendNullPacketRequest(moteType, sensorID, numberOfPacketsToGenerate);
+		}
+	} ;
+	
+	private void cancelTimeOutTimer()
+	{
+		if(timeOutHandler != null)
+		{
+			timeOutHandler.removeCallbacks(timeOutRun);
+		}
+	}
+	
+	private void setUpTimeOutTimer()
+	{
+		if(timeOutHandler == null)
+		{
+			timeOutHandler = new Handler();
+		}
+		timeOut = timeOutDefault;
+		timeOutHandler.postDelayed(timeOutRun, timeOut);
 	}
 
 
@@ -167,6 +209,51 @@ public class GenericMoteSensor extends AbstractSensor implements
 	}
 
 
+	public static int getFrameRate(int mSensorID)
+	{
+		int frameRate = -1;
+		
+		switch(mSensorID)
+		{
+		case Constants.SENSOR_ECK:
+			frameRate = ECGFRAMERATE;
+			break;
+			
+		case Constants.SENSOR_RIP:
+			frameRate = RIPFRAMERATE;
+			break;
+			
+		case Constants.SENSOR_ACCELCHESTX:
+			frameRate = ACCELCHESTFRAMERATE;
+			break;
+			
+		case Constants.SENSOR_ACCELCHESTY:
+			frameRate = ACCELCHESTFRAMERATE;
+			break;
+			
+		case Constants.SENSOR_ACCELCHESTZ:
+			frameRate = ACCELCHESTFRAMERATE;
+			break;
+			
+		case Constants.SENSOR_AMBIENT_TEMP:
+			frameRate = AMBIENTTEMPFRAMERATE;
+			break;
+			
+		case Constants.SENSOR_BODY_TEMP:
+			frameRate = BODYTEMPFRAMERATE;
+			break;
+			
+		case Constants.SENSOR_GSR:
+			frameRate = GSRFRAMERATE;
+			break;
+			
+		case Constants.SENSOR_ALCOHOL:
+			frameRate = ALCOHOLFRAMERATE;
+			break;
+		}
+		return frameRate;
+	}
+	
 	public static String getLogtag() {
 		return LOGTAG;
 	}

@@ -30,15 +30,10 @@ package org.fieldstream;
 //@author Andrew Raij
 
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -49,10 +44,7 @@ import org.fieldstream.oscilloscope.OscilloscopeActivity;
 import org.fieldstream.service.IInferrenceService;
 import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
-import org.fieldstream.service.context.model.DataQualityCalculation;
 import org.fieldstream.service.logger.Log;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
-import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateManager;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateSubscriber;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -62,9 +54,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Dialog;
-import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -148,6 +138,7 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 	private TextView endofdaylabel;
 	private TextView stressorlabel;
 	private TextView incentives;
+	@SuppressWarnings("unused")
 	private int result;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -410,7 +401,7 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 		initService();
 		
 		// Create the mote sensor manager
-		MoteSensorManager.getInstance();
+		// MoteSensorManager.getInstance();
 		
 		// Create the bluetooth state manager
 //		btStateManager = (BluetoothStateManager) BluetoothStateManager.getInstance();
@@ -571,6 +562,7 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 				//				inferenceService.activateModel(Constants.MODEL_CONVERSATION);
 				//				inferenceService.activateModel(Constants.MODEL_ACTIVITY);
 			
+				
 				inferenceService.logDeadPeriod(offStart,offEnd);
 				
 			} catch (RemoteException e) {

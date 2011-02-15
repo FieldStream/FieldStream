@@ -38,7 +38,7 @@ import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractFeature;
 import org.fieldstream.service.sensors.api.AbstractSensor;
-import org.fieldstream.service.sensors.mote.bluetooth.Reader;
+import org.fieldstream.service.sensors.mote.bluetooth.Packetizer;
 
 import android.os.Handler;
 import android.os.HandlerThread;

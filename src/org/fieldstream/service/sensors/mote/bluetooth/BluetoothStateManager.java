@@ -33,9 +33,6 @@ import java.util.Iterator;
 
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.logger.Log;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
-import org.fieldstream.service.sensors.mote.tinyos.TOSOscopeIntPacket;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -65,10 +62,8 @@ public class BluetoothStateManager extends Thread {
 	private BluetoothAdapter btScanAdapter;
 	private ArrayList<CharSequence> deviceArray;
 	
-	/* 
-	 * This is the variable to create a blocking queue that
-	 * is common between a Bluetooth Connection
-	 */
+	
+	
 	
 	
 	/*
@@ -77,14 +72,15 @@ public class BluetoothStateManager extends Thread {
 	 * There should be just one instance hence a static variable.
 	 */
 	
-	private Reader reader = null;
+	private Packetizer reader = null;
 	
+	/*
+	 * The address of the 
+	 */
 	private String BridgeAddress;
 	
 	private int requestedBluetoothState;
-	private long requestedBluetoothStateStartTime;
-	private long requestedBluetoothStateEndTime;
-	
+
 	private int currentBluetoothMode;
 	
 	private boolean dutyCycle = false;
@@ -94,7 +90,7 @@ public class BluetoothStateManager extends Thread {
 	private long timeToNextScan = -1;
 	
 	
-	private long lastReceivedPacketTime = -1;
+	//private long lastReceivedPacketTime = -1;
 	
 	private volatile boolean keepAlive = true;
 	
@@ -161,15 +157,13 @@ public class BluetoothStateManager extends Thread {
 	 * States such as periodic scanning , dead time , duty cycle and no duty cycle 
 	 * can be requested.
 	 */
-	public synchronized void requestBluetoothState(int BluetoothState,long BluetoothStateStartTime, long BluetoothStateEndTime)
+	public synchronized void requestBluetoothState(int BluetoothState)
 	{
 		String TAG = "BluetoothManager.requestedBluetoothState";
 		String msg = Integer.toString(BluetoothState);
 		Log.d(TAG , msg);
 		// Save the requested State
 		requestedBluetoothState = BluetoothState;
-		setRequestedBluetoothStateStartTime(BluetoothStateStartTime);
-		setRequestedBluetoothStateEndTime(BluetoothStateEndTime);
 				
 		// stop the duty cycle if any
 		stopDutyCycle();
@@ -273,11 +267,11 @@ public class BluetoothStateManager extends Thread {
 	}
 
 	private void startDutyCycle() {
-		dutyCycle = true;
+		setDutyCycle(true);
 	}
 	
 	private void stopDutyCycle() {
-		dutyCycle = false;
+		setDutyCycle(false);
 	}
 	
 	private void startPeriodicScanning() {
@@ -304,7 +298,7 @@ public class BluetoothStateManager extends Thread {
 			btConnection.startReceiving();		
 			
 			reader = null;
-			reader = Reader.getInstance();
+			reader = Packetizer.getInstance();
 			
 			// if this is a new reader thread increase its priority so that it doesn't get killed by Android		
 			if(reader.getState() == Thread.State.NEW)
@@ -364,61 +358,28 @@ public class BluetoothStateManager extends Thread {
 		}
 	}
 	
-	/* This function is the central point from which data is distributed
-	 * to the CMU framework. 
-	 */
-	public void onReceive(TOSOscopeIntPacket toip)
-	{
-		int ChannelID = toip.getChan();
-		int moteID = toip.getMoteID();
-		long timestamp = toip.getReceivedTimeStamp();
-		String TAG = "BluetoothStateManager.onReceive()";
-		if (Log.DEBUG) Log.d(TAG, "mote id = " + moteID);
-		if (Log.DEBUG) Log.d(TAG, " received Channel " + Integer.toString(ChannelID) + "packet");
-//		int ChannelID = ChannelToSensorMapping.mapMoteChannelToMoteSensor(channel);
-		int[] data;
-		data = new int[toip.DATA_INT_SIZE];
-		System.arraycopy(toip.getData(), 0, data, 0, toip.DATA_INT_SIZE);
-		if(ChannelID >= 0)
-			MoteSensorManager.getInstance().updateSensor(data, moteID, ChannelID, timestamp);
-		lastReceivedPacketTime = toip.getReceivedTimeStamp();
-		TAG = "onReceive";
-		if (Log.DEBUG) Log.d(TAG, " lastReceivedPacketTime " + Long.toString(lastReceivedPacketTime));
-		
-		return;
-	}
+	
 
 	
 	boolean disconnected = false;
-	int problem = 0;
+	//int problem = 0;
 	public void run() 
 	{
 		while(keepAlive)
-		{
+		{	
 			
-		if (!disconnected) {
-//			problem = detectBridgeProblem();
+		if (!disconnected) 
+		{
 			disconnected = detectBridgeDisconnection();
 	
 			// this is where periodic scanning kicks in
 			if (disconnected) {
-				requestBluetoothState(BluetoothConnectionStates.BT_STATE_PERIODIC_SCANNING , System.currentTimeMillis(), System.currentTimeMillis());
+				requestBluetoothState(BluetoothConnectionStates.BT_STATE_PERIODIC_SCANNING);
 			}
-		}
-		
-//		if(problem > 0)
-//		{
-//			// TODO do the actions part of the problem detection
-//			// actions could be requesting states from the manager 
-//			// and letting the higher layers know about this
-//			// probably should do a switch case here for multiple problem types
-//		}
-		
-
-		if (!disconnected) {
+	
 			// if the reader dies (which sometimes does), then restart it
 			if (reader == null)
-				reader = Reader.getInstance();
+				reader = Packetizer.getInstance();
 			
 			// if this is a new reader thread increase its priority so that it doesn't get killed by Android		
 			if(reader.getState() == Thread.State.NEW)
@@ -430,14 +391,7 @@ public class BluetoothStateManager extends Thread {
 			else if (reader.getState() == Thread.State.TERMINATED) {
 				if (Log.DEBUG) Log.e("BluetoothStateManager.run()","Reader Terminated...what happened?");
 			}
-		}
-		
-//		if(dutyCycle) 
-//		{
-//			//TODO put the duty cycle part here
-//			
-//		} // end duty cycle
-		
+
 		// if periodic Scanning is true
 		if(periodicScanning)
 		{
@@ -450,45 +404,47 @@ public class BluetoothStateManager extends Thread {
 				scan();
 				
 				timeToNextScan += 60 * 1000;
-			}				
-		}
+			}	// end if( now >= timeToNextScan)
+		} // end if(periodicScanning)
 		
-		try
-		{
-			// Dont want to run these tests all the time
-			// Have to find the right times to do all the checking
-			sleep(BluetoothConnectionStates.getBT_CHECK_TIME());
-		}
-		catch(Exception e)
-		{
-			String TAG = "BluetoothStateManager.run()";
-			String msg = "Exception while sleeping";
-			if (Log.DEBUG) Log.d(TAG,msg);
-		}
-		}
+			try
+			{
+				// Dont want to run these tests all the time
+				// Have to find the right times to do all the checking
+				sleep(BluetoothConnectionStates.getBT_CHECK_TIME());
+			} // end try
+			catch(Exception e)
+			{
+				String TAG = "BluetoothStateManager.run()";
+				String msg = "Exception while sleeping";
+				if (Log.DEBUG) Log.d(TAG,msg);
+			} // end catch
+			} // end if not disconnected
+		} // end while keepalive
 	}
 
-	//TODO Make this detector as a part of separate class with static methods later 
+	
+	//Make this detector as a part of separate class with static methods later 
 	// This detector will do a lot of stuff such as checking for timeout
 	// of packet reception from each of the motes , check for data loss (by looking at packet last sample 
 	// numbers)
-	public int detectBridgeProblem() {
-		int problem = -1;
-		long now = System.currentTimeMillis();
-		if(lastReceivedPacketTime == -1)
-			return problem;
-	    if(now - lastReceivedPacketTime > BluetoothConnectionStates.BT_TIMEOUT);
-			problem = 1;
-		return problem;
-	}
+//	public int detectBridgeProblem() {
+//		int problem = -1;
+//		long now = System.currentTimeMillis();
+//		if(lastReceivedPacketTime == -1)
+//			return problem;
+//	    if(now - lastReceivedPacketTime > BluetoothConnectionStates.BT_TIMEOUT);
+//			problem = 1;
+//		return problem;
+//	}
 	
 	public boolean detectBridgeDisconnection() {
-		boolean disconnected = false;
+		boolean mdisconnected = false;
 		if(BluetoothConnectionStates.getCURRENT_BT_STATE() == BluetoothConnectionStates.BT_STATE_BRIDGE_DISCONNECTED)
 		{
-			disconnected = true;
+			mdisconnected = true;
 		}
-		return disconnected;
+		return mdisconnected;
 	}
 	
 	public void kill()
@@ -516,23 +472,37 @@ public class BluetoothStateManager extends Thread {
 		
 	}
 	
-	public void setRequestedBluetoothStateStartTime(
-			long requestedBluetoothStateStartTime) {
-		this.requestedBluetoothStateStartTime = requestedBluetoothStateStartTime;
+	
+
+	public void setCurrentBluetoothMode(int currentBluetoothMode) {
+		this.currentBluetoothMode = currentBluetoothMode;
 	}
 
-	public long getRequestedBluetoothStateStartTime() {
-		return requestedBluetoothStateStartTime;
+	public int getCurrentBluetoothMode() {
+		return currentBluetoothMode;
 	}
 
-	public void setRequestedBluetoothStateEndTime(
-			long requestedBluetoothStateEndTime) {
-		this.requestedBluetoothStateEndTime = requestedBluetoothStateEndTime;
+
+
+	public void setDutyCycle(boolean dutyCycle) {
+		this.dutyCycle = dutyCycle;
 	}
 
-	public long getRequestedBluetoothStateEndTime() {
-		return requestedBluetoothStateEndTime;
+	public boolean isDutyCycle() {
+		return dutyCycle;
 	}
+
+
+
+	public void setTimeToNextDutyCycle(long timeToNextDutyCycle) {
+		this.timeToNextDutyCycle = timeToNextDutyCycle;
+	}
+
+	public long getTimeToNextDutyCycle() {
+		return timeToNextDutyCycle;
+	}
+
+
 
 	// Create a BroadcastReceiver for finding a bt device
 	private final BroadcastReceiver deviceFoundReceiver = new BroadcastReceiver() {
@@ -582,7 +552,7 @@ public class BluetoothStateManager extends Thread {
 	 	 			        Log.d("BT STATE MANAGER", nextDevice + " == " + BridgeAddress);
 	        				 // We have found our bridge so we will request no duty cycle state for now
 	        				 // and try to get lots of data out of bridge.
-	        				 requestBluetoothState(BluetoothConnectionStates.BT_STATE_NO_DUTY_CYCLE, System.currentTimeMillis(), System.currentTimeMillis());
+	        				 requestBluetoothState(BluetoothConnectionStates.BT_STATE_NO_DUTY_CYCLE);
 	        				 deviceArray.clear();
 	        				 break;
 	        			 }

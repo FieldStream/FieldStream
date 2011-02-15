@@ -38,8 +38,8 @@ import org.fieldstream.Constants;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.FeatureBus;
 import org.fieldstream.service.sensor.FeatureBusSubscriber;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
-import org.fieldstream.service.sensors.mote.MoteUpdateSubscriber;
+import org.fieldstream.service.sensors.mote.sensors.MoteSensorManager;
+import org.fieldstream.service.sensors.mote.sensors.MoteUpdateSubscriber;
 
 import android.graphics.Paint;
 

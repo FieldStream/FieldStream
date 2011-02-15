@@ -37,8 +37,8 @@ import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.features.Percentile;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
-import org.fieldstream.service.sensors.mote.MoteUpdateSubscriber;
+import org.fieldstream.service.sensors.mote.sensors.MoteSensorManager;
+import org.fieldstream.service.sensors.mote.sensors.MoteUpdateSubscriber;
 
 import android.util.Log;
 

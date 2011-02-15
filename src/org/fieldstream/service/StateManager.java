@@ -36,6 +36,7 @@ import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.ContextBus;
 import org.fieldstream.service.sensor.ContextSubscriber;
 import org.fieldstream.service.sensors.api.AbstractFeature;
+import org.fieldstream.service.sensors.api.AbstractMote;
 import org.fieldstream.service.sensors.api.AbstractSensor;
 
 
@@ -57,6 +58,7 @@ public class StateManager implements ContextSubscriber {
  */
 	private DatabaseLogger db;
 	
+	public static HashMap<Integer,AbstractMote> motes;
 	public static HashMap<Integer,AbstractSensor> sensors;
 	public static HashMap<Integer,AbstractFeature> features;
 	public static HashMap<Integer, ArrayList<Integer>> modelToSFMapping;
@@ -80,6 +82,7 @@ public class StateManager implements ContextSubscriber {
 		models = new HashMap<Integer, ModelCalculation>();
 		modelToSFMapping = new HashMap<Integer, ArrayList<Integer>>();
 		SFlist = new ArrayList<Integer>();
+		motes = new HashMap<Integer, AbstractMote>();
 		sensors = new HashMap<Integer, AbstractSensor>();
 		sensorFeature = new HashMap<Integer, ArrayList<Integer>>();
 		features = new HashMap<Integer, AbstractFeature>();
@@ -191,6 +194,21 @@ public class StateManager implements ContextSubscriber {
 		return null;
 	}
 	
+	public void activateMote(int moteType) {
+		if(!motes.containsKey(moteType)) {
+			motes.put(moteType, Factory.moteFactory(moteType));
+			motes.get(moteType).activate();
+		}
+	}
+	
+	public void deactivateMote(int moteType) {
+		if(motes.containsKey(moteType))
+		{
+			motes.get(moteType).deactivate();
+			motes.remove(moteType);
+		}
+	}
+	
 	/**
 	 * activate a specific model. Automatically starts/activates all needed sensors and features
 	 * @param modelID the IntegerID of a Model as defined in {@link Constants}
@@ -255,6 +273,8 @@ public class StateManager implements ContextSubscriber {
 		db = null;
 
 	}
+	
+	
 	/**
 	 * dynamicly add/delete a sensor / feature combination (from a model),<br /> the model has to be loaded already
 	 * for this to work.
@@ -317,6 +337,8 @@ public class StateManager implements ContextSubscriber {
 		}
 		
 	}
+	
+	
 
 	/**
 	 * used to dynamically activate sensors that are needed, but not direclty by a classifier. Necessary for some Virtual Sensors

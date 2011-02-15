@@ -188,6 +188,18 @@ public class TestService extends Service {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void activateMote(int mote) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void deactivateMote(int mote) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
 	};		
 	@Override
 	public IBinder onBind(Intent intent) {

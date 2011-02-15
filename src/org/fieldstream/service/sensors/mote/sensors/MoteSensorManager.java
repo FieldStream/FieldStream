@@ -25,18 +25,12 @@
 // @author Somnath Mitra
 
 
-package org.fieldstream.service.sensors.mote;
+package org.fieldstream.service.sensors.mote.sensors;
 
 import java.util.ArrayList;
 
-import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.logger.Log;
-import org.fieldstream.service.sensors.mote.tinyos.ChannelToSensorMapping;
-
-
-
 import android.app.Notification;
-import android.app.NotificationManager;
 
 /*
  * The mote sensor manager does the following things:
@@ -59,8 +53,8 @@ public class MoteSensorManager {
 	
 	private static MoteSensorManager INSTANCE;
 
-	private  NotificationManager nm;
-	private boolean led=true;
+	// private  NotificationManager nm;
+	// private boolean led=true;
 	
 	public ArrayList<MoteUpdateSubscriber> moteUpdateSubsribers;
 
@@ -96,42 +90,42 @@ public class MoteSensorManager {
 	}
 
 	
-	public void updateSensor(int[] data, int moteID, int ChannelID , long timestamp) 
+	public void updateSensor(int[] data, int SensorID, long[] timestamps) 
 	{
 		
-        if (led) {
-        	if (moteID % 10 == 1)   // ECG mote
-        		notif.ledARGB = 0xFFFF0000;
-        	else					// RIP mote
-        		notif.ledARGB = 0xFF0000FF;        		
-
-        	notif.ledOnMS = 1;
-        } else {
-        	notif.ledARGB = 0x00000000;
-        	notif.ledOnMS = 0;
-        }
-        led=!led;
-        notif.ledOffMS = 0;
-        if (nm == null) {
-        	nm=( NotificationManager ) InferrenceService.INSTANCE.getSystemService( InferrenceService.NOTIFICATION_SERVICE );
-        }
-        nm.notify(1, notif);
-        
+//        if (led) {
+//        	if (moteID % 10 == 1)   // ECG mote
+//        		notif.ledARGB = 0xFFFF0000;
+//        	else					// RIP mote
+//        		notif.ledARGB = 0xFF0000FF;        		
+//
+//        	notif.ledOnMS = 1;
+//        } else {
+//        	notif.ledARGB = 0x00000000;
+//        	notif.ledOnMS = 0;
+//        }
+//        led=!led;
+//        notif.ledOffMS = 0;
+//        if (nm == null) {
+//        	nm=( NotificationManager ) InferrenceService.INSTANCE.getSystemService( InferrenceService.NOTIFICATION_SERVICE );
+//        }
+//        nm.notify(1, notif);
+//        
 		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
 		{
-				int SensorID = ChannelToSensorMapping.mapMoteChannelToPhoneSensor(moteID, ChannelID);
+				//int SensorID = ChannelToSensorMapping.mapMoteChannelToPhoneSensor(moteID, ChannelID);
 //				String TAG = "updateSensor";
 //				String sendingTo = "sending To " + item.toString();
 //				Log.d(TAG, sendingTo);
 				
-				long[] timeStamps = null;
-				timeStamps = TimeStamping.timestampCalculator(timestamp, SensorID);
+				// long[] timeStamps = null;
+				// timeStamps = TimeStamping.timestampCalculator(timestamp, SensorID);
 				
 				if (SensorID != -1) {
-					item.onReceiveData(SensorID, data , timeStamps);
+					item.onReceiveData(SensorID, data , timestamps);
 				}
 				else {
-					Log.d("updateSensor", "Packet from mote " + moteID + " ignored");
+					Log.d("updateSensor", "Packet from sensor " + SensorID + " ignored");
 				}
 		}
 		return;

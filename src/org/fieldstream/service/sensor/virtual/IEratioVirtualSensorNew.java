@@ -34,8 +34,8 @@ import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
-import org.fieldstream.service.sensors.mote.MoteUpdateSubscriber;
+import org.fieldstream.service.sensors.mote.sensors.MoteSensorManager;
+import org.fieldstream.service.sensors.mote.sensors.MoteUpdateSubscriber;
 
 //@author Amin Ahsan Ali
 //@author Patrick Blitz
