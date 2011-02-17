@@ -50,9 +50,9 @@ import android.util.Log;
 public class  BdurationVirtualSensor extends AbstractSensor implements SensorBusSubscriber {
 
 	private static final int FRAMERATE = 60;
-	/**
-	 * duration in seconds.
-	 */
+	private static final int missingIndicator=-1; //-1 in the array indicates that the data is missing
+	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
+	
 	//private static final int WINDOW_DURATION=30;
 	private static final int WINDOW_DURATION=60;
 	private static final int PVWINDOWSIZE = WINDOW_DURATION*FRAMERATE;
@@ -115,14 +115,41 @@ public class  BdurationVirtualSensor extends AbstractSensor implements SensorBus
 				synchronized (lock) {
 
 					if (buffer!=null) {
-						//Log.d("BdurationBefore","BeginTS= "+timestamps[0]+"EndTS= "+timestamps[timestamps.length-1]);
-						//test purpose
-//						String raw="";
-//						for(int i=0;i<buffer.length;i++)
-//							raw+=buffer[i]+",";
-//						Log.d("BeforeCallingBdurationCalculation",raw);
-						//Log.d("BeforeCallingBdurationCalculation","raw data length= "+buffer.length);
-						int[] calculate = bdurationCalculation.calculate(buffer, timestamps);
+						//search missing indicator
+						int len=buffer.length;
+						int numberOfMissing=0,numberOfAvailable=0;
+						double []missingRemovedVal=new double[len];
+						double []missingRemovedTS=new double[len];
+						double []missingValuedTS=new double[len];
+//						double []interpoletedValForMissingTS=new double[len]; //will contain interpolated values for the missing timestamp positions
+						for(int i=0;i<len;i++)
+						{
+							if(buffer[i]!=missingIndicator)
+							{
+								missingRemovedVal[numberOfAvailable]=buffer[i];
+								missingRemovedTS[numberOfAvailable]=timestamps[i];
+								numberOfAvailable++;
+							}
+							else
+								missingValuedTS[numberOfMissing++]=buffer[i];
+						}
+						if(numberOfMissing/len<MISSINGRATETHRESHOLD)
+						{
+							//missing rate is below the threshold. now interpolate the missing values
+							//then send them for the further computation
+							//otherwise discard or send null values to upward in the framework
+							SplineInterpolation spline = new SplineInterpolation(missingRemovedTS, missingRemovedVal);
+							for(int i=0;i<numberOfMissing;i++)
+							{
+								//interpoletedValForMissingTS[i]=spline.spline_value(missingValuedTS[i]);  //interpolating each signal value for corresponding timestamp
+								for(int j=0;j<len;j++)
+								{
+									if(timestamps[j]==missingValuedTS[i])
+									{
+										buffer[j]=(int)spline.spline_value(missingValuedTS[i]);  //assign the interpolated missing values into the buffer
+									}
+								}
+							}						int[] calculate = bdurationCalculation.calculate(buffer, timestamps);
 						//Log.d("Bduration:Calculate: ","length= "+calculate.length);
 						//int[] calculate = pvCalculation.calculate(buffer, timestamps);
 						if((calculate.length==0))
@@ -131,25 +158,9 @@ public class  BdurationVirtualSensor extends AbstractSensor implements SensorBus
 							numberOfConsecutiveEmptyRealPeaks++;
 							if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
 							{
-								//adjust threshold for peaks
-								//should check data quality..........make sure that band is not loose
-								//Log.d("Threshold"," no peak="+peakThreshold);
 								peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-								//calculate = pvCalculation.calculate(buffer, timestamps);
-								//continue;		//test wheather it works or not.
 							}
 						}
-						/*else if((calculate.length>4*numberOfPeakThreshold))	//too many real peaks, need to adjust the threshold to upper value; 5 is probable offset
-						{
-							//							Variance var=new Variance(Constants.FEATURE_VAR, false, 0);
-							//							if(var.calculate(buffer, timestamps, Constants.SENSOR_RIP)>1)
-							//							{
-							//Log.d("Threshold"," too many peaks="+peakThreshold);
-							peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-							//calculate = pvCalculation.calculate(buffer, timestamps);
-							//continue;			//test whether it works or not
-							//							}
-						}*/
 						else									//if the calculation function returns null.....
 						{
 							long[] timestampsNew = new long[calculate.length];
@@ -173,23 +184,9 @@ public class  BdurationVirtualSensor extends AbstractSensor implements SensorBus
 
 							int start = 0;
 							int end = calculate.length;
-//							Log.d("BdurationAfter","BeginTS= "+timestampsNew[0]+"EndTS= "+timestampsNew[timestampsNew.length-1]);
-//							String sensor = "";
-//
-//							for (int i=0; i < calculate.length; i++) {
-//								sensor += calculate[i] + ",";
-//							}		
-//							Log.d("BdurationVirtualSesnor", "Bduration Durations = " + sensor);	
-//
-//							String timeStamp="";
-//							for(int i=0;i<timestampsNew.length;i++)
-//							{
-//								timeStamp+=timestampsNew[i]+",";
-//							}
-//							Log.d("BdurationVirtualSesnor","Bduration timestamp= "+timeStamp);
-
 							sendBufferReal(calculate, timestampsNew, start, end);
-						}							
+						}	
+					}
 					}
 
 					try {

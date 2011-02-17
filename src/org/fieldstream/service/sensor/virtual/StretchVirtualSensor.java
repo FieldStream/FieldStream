@@ -76,6 +76,7 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 	private static final int missingIndicator=-1; //-1 in the array indicates that the data is missing
 	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
 	//private static final int WINDOW_DURATION=30;
+
 	private static final int WINDOW_DURATION=60;
 	private static final int PVWINDOWSIZE = WINDOW_DURATION*FRAMERATE;
 	private static final Boolean PVSCHEDULER = false;
@@ -137,7 +138,6 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 				synchronized (lock) {
 
 					if (buffer!=null) {
-						Log.d("StretchBefore","BeginTS= "+timestamps[0]+"EndTS= "+timestamps[timestamps.length-1]);
 						/**
 						 * Buffer is full now. missing positions contain -1 value to indicate missing
 						 * Find out the missing positions and save it into another array. 

@@ -74,9 +74,9 @@ import android.util.Log;
 public class  ExhalationFirstDiffVirtualSensorNew extends AbstractSensor implements SensorBusSubscriber {
 
 	private static final int FRAMERATE = 60;
-	/**
-	 * duration in seconds.
-	 */
+	private static final int missingIndicator=-1; //-1 in the array indicates that the data is missing
+	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
+
 	private static final int WINDOW_DURATION=60;
 	private static final int PVWINDOWSIZE = WINDOW_DURATION*FRAMERATE;
 	private static final Boolean PVSCHEDULER = false;
@@ -127,7 +127,7 @@ public class  ExhalationFirstDiffVirtualSensorNew extends AbstractSensor impleme
 		public FirstDiffRunner() {
 			firstDifference = new FirstDifferenceExhalationNew();
 			//pvCalculation = new PVCalculation();
-			}
+		}
 		public boolean active=true;
 		public int[] buffer;
 		public long[] timestamps;
@@ -138,78 +138,84 @@ public class  ExhalationFirstDiffVirtualSensorNew extends AbstractSensor impleme
 				synchronized (lock) {
 
 					if (buffer!=null) {
-						//Log.d("FirstDiffBefore","BeginTS= "+timestamps[0]+"EndTS= "+timestamps[timestamps.length-1]);
-						int[] calculate = firstDifference.calculate(buffer, timestamps);
-						//int[] calculate = pvCalculation.calculate(buffer, timestamps);
-						if((calculate.length==0))
+						//search missing indicator
+						int len=buffer.length;
+						int numberOfMissing=0,numberOfAvailable=0;
+						double []missingRemovedVal=new double[len];
+						double []missingRemovedTS=new double[len];
+						double []missingValuedTS=new double[len];
+						//						double []interpoletedValForMissingTS=new double[len]; //will contain interpolated values for the missing timestamp positions
+						for(int i=0;i<len;i++)
 						{
-							//first check the variance. if it is very low then the band might be off
-							numberOfConsecutiveEmptyRealPeaks++;
-							if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
+							if(buffer[i]!=missingIndicator)
 							{
-								//adjust threshold for peaks
-								//should check data quality..........make sure that band is not loose
-								//Log.d("Threshold"," no peak="+peakThreshold);
-								peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-								//calculate = pvCalculation.calculate(buffer, timestamps);
-								//continue;		//test wheather it works or not.
+								missingRemovedVal[numberOfAvailable]=buffer[i];
+								missingRemovedTS[numberOfAvailable]=timestamps[i];
+								numberOfAvailable++;
+							}
+							else
+								missingValuedTS[numberOfMissing++]=buffer[i];
+						}
+						if(numberOfMissing/len<MISSINGRATETHRESHOLD)
+						{
+							//missing rate is below the threshold. now interpolate the missing values
+							//then send them for the further computation
+							//otherwise discard or send null values to upward in the framework
+							SplineInterpolation spline = new SplineInterpolation(missingRemovedTS, missingRemovedVal);
+							for(int i=0;i<numberOfMissing;i++)
+							{
+								//interpoletedValForMissingTS[i]=spline.spline_value(missingValuedTS[i]);  //interpolating each signal value for corresponding timestamp
+								for(int j=0;j<len;j++)
+								{
+									if(timestamps[j]==missingValuedTS[i])
+									{
+										buffer[j]=(int)spline.spline_value(missingValuedTS[i]);  //assign the interpolated missing values into the buffer
+									}
+								}
+							}
+							//Log.d("FirstDiffBefore","BeginTS= "+timestamps[0]+"EndTS= "+timestamps[timestamps.length-1]);
+							int[] calculate = firstDifference.calculate(buffer, timestamps);
+							//int[] calculate = pvCalculation.calculate(buffer, timestamps);
+							if((calculate.length==0))
+							{
+								//first check the variance. if it is very low then the band might be off
+								numberOfConsecutiveEmptyRealPeaks++;
+								if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
+								{
+									//adjust threshold for peaks
+									//should check data quality..........make sure that band is not loose
+									//Log.d("Threshold"," no peak="+peakThreshold);
+									peakThreshold=(int)Percentile.evaluate(buffer, quantile);
+									//calculate = pvCalculation.calculate(buffer, timestamps);
+									//continue;		//test wheather it works or not.
+								}
+							}
+							else									//if the calculation function returns null.....
+							{
+								long[] timestampsNew = new long[calculate.length];
+								if(calculate.length<=1)
+								{
+									timestampsNew[0]=timestamps[0];
+								}
+								else if (calculate.length<timestamps.length) {
+									float fakeIndex = 0;
+									float factor = timestamps.length/((float)calculate.length - 1);	
+									timestampsNew[0]=timestamps[0];
+									for (int i=1; i<calculate.length;i++) {
+										fakeIndex = i * factor;
+										timestampsNew[i]=timestamps[(int)Math.floor(fakeIndex)-1];
+									}
+								} else {
+									for (int i=0; i<calculate.length;i++) {
+										timestampsNew[i]=timestamps[i];
+									}
+								}
+
+								int start = 0;
+								int end = calculate.length;
+								sendBufferReal(calculate, timestampsNew, start, end);
 							}
 						}
-						/*else if((calculate.length>4*numberOfPeakThreshold))	//too many real peaks, need to adjust the threshold to upper value; 5 is probable offset
-						{
-							//							Variance var=new Variance(Constants.FEATURE_VAR, false, 0);
-							//							if(var.calculate(buffer, timestamps, Constants.SENSOR_RIP)>1)
-							//							{
-							//Log.d("Threshold"," too many peaks="+peakThreshold);
-							peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-							//calculate = pvCalculation.calculate(buffer, timestamps);
-							//continue;			//test whether it works or not
-							//							}
-						}*/
-						else									//if the calculation function returns null.....
-						{
-							long[] timestampsNew = new long[calculate.length];
-							if(calculate.length<=1)
-							{
-								timestampsNew[0]=timestamps[0];
-							}
-							else if (calculate.length<timestamps.length) {
-								float fakeIndex = 0;
-								float factor = timestamps.length/((float)calculate.length - 1);	
-								timestampsNew[0]=timestamps[0];
-								for (int i=1; i<calculate.length;i++) {
-									fakeIndex = i * factor;
-									timestampsNew[i]=timestamps[(int)Math.floor(fakeIndex)-1];
-								}
-							} else {
-								for (int i=0; i<calculate.length;i++) {
-									timestampsNew[i]=timestamps[i];
-								}
-							}
-
-							int start = 0;
-							int end = calculate.length;
-//							Log.d("FirstDiffAfter","BeginTS= "+timestampsNew[0]+"EndTS= "+timestampsNew[timestampsNew.length-1]);
-//							for(int t=0;t<end;t++)
-//							{
-//								System.out.print(calculate[t]+" ");
-//							}
-//							
-//							String ripData="";
-//							for(int i=0;i<calculate.length;i++)
-//							{
-//								ripData+=calculate[i]+",";
-//							}
-//							String checktimestamp="";
-//							for(int i=0;i<timestampsNew.length;i++)
-//							{
-//								checktimestamp+=timestamps[i]+",";
-//							}
-//							Log.d("FirstDiff", "FirstDiff value= "+ripData);
-//							Log.d("FirstDiff","FirstDiff timestamp= "+checktimestamp);
-//							
-							sendBufferReal(calculate, timestampsNew, start, end);
-						}							
 					}
 
 					try {
@@ -223,26 +229,12 @@ public class  ExhalationFirstDiffVirtualSensorNew extends AbstractSensor impleme
 			}
 		}	
 	};
-	
-//	public int adjustPeakThreshold(int data[])
-//	{
-//		
-//		
-//	}
-	
+
 	private Thread FirstDiffThread;
 	private ExhalationFirstDiffVirtualSensorNew INSTANCE;
 
 	public ExhalationFirstDiffVirtualSensorNew(int SensorID) {
 		super(SensorID);
-		//		try {
-		//			outFile = new FileWriter("/mahbub/logDump.txt",true);
-		//			out = new PrintWriter(outFile,true);
-		//		} catch (IOException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-
 		INSTANCE = this;
 		initalize(PVSCHEDULER,PVWINDOWSIZE, PVWINDOWSIZE);	
 	}	
@@ -253,7 +245,7 @@ public class  ExhalationFirstDiffVirtualSensorNew extends AbstractSensor impleme
 		runner.active = true;
 		FirstDiffThread = new Thread(runner);
 		FirstDiffThread.start();
-		
+
 		SensorBus.getInstance().subscribe(this);
 		//MoteSensorManager.getInstance().registerListener(this);
 		if (REPLAY_SENSOR) {
@@ -261,22 +253,22 @@ public class  ExhalationFirstDiffVirtualSensorNew extends AbstractSensor impleme
 		} else {
 			InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_RIP);
 		}
-		
-//		if (REPLAY_SENSOR) { 
-//			SensorBus.getInstance().subscribe(this);
-//		} else {
-//			MoteSensorManager.getInstance().registerListener(this);
-//		}
+
+		//		if (REPLAY_SENSOR) { 
+		//			SensorBus.getInstance().subscribe(this);
+		//		} else {
+		//			MoteSensorManager.getInstance().registerListener(this);
+		//		}
 
 	}
 
 	@Override
 	public void deactivate() {
-//		if (REPLAY_SENSOR) {
-//			SensorBus.getInstance().unsubscribe(this);
-//		} else {
-//			MoteSensorManager.getInstance().unregisterListener(this);
-//		}
+		//		if (REPLAY_SENSOR) {
+		//			SensorBus.getInstance().unsubscribe(this);
+		//		} else {
+		//			MoteSensorManager.getInstance().unregisterListener(this);
+		//		}
 		SensorBus.getInstance().unsubscribe(this);
 		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {

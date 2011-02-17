@@ -71,15 +71,14 @@ import org.fieldstream.service.sensors.mote.MoteUpdateSubscriber;
 public class  RespirationVirtualSensor extends AbstractSensor implements SensorBusSubscriber {
 
 	private static final int FRAMERATE = 64;
-	/**
-	 * duration in seconds.
-	 */
 	private static final int WINDOW_DURATION=60;
 	private static final int PVWINDOWSIZE = WINDOW_DURATION*FRAMERATE;
+	
+	private static final int missingIndicator=-1; //-1 in the array indicates that the data is missing
+	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
+	
+	
 	private static final Boolean PVSCHEDULER = false;
-	/**
-	 * decide if the Replay sensor or the mote RIP sensor should be used! 
-	 */
 	//private static final Boolean REPLAY_SENSOR = true;
 	private static final Boolean REPLAY_SENSOR = false;
 	/**
@@ -135,77 +134,94 @@ public class  RespirationVirtualSensor extends AbstractSensor implements SensorB
 				synchronized (lock) {
 
 					if (buffer!=null) {
-						Log.d("RespirationBefore","BeginTS= "+timestamps[0]+"EndTS= "+timestamps[timestamps.length-1]);
-						int[] calculate = RespirationCalculation.calculate(buffer, timestamps);
-						//int[] calculate = pvCalculation.calculate(buffer, timestamps);
-						if((calculate.length==0))
+						int len=buffer.length;
+						int numberOfMissing=0,numberOfAvailable=0;
+						double []missingRemovedVal=new double[len];
+						double []missingRemovedTS=new double[len];
+						double []missingValuedTS=new double[len];
+						//						double []interpoletedValForMissingTS=new double[len]; //will contain interpolated values for the missing timestamp positions
+						for(int i=0;i<len;i++)
 						{
-							//first check the variance. if it is very low then the band might be off
-							numberOfConsecutiveEmptyRealPeaks++;
-							if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
+							if(buffer[i]!=missingIndicator)
 							{
-								//adjust threshold for peaks
-								//should check data quality..........make sure that band is not loose
-								//Log.d("Threshold"," no peak="+peakThreshold);
-								peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-								//calculate = pvCalculation.calculate(buffer, timestamps);
-								//continue;		//test wheather it works or not.
-								numberOfConsecutiveEmptyRealPeaks=0;
+								missingRemovedVal[numberOfAvailable]=buffer[i];
+								missingRemovedTS[numberOfAvailable]=timestamps[i];
+								numberOfAvailable++;
 							}
+							else
+								missingValuedTS[numberOfMissing++]=buffer[i];
 						}
-						//check this condition again....it may be unnecessary
-//						else if((calculate.length>4*numberOfPeakThreshold))	//too many real peaks, need to adjust the threshold to upper value; 5 is probable offset
-//						{
-//							//							Variance var=new Variance(Constants.FEATURE_VAR, false, 0);
-//							//							if(var.calculate(buffer, timestamps, Constants.SENSOR_RIP)>1)
-//							//							{
-//							//Log.d("Threshold"," too many peaks="+peakThreshold);
-//							peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-//							//calculate = pvCalculation.calculate(buffer, timestamps);
-//							//continue;			//test whether it works or not
-//							//							}
-//						}
-						else									//if the calculation function returns null.....
+						if(numberOfMissing/len<MISSINGRATETHRESHOLD)
 						{
-							long[] timestampsNew = new long[calculate.length];
-							if(calculate.length<=1)
+							//missing rate is below the threshold. now interpolate the missing values
+							//then send them for the further computation
+							//otherwise discard or send null values to upward in the framework
+							SplineInterpolation spline = new SplineInterpolation(missingRemovedTS, missingRemovedVal);
+							for(int i=0;i<numberOfMissing;i++)
 							{
-								timestampsNew[0]=timestamps[0];
-							}
-							else if (calculate.length<timestamps.length) {
-								float fakeIndex = 0;
-								float factor = timestamps.length/((float)calculate.length - 1);	
-								timestampsNew[0]=timestamps[0];
-								for (int i=1; i<calculate.length;i++) {
-									fakeIndex = i * factor;
-									timestampsNew[i]=timestamps[(int)Math.floor(fakeIndex)-1];
-								}
-							} else {
-								for (int i=0; i<calculate.length;i++) {
-									timestampsNew[i]=timestamps[i];
+								//interpoletedValForMissingTS[i]=spline.spline_value(missingValuedTS[i]);  //interpolating each signal value for corresponding timestamp
+								for(int j=0;j<len;j++)
+								{
+									if(timestamps[j]==missingValuedTS[i])
+									{
+										buffer[j]=(int)spline.spline_value(missingValuedTS[i]);  //assign the interpolated missing values into the buffer
+									}
 								}
 							}
-							
-							Log.d("RespirationAfter","BeginTS= "+timestampsNew[0]+"EndTS= "+timestampsNew[timestampsNew.length-1]);
-							int start = 0;
-							int end = calculate.length;
-							
-							String sensor = "";
-
-							for (int i=0; i < calculate.length; i++) {
-								sensor += calculate[i] + ",";
-							}		
-							Log.d("RespirationVirtualSensor", "RealPeakValley = " + sensor);	
-
-							String timeStamp="";
-							for(int i=0;i<timestampsNew.length;i++)
+							int[] calculate = RespirationCalculation.calculate(buffer, timestamps);
+							//int[] calculate = pvCalculation.calculate(buffer, timestamps);
+							if((calculate.length==0))
 							{
-								timeStamp+=timestampsNew[i]+",";
+								//first check the variance. if it is very low then the band might be off
+								numberOfConsecutiveEmptyRealPeaks++;
+								if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
+								{
+									peakThreshold=(int)Percentile.evaluate(buffer, quantile);
+									numberOfConsecutiveEmptyRealPeaks=0;
+								}
 							}
-							Log.d("RespirationVirtualSensor","RealPeakValley timestamp= "+timeStamp);
+							else									//if the calculation function returns null.....
+							{
+								long[] timestampsNew = new long[calculate.length];
+								if(calculate.length<=1)
+								{
+									timestampsNew[0]=timestamps[0];
+								}
+								else if (calculate.length<timestamps.length) {
+									float fakeIndex = 0;
+									float factor = timestamps.length/((float)calculate.length - 1);	
+									timestampsNew[0]=timestamps[0];
+									for (int i=1; i<calculate.length;i++) {
+										fakeIndex = i * factor;
+										timestampsNew[i]=timestamps[(int)Math.floor(fakeIndex)-1];
+									}
+								} else {
+									for (int i=0; i<calculate.length;i++) {
+										timestampsNew[i]=timestamps[i];
+									}
+								}
 
-							sendBufferReal(calculate, timestampsNew, start, end);
-						}							
+								Log.d("RespirationAfter","BeginTS= "+timestampsNew[0]+"EndTS= "+timestampsNew[timestampsNew.length-1]);
+								int start = 0;
+								int end = calculate.length;
+
+								String sensor = "";
+
+								for (int i=0; i < calculate.length; i++) {
+									sensor += calculate[i] + ",";
+								}		
+								Log.d("RespirationVirtualSensor", "RealPeakValley = " + sensor);	
+
+								String timeStamp="";
+								for(int i=0;i<timestampsNew.length;i++)
+								{
+									timeStamp+=timestampsNew[i]+",";
+								}
+								Log.d("RespirationVirtualSensor","RealPeakValley timestamp= "+timeStamp);
+
+								sendBufferReal(calculate, timestampsNew, start, end);
+							}	
+						}
 					}
 
 					try {
@@ -241,11 +257,11 @@ public class  RespirationVirtualSensor extends AbstractSensor implements SensorB
 		runner.active = true;
 		RespirationThread = new Thread(runner);
 		RespirationThread.start();	
-//		if (REPLAY_SENSOR) { 
-//			SensorBus.getInstance().subscribe(this);
-//		} else {
-//			MoteSensorManager.getInstance().registerListener(this);
-//		}
+		//		if (REPLAY_SENSOR) { 
+		//			SensorBus.getInstance().subscribe(this);
+		//		} else {
+		//			MoteSensorManager.getInstance().registerListener(this);
+		//		}
 		SensorBus.getInstance().subscribe(this);
 		// as this depends on the ECG sensor to be active, i need to load it to make sure it's there!
 		//MoteSensorManager.getInstance().registerListener(this);
@@ -258,11 +274,11 @@ public class  RespirationVirtualSensor extends AbstractSensor implements SensorB
 
 	@Override
 	public void deactivate() {
-//		if (REPLAY_SENSOR) {
-//			SensorBus.getInstance().unsubscribe(this);
-//		} else {
-//			MoteSensorManager.getInstance().unregisterListener(this);
-//		}
+		//		if (REPLAY_SENSOR) {
+		//			SensorBus.getInstance().unsubscribe(this);
+		//		} else {
+		//			MoteSensorManager.getInstance().unregisterListener(this);
+		//		}
 		SensorBus.getInstance().unsubscribe(this);
 		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {
@@ -309,7 +325,7 @@ public class  RespirationVirtualSensor extends AbstractSensor implements SensorB
 	}
 
 	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
-	/*	if(SensorID == Constants.SENSOR_RIP)
+		/*	if(SensorID == Constants.SENSOR_RIP)
 		{
 //			int length=runner.timestamps.length;
 //			for(int k=0;k<length;k++)
