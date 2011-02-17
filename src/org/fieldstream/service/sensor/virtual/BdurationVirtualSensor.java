@@ -52,7 +52,7 @@ public class  BdurationVirtualSensor extends AbstractSensor implements SensorBus
 	private static final int FRAMERATE = 60;
 	private static final int missingIndicator=-1; //-1 in the array indicates that the data is missing
 	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
-	
+
 	//private static final int WINDOW_DURATION=30;
 	private static final int WINDOW_DURATION=60;
 	private static final int PVWINDOWSIZE = WINDOW_DURATION*FRAMERATE;
@@ -121,7 +121,7 @@ public class  BdurationVirtualSensor extends AbstractSensor implements SensorBus
 						double []missingRemovedVal=new double[len];
 						double []missingRemovedTS=new double[len];
 						double []missingValuedTS=new double[len];
-//						double []interpoletedValForMissingTS=new double[len]; //will contain interpolated values for the missing timestamp positions
+						//						double []interpoletedValForMissingTS=new double[len]; //will contain interpolated values for the missing timestamp positions
 						for(int i=0;i<len;i++)
 						{
 							if(buffer[i]!=missingIndicator)
@@ -149,44 +149,45 @@ public class  BdurationVirtualSensor extends AbstractSensor implements SensorBus
 										buffer[j]=(int)spline.spline_value(missingValuedTS[i]);  //assign the interpolated missing values into the buffer
 									}
 								}
-							}						int[] calculate = bdurationCalculation.calculate(buffer, timestamps);
-						//Log.d("Bduration:Calculate: ","length= "+calculate.length);
-						//int[] calculate = pvCalculation.calculate(buffer, timestamps);
-						if((calculate.length==0))
-						{
-							//first check the variance. if it is very low then the band might be off
-							numberOfConsecutiveEmptyRealPeaks++;
-							if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
+							}						
+							int[] calculate = bdurationCalculation.calculate(buffer, timestamps);
+							//Log.d("Bduration:Calculate: ","length= "+calculate.length);
+							//int[] calculate = pvCalculation.calculate(buffer, timestamps);
+							if((calculate.length==0))
 							{
-								peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-							}
-						}
-						else									//if the calculation function returns null.....
-						{
-							long[] timestampsNew = new long[calculate.length];
-							if(calculate.length<=1)
-							{
-								timestampsNew[0]=timestamps[0];
-							}
-							else if (calculate.length<timestamps.length) {
-								float fakeIndex = 0;
-								float factor = timestamps.length/((float)calculate.length - 1);	
-								timestampsNew[0]=timestamps[0];
-								for (int i=1; i<calculate.length;i++) {
-									fakeIndex = i * factor;
-									timestampsNew[i]=timestamps[(int)Math.floor(fakeIndex)-1];
-								}
-							} else {
-								for (int i=0; i<calculate.length;i++) {
-									timestampsNew[i]=timestamps[i];
+								//first check the variance. if it is very low then the band might be off
+								numberOfConsecutiveEmptyRealPeaks++;
+								if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
+								{
+									peakThreshold=(int)Percentile.evaluate(buffer, quantile);
 								}
 							}
+							else									//if the calculation function returns null.....
+							{
+								long[] timestampsNew = new long[calculate.length];
+								if(calculate.length<=1)
+								{
+									timestampsNew[0]=timestamps[0];
+								}
+								else if (calculate.length<timestamps.length) {
+									float fakeIndex = 0;
+									float factor = timestamps.length/((float)calculate.length - 1);	
+									timestampsNew[0]=timestamps[0];
+									for (int i=1; i<calculate.length;i++) {
+										fakeIndex = i * factor;
+										timestampsNew[i]=timestamps[(int)Math.floor(fakeIndex)-1];
+									}
+								} else {
+									for (int i=0; i<calculate.length;i++) {
+										timestampsNew[i]=timestamps[i];
+									}
+								}
 
-							int start = 0;
-							int end = calculate.length;
-							sendBufferReal(calculate, timestampsNew, start, end);
-						}	
-					}
+								int start = 0;
+								int end = calculate.length;
+								sendBufferReal(calculate, timestampsNew, start, end);
+							}	
+						}
 					}
 
 					try {
@@ -222,11 +223,11 @@ public class  BdurationVirtualSensor extends AbstractSensor implements SensorBus
 		runner.active = true;
 		BdurationThread = new Thread(runner);
 		BdurationThread.start();	
-//		if (REPLAY_SENSOR) { 
-//			SensorBus.getInstance().subscribe(this);
-//		} else {
-//			MoteSensorManager.getInstance().registerListener(this);
-//		}
+		//		if (REPLAY_SENSOR) { 
+		//			SensorBus.getInstance().subscribe(this);
+		//		} else {
+		//			MoteSensorManager.getInstance().registerListener(this);
+		//		}
 		SensorBus.getInstance().subscribe(this);
 		//MoteSensorManager.getInstance().registerListener(this);
 		// as this depends on the ECG sensor to be active, i need to load it to make sure it's there!
@@ -240,11 +241,11 @@ public class  BdurationVirtualSensor extends AbstractSensor implements SensorBus
 
 	@Override
 	public void deactivate() {
-//		if (REPLAY_SENSOR) {
-//			SensorBus.getInstance().unsubscribe(this);
-//		} else {
-//			MoteSensorManager.getInstance().unregisterListener(this);
-//		}
+		//		if (REPLAY_SENSOR) {
+		//			SensorBus.getInstance().unsubscribe(this);
+		//		} else {
+		//			MoteSensorManager.getInstance().unregisterListener(this);
+		//		}
 		SensorBus.getInstance().unsubscribe(this);
 		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {
