@@ -31,6 +31,7 @@ public class AccelCommutingCalculation{
 	private static double[] meanBuff;
 	private static int meanHead=0;
 	
+	private static int valuecount=0;
 	// ===============================================
 	public AccelCommutingCalculation(){
 		varBuff=new double[4];
@@ -83,6 +84,17 @@ public class AccelCommutingCalculation{
 	// ============================================
 	// PERCENTILE
 	// ============================================
+	private void computeValueCount(int[] buffer){
+		int[] s=buffer;
+		Arrays.sort(s);
+		if(buffer.length<2){
+			valuecount=buffer.length;
+		}else{
+			valuecount=1;
+			for(int i=1;i<buffer.length;i++) if(buffer[i]>buffer[i-1]) valuecount++;
+		}
+	}
+	
 	private void computePrctile(int[] buffer){
 		int[] s=buffer;
 		Arrays.sort(s);
@@ -133,6 +145,7 @@ public class AccelCommutingCalculation{
 		computeMean(buffer);
 		computeMeanCrossings(buffer);
 		computePrctile(buffer);
+		computeValueCount(buffer);
 		if(prctileHead==prctileBuff.length-1){
 			computePrctilePrctile();
 			computeMaxPrctile();
@@ -142,6 +155,8 @@ public class AccelCommutingCalculation{
 		}
 //		if(Log.DEBUG) Log.d(TAG,"currentprctile="+currentprctile+"|maxprctile"+maxprctile+"|ratio="+currentprctile/maxprctile);
 		print();
+		boolean obviouslystatic=(valuecount<10);
+		if(obviouslystatic) return STATIC;
 		boolean strongmovement=(currentprctile>0.02*maxprctile);
 		boolean highfrequency=(meancrossings>10);
 		if(strongmovement && highfrequency) return MOVING; else return STATIC;
