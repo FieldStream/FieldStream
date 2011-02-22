@@ -24,6 +24,7 @@ public class AccelCommutingModel extends ModelCalculation{
 	public ArrayList<Integer> getUsedFeatures(){return featureLabels;}
 	@Override
 	public void computeContext(FeatureSet fs) {
+		if(Log.DEBUG) Log.d(TAG,"Sent one decision");
 		currentMotion=fs.getFeature(Constants.getId(Constants.FEATURE_MAX, Constants.SENSOR_VIRTUAL_ACCELCOMMUTING));
 		ContextBus.getInstance().pushNewContext(getID(), (int) currentMotion, fs.getBeginTime(), fs.getEndTime());	
 	}

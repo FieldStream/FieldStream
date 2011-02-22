@@ -118,7 +118,7 @@ public class AccelCommutingVirtualSensor extends AbstractSensor implements Senso
 	// =====================================================================
 	// SET WINDOW SIZE
 	// =====================================================================
-	private static final int SAMPLES_PER_SECOND=100;
+	private static final int SAMPLES_PER_SECOND=30;
 	private static final int WINDOW_SIZE_IN_SECONDS=12;
 	private static final int PVWINDOWSIZE = SAMPLES_PER_SECOND*WINDOW_SIZE_IN_SECONDS;
 	private static final Boolean PVSCHEDULER = false;
@@ -232,7 +232,7 @@ public class AccelCommutingVirtualSensor extends AbstractSensor implements Senso
 		if(Log.DEBUG) Log.d(TAG,"Received Sensor ID="+sensorID);
 		if(sensorID == Constants.SENSOR_ACCELPHONEMAG){
 			if(Log.DEBUG) Log.d(TAG,"Buffer length="+data.length);
-			//if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" "+data.length+" "+timestamps.length+" "+startNewData+" "+endNewData);
+			if(Log.DEBUG) Log.d(TAG, "receiveBuffer(): got a buffer from " + sensorID+" Ndata="+data.length+" Ntimestamps="+timestamps.length);
 			addValue(data, timestamps);
 		}
 	}

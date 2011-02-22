@@ -37,7 +37,6 @@ public class HeartRateMF extends AbstractFeature {
 
 	}
 
-
 	@Override
 	public double calculate(int[] buffer, long[] timestamps, int sensor) {
 		float[][]fP=HeartRateLomb.calculate(buffer);		
