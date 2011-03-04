@@ -88,7 +88,7 @@ import android.os.RemoteException;
 public class InferrenceService extends Service implements ContextSubscriber{
 		private static final String LOG_TAG = "INFERRENCESERVICE";
 		
-		public StateManager fm;
+		public ActivationManager fm;
 		private boolean active=false;
 		public static InferrenceService INSTANCE;
 		protected static ArrayList<IInferrenceServiceCallback> subscribers;
@@ -310,7 +310,8 @@ public class InferrenceService extends Service implements ContextSubscriber{
 		btStateManager.startUp();		
 		
         if (fm == null) {
-        	fm = new StateManager();  
+        	fm = ActivationManager.getInstance();  
+        	fm.init();
         }
          
   		File root = Environment.getExternalStorageDirectory();
@@ -345,7 +346,7 @@ public class InferrenceService extends Service implements ContextSubscriber{
 //			if (http != null)
 //				http.shutdown();		
 			
-			fm.deactivate();
+			fm.destroy();
 			fm=null;
 			dataLogger = null;
 			DatabaseLogger.releaseInstance(this);

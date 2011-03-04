@@ -46,7 +46,7 @@ import org.fieldstream.service.IInferrenceService;
 import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.context.model.ActivityCalculation;
-import org.fieldstream.service.context.model.CommutingCalculation;
+import org.fieldstream.service.context.model.GPSCommutingCalculation;
 import org.fieldstream.service.context.model.ConversationDetectionModel;
 import org.fieldstream.service.context.model.ConversationPrediction;
 import org.fieldstream.service.context.model.DataQualityCalculation;
@@ -544,35 +544,6 @@ public class InterviewScheduler extends Service {
 
 	}
 
-	public static ArrayList<Integer> activeModels = new ArrayList<Integer>() {
-		{
-			add(Constants.MODEL_ACTIVITY);
-			add(Constants.MODEL_DATAQUALITY);
-			add(Constants.MODEL_STRESS);
-			add(Constants.MODEL_ACCUMULATION);	
-			add(Constants.MODEL_CONVERSATION);	
-			add(Constants.MODEL_COMMUTING);
-		// added to capture user self reported events
-			add(Constants.MODEL_SELF_DRINKING);
-			add(Constants.MODEL_SELF_SMOKING);
-		}
-	};
-	
-	public static ArrayList<Integer> activeSensors = new ArrayList<Integer>() {
-		{
-			add(Constants.SENSOR_BATTERY_LEVEL);
-			add(Constants.SENSOR_ACCELCHESTX);
-			add(Constants.SENSOR_ACCELCHESTY);
-			add(Constants.SENSOR_ACCELCHESTZ);		
-			add(Constants.SENSOR_ACCELPHONEX);
-			add(Constants.SENSOR_ACCELPHONEY);
-			add(Constants.SENSOR_ACCELPHONEZ);		
-			add(Constants.SENSOR_BODY_TEMP);
-			add(Constants.SENSOR_AMBIENT_TEMP);			
-			add(Constants.SENSOR_GSR);						
-			add(Constants.SENSOR_ALCOHOL);
-		}
-	};
 	/*
 	 * Connection to the inference service
 	 */
@@ -587,14 +558,6 @@ public class InterviewScheduler extends Service {
 
 			try {
 				inferenceService.subscribe(inferenceCallback);				
-
-				for (Integer model : activeModels) {
-					inferenceService.activateModel(model);
-				}
-
-				for (Integer sensor : activeSensors) {
-					inferenceService.activateSensor(sensor);
-				}
 				
 				if (Log.DEBUG) Log.d("inferenceConnection",
 						"Subscribed to the inference service callback");
@@ -606,26 +569,7 @@ public class InterviewScheduler extends Service {
 
 		}
 
-		public void onServiceDisconnected(ComponentName name) {
-
-			for (Integer model : activeModels) {
-				try {
-					inferenceService.deactivateModel(model);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			for (Integer sensor : activeSensors) {
-				try {
-					inferenceService.deactivateSensor(sensor);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
+		public void onServiceDisconnected(ComponentName name) {			
 			
 			inferenceService = null;
 			if (Log.DEBUG) Log.d("inferenceConnection", "Disconnected from inference service");
@@ -1254,15 +1198,6 @@ public class InterviewScheduler extends Service {
 			atEOD = true;
 			if (startOfDay > 0) {
 				if (Log.DEBUG) Log.d("InterviewScheduler","End Of Day");
-				try {
-					for (Integer model : activeModels) {
-						inferenceService.deactivateModel(model);
-					}
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					if (Log.DEBUG) Log.d("InterviewScheduler","Error trying to stop inference Service model stress "+e);
-					e.printStackTrace();
-				}
 				long diff = startOfDay - System.currentTimeMillis();
 				if (Log.DEBUG) Log.d("InterviewScheduler","scheduler for SOD in "+diff);
 				if (diff > 0) {
@@ -1301,9 +1236,6 @@ public class InterviewScheduler extends Service {
 			schedulerPaused = false;
 			nextPeriodicTime = SystemClock.uptimeMillis();
 			try {
-				for (Integer model : activeModels) {
-					inferenceService.activateModel(model);
-				}
 				inferenceService.setFeatureComputation(true);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -1541,7 +1473,7 @@ public class InterviewScheduler extends Service {
 		budgeter.addOrUpdateItem("" + Constants.MODEL_CONVERSATION + ":" + ConversationPrediction.SMOKING, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_ACTIVITY + ":" + ActivityCalculation.WALK, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_ACCUMULATION, 4);
-		budgeter.addOrUpdateItem("" + Constants.MODEL_COMMUTING + ":" + CommutingCalculation.COMMUTING, 2);
+		budgeter.addOrUpdateItem("" + Constants.MODEL_GPSCOMMUTING + ":" + GPSCommutingCalculation.COMMUTING, 2);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_DRINKING,1);
 		budgeter.addOrUpdateItem("" + Constants.MODEL_SELF_SMOKING, 4);
 		

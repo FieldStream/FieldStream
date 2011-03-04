@@ -32,6 +32,9 @@ import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.FeatureBus;
 import org.fieldstream.service.sensors.api.AbstractFeature;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
 
 /**
@@ -40,12 +43,11 @@ import android.os.SystemClock;
  * @author Andrew Raij
  * 
  */
-public class FeatureRunner implements Runnable {
-	private FeatureData data;
+public class FeatureRunner {
 	private FeatureCalculation calculation2;
 	private ArrayBlockingQueue<FeatureData> queue;
-	private static boolean run;
 	private Thread thread;
+	private Handler handler;
 
 	private static FeatureRunner INSTANCE = null;
 	
@@ -54,7 +56,71 @@ public class FeatureRunner implements Runnable {
 	private FeatureRunner() {
 		calculation2 = FeatureCalculation.getInstance();
 		queue = new ArrayBlockingQueue<FeatureData>(100);
-		thread = new Thread(this);
+		thread = new Thread() {
+			public void run() {
+				  try {
+				    // preparing a looper on current thread
+				    // the current thread is being detected implicitly
+				    Looper.prepare();
+				 				    
+				    // now, the handler will automatically bind to the
+				    // Looper that is attached to the current thread
+				    // You don't need to specify the Looper explicitly
+				    handler = new Handler() {
+				    	public void handleMessage(Message msg) {
+				    		FeatureData data = (FeatureData)msg.obj;
+							if (data != null) {
+								long beginTime = 0, endTime = 0;
+								if (data.timestamps.length > 0) {
+									beginTime = data.timestamps[0];
+									endTime = data.timestamps[data.timestamps.length - 1];
+								}
+								
+								if (calculation2.mapping != null
+										&& !calculation2.mapping.isEmpty()) {
+									ArrayList<AbstractFeature> abstractFeatures = calculation2.mapping.get(data.sensorID);
+									if (abstractFeatures != null) {
+										for (AbstractFeature f : abstractFeatures) {
+											if (f.active) {
+												long start = SystemClock.uptimeMillis();
+												double result = f.calculate(data.buffer,
+														data.timestamps, data.sensorID);
+												if (Log.DEBUG) Log.d("FeatureCalc", "Feature "
+														+ ((Integer) f.featureID).toString()
+														+ " for Sensor "+((Integer)data.sensorID).toString() 
+														+ " has value "
+														+ ((Double) result).toString() + " for "
+														+ data.buffer.length
+														+ " bufferlenght, calculated in  "
+														+ (SystemClock.uptimeMillis() - start)
+														/ 1000);
+											// for testing, have the last time equal the current time
+											//endTime=System.currentTimeMillis();
+												FeatureBus.getInstance()
+														.receiveUpdate(
+																Constants.getId(f.featureID,
+																		data.sensorID), result,
+																beginTime, endTime);
+											}
+										}
+									}
+								}
+							}
+						}				    	
+				    };
+				    				    
+				    // After the following line the thread will start
+				    // running the message loop and will not normally
+				    // exit the loop unless a problem happens or you
+				    // quit() the looper (see below)
+				    Looper.loop();
+				  } catch (Throwable t) {
+				    Log.e(TAG, "halted due to an error");
+				  }
+			}
+		};
+		
+		thread.start();
 	}
 	
 	public static FeatureRunner getInstance() {
@@ -67,87 +133,20 @@ public class FeatureRunner implements Runnable {
 		
 		return INSTANCE;
 	}
-
-	public void start() {
-		run = true;
 		
-		// if this is a new feature runner thread increase its priority so that it doesn't get killed by Android		
-		if(thread.getState() == Thread.State.NEW)
-		{
-			thread.setPriority(Thread.MAX_PRIORITY);
-			thread.start();
-			if (Log.DEBUG) Log.d(TAG,"Starting Feature Runner");
-		}
-		else if (thread.getState() == Thread.State.TERMINATED) {
-			if (Log.DEBUG) Log.e(TAG,"FeatureRunner Terminated...what happened?");
-		}
-	}
-	
-	public Boolean isAlive() {
-		return thread.isAlive();
-	}
-	
-	public void run() {
-		while (run) {
+	public synchronized void addBuffer(FeatureData featureData) {
+		while (handler == null) {
 			try {
-				data = queue.take();
+				wait(500);
 			} catch (InterruptedException e) {
-				if (Log.DEBUG) Log.d("FeatureCalc","Got interrupted getting a new element, quitting");
-				data = null;
-			} // this is a blocking queue, so it will wait till new events
-				// objects are available!
-			if (data != null) {
-				long beginTime = 0, endTime = 0;
-				if (data.timestamps.length > 0) {
-					beginTime = data.timestamps[0];
-					endTime = data.timestamps[data.timestamps.length - 1];
-				}
-				
-				if (calculation2.mapping != null
-						&& !calculation2.mapping.isEmpty()) {
-					ArrayList<AbstractFeature> abstractFeatures = calculation2.mapping.get(data.sensorID);
-					if (abstractFeatures != null) {
-						for (AbstractFeature f : abstractFeatures) {
-							if (f.active) {
-								long start = SystemClock.uptimeMillis();
-								double result = f.calculate(data.buffer,
-										data.timestamps, data.sensorID);
-								if (Log.DEBUG) Log.d("FeatureCalc", "Feature "
-										+ ((Integer) f.featureID).toString()
-										+ " for Sensor "+((Integer)data.sensorID).toString() 
-										+ " has value "
-										+ ((Double) result).toString() + " for "
-										+ data.buffer.length
-										+ " bufferlenght, calculated in  "
-										+ (SystemClock.uptimeMillis() - start)
-										/ 1000);
-							// for testing, have the last time equal the current time
-							//endTime=System.currentTimeMillis();
-								FeatureBus.getInstance()
-										.receiveUpdate(
-												Constants.getId(f.featureID,
-														data.sensorID), result,
-												beginTime, endTime);
-							}
-						}
-					}
-				}
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-	}
+		
+		Message msg=handler.obtainMessage(0, featureData);
+		handler.sendMessage(msg);
 
-	public void stop() {
-		run = false;
-		thread.interrupt();
-	}
-	
-	public synchronized void addBuffer(FeatureData featureData) {
-		try {
-			queue.put(featureData);
-			if (Log.DEBUG) Log.d(TAG,"Queue is now "+queue.size()+" long");
-		} catch (InterruptedException e) {
-			
-		}
 	}
 
 }

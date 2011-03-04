@@ -1,5 +1,4 @@
-﻿//Copyright (c) 2010, University of Memphis, Carnegie Mellon University
-//All rights reserved.
+﻿//All rights reserved.
 //
 //Redistribution and use in source and binary forms, with or without modification, are permitted provided 
 //that the following conditions are met:
@@ -51,6 +50,7 @@ import org.fieldstream.service.IInferrenceServiceCallback;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.context.model.DataQualityCalculation;
 import org.fieldstream.service.logger.Log;
+import org.fieldstream.service.logger.TopExceptionHandler;
 import org.fieldstream.service.sensors.mote.MoteSensorManager;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateManager;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateSubscriber;
@@ -113,7 +113,7 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 	
 	private Button selfReportButton;
 	private Intent selfReportIntent;
-	
+	//test
 	private final static String EXIT_CODE = "7556";
 	private final static String OSCOPE_CODE ="6557";
 	private final static String ECGRIP_DEMO_CODE ="3366";
@@ -152,6 +152,9 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Thread.setDefaultUncaughtExceptionHandler(new TopExceptionHandler(this));
+		
 		//
 		//		if (Constants.DEBUG)
 		//			Debug
@@ -160,7 +163,6 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);  
 
-		super.onCreate(savedInstanceState);
 		setContentView(R.layout.test_layout);
 
 		start = false;

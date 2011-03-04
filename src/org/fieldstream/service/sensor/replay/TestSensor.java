@@ -35,7 +35,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 
 import org.fieldstream.Constants;
-import org.fieldstream.service.StateManager;
+import org.fieldstream.service.ActivationManager;
 import org.fieldstream.service.logger.Log;
 
 import android.os.Handler;
@@ -60,7 +60,7 @@ public class TestSensor extends org.fieldstream.service.sensors.api.AbstractSens
 	private ReaderRunner readerRunner;
 	
 	/**
-	 * constructor, finally called by {@link StateManager} to establish this sensors. Has to set the correct parameters for this sensor 
+	 * constructor, finally called by {@link ActivationManager} to establish this sensors. Has to set the correct parameters for this sensor 
 	 * @param SensorID
 	 */
 	

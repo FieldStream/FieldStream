@@ -29,29 +29,20 @@ package org.fieldstream.service.sensor.virtual;
 //@author Patrick Blitz
 //@author Mahbub Rahman
 
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
-
 import org.fieldstream.Constants;
 import org.fieldstream.service.features.Percentile;
-import org.fieldstream.service.features.Variance;
 import org.fieldstream.service.logger.Log;
-import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
 import org.fieldstream.service.sensors.mote.MoteUpdateSubscriber;
 
-import android.text.InputFilter.LengthFilter;
 /**
  * This Class has two modes. One connects to the mote subsystem to receive updates for the ECG one connects to the replay server. 
  * @author mahbub
  *
  */
-public class  RealPeakValleyVirtualSensor extends AbstractSensor implements MoteUpdateSubscriber, SensorBusSubscriber {
+//public class  RealPeakValleyVirtualSensor extends AbstractSensor implements MoteUpdateSubscriber /*remove*/, SensorBusSubscriber {
+public class  RealPeakValleyVirtualSensor extends AbstractSensor implements SensorBusSubscriber {
 
 	private static final int FRAMERATE = 60;
 	/**
@@ -274,7 +265,7 @@ public class  RealPeakValleyVirtualSensor extends AbstractSensor implements Mote
 		super.sendBuffer(toSendSamples, toSendTimestamps, startNewData, endNewData);
 	}
 
-	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
+	/*public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
 		if(SensorID == Constants.SENSOR_RIP)
 		{
 			//long[] timeStamps = new long[data.length];
@@ -297,11 +288,27 @@ public class  RealPeakValleyVirtualSensor extends AbstractSensor implements Mote
 //			Log.d("RealPeakValleyVirtualSensor","raw RIP data timestamp= "+checktimestamp);
 		}
 	}
-
+*/
 	public void receiveBuffer(int sensorID, int[] data, long[] timestamps,
 			int startNewData, int endNewData) {
 		if (sensorID==Constants.SENSOR_REPLAY_RESP) {
 			addValue(data, timestamps);		
+		}
+		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
+		{
+			addValue(data, timestamps);
+			String ripData="";
+			for(int i=0;i<data.length;i++)
+			{
+				ripData+=data[i]+",";
+			}
+			String checktimestamp="";
+			for(int i=0;i<timestamps.length;i++)
+			{
+				checktimestamp+=timestamps[i]+",";
+			}
+			Log.d("RealPeakValleyVirtualSensor", "raw RIP data= "+ripData);
+			Log.d("RealPeakValleyVirtualSensor","raw RIP data timestamp= "+checktimestamp);
 		}
 	}
 }

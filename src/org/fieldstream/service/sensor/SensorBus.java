@@ -24,11 +24,6 @@
 //
 package org.fieldstream.service.sensor;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.fieldstream.Constants;
@@ -127,6 +122,8 @@ public class SensorBus {
 			Log.d("SensorBus", "Got a " + data.length + " sample buffer of " + Constants.getSensorDescription(sensorID) + " with timestamp " + t);
 		}
 		if (subscribers!= null) {
+			if(sensorID==Constants.SENSOR_RIP)
+				Log.d("SensorBus-RIP", "RIP data in sensor bus");
 			for (int i=0;  i<subscribers.size(); i++) {
 //				Log.d("SensorBus", "sending buffer to " + subscribers.get(i).toString());
 				subscribers.get(i).receiveBuffer(sensorID, data, timestamps, startNewData, endNewData);

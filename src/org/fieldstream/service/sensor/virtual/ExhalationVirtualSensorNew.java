@@ -52,7 +52,6 @@ package org.fieldstream.service.sensor.virtual;
 //@author Mahbub Rahman
 
 
-import java.util.Arrays;
 
 import org.fieldstream.Constants;
 import org.fieldstream.service.InferrenceService;
@@ -69,7 +68,7 @@ import org.fieldstream.service.sensors.mote.MoteUpdateSubscriber;
  * @author mahbub
  *
  */
-public class  ExhalationVirtualSensorNew extends AbstractSensor implements MoteUpdateSubscriber, SensorBusSubscriber {
+public class  ExhalationVirtualSensorNew extends AbstractSensor implements SensorBusSubscriber {
 
 	private static final int FRAMERATE = 60;
 	/**
@@ -247,9 +246,9 @@ public class  ExhalationVirtualSensorNew extends AbstractSensor implements MoteU
 //		} else {
 //			MoteSensorManager.getInstance().registerListener(this);
 //		}
-		//SensorBus.getInstance().subscribe(this);
+		SensorBus.getInstance().subscribe(this);
 		// as this depends on the ECG sensor to be active, i need to load it to make sure it's there!
-		MoteSensorManager.getInstance().registerListener(this);
+		//MoteSensorManager.getInstance().registerListener(this);
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_REPLAY_RESP);
 		} else {
@@ -260,8 +259,8 @@ public class  ExhalationVirtualSensorNew extends AbstractSensor implements MoteU
 
 	@Override
 	public void deactivate() {
-		//SensorBus.getInstance().unsubscribe(this);
-		MoteSensorManager.getInstance().unregisterListener(this);
+		SensorBus.getInstance().unsubscribe(this);
+		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {
 			InferrenceService.INSTANCE.fm.deactivateSensor(Constants.SENSOR_REPLAY_RESP);
 		} else {
@@ -310,7 +309,7 @@ public class  ExhalationVirtualSensorNew extends AbstractSensor implements MoteU
 		super.sendBuffer(toSendSamples, toSendTimestamps, startNewData, endNewData);
 	}
 
-	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
+	/*public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
 		if(SensorID == Constants.SENSOR_RIP)
 		{
 //			int length=runner.timestamps.length;
@@ -339,12 +338,28 @@ public class  ExhalationVirtualSensorNew extends AbstractSensor implements MoteU
 //			Log.d("RealPeakValleyVirtualSensor", "raw RIP data= "+ripData);
 //			Log.d("RealPeakValleyVirtualSensor","raw RIP data timestamp= "+checktimestamp);
 		}
-	}
+	}*/
 
 	public void receiveBuffer(int sensorID, int[] data, long[] timestamps,
 			int startNewData, int endNewData) {
 		if (sensorID==Constants.SENSOR_REPLAY_RESP) {
 			addValue(data, timestamps);		
+		}
+		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
+		{
+			addValue(data, timestamps);
+			String ripData="";
+			for(int i=0;i<data.length;i++)
+			{
+				ripData+=data[i]+",";
+			}
+			String checktimestamp="";
+			for(int i=0;i<timestamps.length;i++)
+			{
+				checktimestamp+=timestamps[i]+",";
+			}
+			Log.d("ExhalationVirtualSensor", "raw RIP data for Exhalation= "+ripData);
+			Log.d("ExhalationVirtualSensor","raw RIP data timestamp for Exhalation= "+checktimestamp);
 		}
 	}
 }

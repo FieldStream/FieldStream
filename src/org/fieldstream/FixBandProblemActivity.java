@@ -220,6 +220,12 @@ public class FixBandProblemActivity extends Activity   {
 	/* This is called when the app is killed. */
 	@Override
 	protected void onDestroy() {
+		if (wakelock != null) {
+			if (wakelock.isHeld()) {
+				wakelock.release();
+			}
+		}
+		
 		super.onDestroy();
 	}
 	/* END ANDROID LIFE CYCLE */

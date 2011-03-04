@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.fieldstream.Constants;
+import org.fieldstream.service.ActivationManager;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.ContextBus;
 import org.fieldstream.service.sensor.virtual.IEratioCalculation;
@@ -81,8 +82,10 @@ public class ConversationDetectionModel extends ModelCalculation{
 //		featureLabels.add(Constants.getId(Constants.FEATURE_MEDIAN,Constants.SENSOR_VIRTUAL_FIRSTDIFF_EXHALATION_NEW));//8 [14][11]
 //		featureLabels.add(Constants.getId(Constants.FEATURE_SECOND_BEST,Constants.SENSOR_VIRTUAL_EXHALATION));//9	   [15][12]//1
 		
-		//featureLabels.add(Constants.getId(Constants.FEATURE_NULL, Constants.SENSOR_RIP));
+		featureLabels.add(Constants.getId(Constants.FEATURE_NULL, Constants.SENSOR_RIP)); //to activate the RIP sensor
 		//featureLabels.add(Constants.getId(Constants.FEATURE_NULL, Constants.SENSOR_VIRTUAL_REALPEAKVALLEY));
+
+		//featureLabels.add(Constants.getId(Constants.FEATURE_MAX, Constants.SENSOR_ACCELPHONEZ));
 		
 		featureNum=featureLabels.size();																//actually it will be the count of total used features
 		
@@ -99,7 +102,8 @@ public class ConversationDetectionModel extends ModelCalculation{
 		
 		//Log.d("computeContext","in compute context");
 		Log.d("ConversationDetection","in compute context");
-
+		
+		
 		for (int featureID : featureLabels) {			
 			double result = fs.getFeature(featureID);
 
@@ -124,6 +128,9 @@ public class ConversationDetectionModel extends ModelCalculation{
 		if (Log.DEBUG) Log.d("ConersationClassification","New Classification: "+((Integer)conversationClassification).toString());
 		//initialize all the flags to 0
 		Arrays.fill(featureFlag, 0);
+
+		//need to be varified from Dr Raij
+		ActivationManager.getInstance().updateFeatureList(getID(), getUsedFeatures());  
 
 	}
 	

@@ -40,7 +40,7 @@ import org.fieldstream.service.sensors.phone.LocatioN;
  * @author Andrew Raij
  *
  */
-public class CommutingCalculation extends ModelCalculation {
+public class GPSCommutingCalculation extends ModelCalculation {
 
 	int lastClassification = -1;
 	int feature1 = Constants.getId(Constants.FEATURE_MEDIAN, Constants.SENSOR_LOCATIONSPEED);
@@ -69,7 +69,7 @@ public class CommutingCalculation extends ModelCalculation {
 	 * @see edu.cmu.ices.stress.phone.service.context.model.ModelCalculation#getID()
 	 */
 	public int getID() {
-		return Constants.MODEL_COMMUTING;
+		return Constants.MODEL_GPSCOMMUTING;
 	}
 	
 	private final static HashMap<Integer, String> outputDescription = new HashMap<Integer, String>() {
