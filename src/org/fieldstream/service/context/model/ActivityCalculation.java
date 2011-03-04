@@ -64,11 +64,10 @@ public class ActivityCalculation extends ModelCalculation {
 		
 		// features in the model.
 		featureLabels = new ArrayList<Integer>(featureNum);
-		featureLabels.add(Constants.getId(Constants.FEATURE_MEANCROSS, Constants.SENSOR_ACCELPHONEZ));
-		featureLabels.add(Constants.getId(Constants.FEATURE_MAD, Constants.SENSOR_ACCELPHONEZ));
+		featureLabels.add(Constants.getId(Constants.FEATURE_MEANCROSS, Constants.SENSOR_ACCELCHESTZ));
+		featureLabels.add(Constants.getId(Constants.FEATURE_MAD, Constants.SENSOR_ACCELCHESTZ));
 		featureFlag = new int[featureNum];
-		features = new double[featureNum];
-		
+		features = new double[featureNum];		
 	}		
 
 	@Override

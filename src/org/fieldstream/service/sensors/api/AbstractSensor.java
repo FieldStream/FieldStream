@@ -39,6 +39,7 @@ import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.SensorBus;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 
 public abstract class AbstractSensor {
@@ -93,6 +94,32 @@ public abstract class AbstractSensor {
 	protected boolean active = false;
 
 	private AbstractSensor INSTANCE;  
+	
+	
+	private Thread thread = new Thread() {
+		public void run() {
+			  try {
+			    // preparing a looper on current thread
+			    // the current thread is being detected implicitly
+			    Looper.prepare();
+			 
+			    // now, the handler will automatically bind to the
+			    // Looper that is attached to the current thread
+			    // You don't need to specify the Looper explicitly
+			    handler = new Handler();
+			    
+				handler.postDelayed(scheduledRun, windowSize);
+			    
+			    // After the following line the thread will start
+			    // running the message loop and will not normally
+			    // exit the loop unless a problem happens or you
+			    // quit() the looper (see below)
+			    Looper.loop();
+			  } catch (Throwable t) {
+			    Log.e(TAG, "halted due to an error");
+			  }
+		}
+	};
 	
 	/**
 	 * the runnable that is used to reset the buffer whenever the timer triggers
@@ -222,13 +249,12 @@ public abstract class AbstractSensor {
 		
 	}
 
-	protected void setUpTimer() {
+	
+
+	
+	protected void setUpTimer() {		
 		if (scheduler) {
-			if (handler == null) {
-				handler = new Handler();
-			}
-			handler.postDelayed(scheduledRun, windowSize);
-			
+			thread.start();
 		}
 	}
 

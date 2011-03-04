@@ -80,9 +80,6 @@ public class FeatureCalculation implements SensorBusSubscriber {
 		active = false;
 		INSTANCE = null;
 		SensorBus.getInstance().unsubscribe(this);
-		if(featureRunner!= null && featureRunner.isAlive()) {
-			featureRunner.stop();
-		}
 		featureRunner= null;
 		
 		Log.d(TAG, "Destroyed FeatureCalculation");
@@ -105,10 +102,9 @@ public class FeatureCalculation implements SensorBusSubscriber {
 
 		if (active) {
 			if (mapping!=null && !mapping.isEmpty()) {
-				if (featureRunner== null || !featureRunner.isAlive()) {
+				if (featureRunner== null) {
 					Log.d("FeatureCalculation","Init FeatureRunner");
 					featureRunner = FeatureRunner.getInstance();
-					featureRunner.start();
 				}
 				
 				featureRunner.addBuffer(new FeatureData(sensorID,buffer,timestamps));		
