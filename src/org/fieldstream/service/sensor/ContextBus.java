@@ -30,7 +30,7 @@ import java.util.HashMap;
 import org.fieldstream.Constants;
 import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.logger.Log;
-import org.fieldstream.service.sensors.mote.MoteUpdateSubscriber;
+import org.fieldstream.service.sensors.mote.sensors.MoteUpdateSubscriber;
 
 import android.app.Notification;
 import android.app.NotificationManager;

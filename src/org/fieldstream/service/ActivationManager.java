@@ -44,6 +44,7 @@ import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.ContextBus;
 import org.fieldstream.service.sensor.ContextSubscriber;
 import org.fieldstream.service.sensors.api.AbstractFeature;
+import org.fieldstream.service.sensors.api.AbstractMote;
 import org.fieldstream.service.sensors.api.AbstractSensor;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateManager;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateSubscriber;
@@ -75,6 +76,7 @@ public class ActivationManager implements ContextSubscriber {
  */
 	private DatabaseLogger db;
 	
+	public static HashMap<Integer,AbstractMote> motes;	
 	public static HashMap<Integer,AbstractSensor> sensors;
 	public static HashMap<Integer,AbstractFeature> features;
 	public static HashMap<Integer, ArrayList<Integer>> modelToSFMapping;
@@ -109,6 +111,7 @@ public class ActivationManager implements ContextSubscriber {
 		modelToSFMapping = new HashMap<Integer, ArrayList<Integer>>();
 		SFlist = new ArrayList<Integer>();
 		sensors = new HashMap<Integer, AbstractSensor>();
+		motes = new HashMap<Integer, AbstractMote>();
 		sensorFeature = new HashMap<Integer, ArrayList<Integer>>();
 		features = new HashMap<Integer, AbstractFeature>();	
 	}
@@ -282,12 +285,23 @@ public class ActivationManager implements ContextSubscriber {
 		if (Log.DEBUG) Log.d("StateManager","unloading Model "+((Integer)modelID).toString());
 	}
 		
-	/**
-	 * 
-	 */
+	public void activateMote(int moteType) {
+		if(!motes.containsKey(moteType)) {
+			motes.put(moteType, Factory.moteFactory(moteType));
+			motes.get(moteType).activate();
+		}
+	}
+	
+	public void deactivateMote(int moteType) {
+		if(motes.containsKey(moteType))
+		{
+			motes.get(moteType).deactivate();
+			motes.remove(moteType);
+		}
+	}
 	
 	boolean initialized = false;
-	
+
 	public void init() {
 		if (initialized)
 			return;

@@ -97,8 +97,10 @@ import org.fieldstream.service.sensor.virtual.RipQualityVirtualSensor;
 import org.fieldstream.service.sensor.virtual.StretchVirtualSensor;
 import org.fieldstream.service.sensor.virtual.TempQualityVirtualSensor;
 import org.fieldstream.service.sensors.api.AbstractFeature;
+import org.fieldstream.service.sensors.api.AbstractMote;
 import org.fieldstream.service.sensors.api.AbstractSensor;
-import org.fieldstream.service.sensors.mote.GenericMoteSensor;
+import org.fieldstream.service.sensors.mote.GenericAutoSenseMote;
+import org.fieldstream.service.sensors.mote.sensors.GenericMoteSensor;
 import org.fieldstream.service.sensors.phone.AccelerometerSensor;
 import org.fieldstream.service.sensors.phone.BatteryLevelSensor;
 import org.fieldstream.service.sensors.phone.CompassSensor;
@@ -272,6 +274,18 @@ public class Factory {
 		}
 		return model;
 	}	
+	
+	static AbstractMote moteFactory(int moteType){
+		AbstractMote mote = null;
+		switch (moteType) {
+		case Constants.MOTE_TYPE_AUTOSENSE_1_ECG:
+		case Constants.MOTE_TYPE_AUTOSENSE_1_RIP:
+		case Constants.MOTE_TYPE_AUTOSENSE_2_ECG_RIP:
+		case Constants.MOTE_TYPE_AUTOSENSE_2_ALCOHOL:
+			mote = new GenericAutoSenseMote(moteType);
+		}
+		return mote;
+	}
 	
 	
 	/**

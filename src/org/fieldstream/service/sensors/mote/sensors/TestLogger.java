@@ -24,8 +24,34 @@
 
 // @author Somnath Mitra
 
-package org.fieldstream.service.sensors.mote;
 
-public interface MoteUpdateSubscriber {
-	public void onReceiveData(int SensorID, int[] data, long[] timeStamps);
+package org.fieldstream.service.sensors.mote.sensors;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
+
+public class TestLogger implements MoteUpdateSubscriber {
+
+	private String TOS_FILE_NAME = "/sdcard/TEST_LOGGER";
+	private PrintStream pTos;
+	public TestLogger() {
+		FileOutputStream fosTos;
+		try {
+			fosTos = new FileOutputStream(TOS_FILE_NAME					+ Long.toString(System.currentTimeMillis()));
+			pTos = new PrintStream(fosTos);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MoteSensorManager.getInstance().registerListener(this);
+	}
+	
+	public void onReceiveData(int SensorID, int[] data , long[] timestamp) {
+			if (pTos!=null) {
+				pTos.print("received data "+data.length+" for sensor "+SensorID+ " at time "+System.currentTimeMillis());
+			}
+	}
+
 }

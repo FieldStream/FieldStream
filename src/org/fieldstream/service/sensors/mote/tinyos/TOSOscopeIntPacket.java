@@ -84,7 +84,7 @@ public class TOSOscopeIntPacket {
 	
 	public void setNextDataItem(int data)
 	{
-		if(dataPosition < this.DATA_INT_SIZE - 1)
+		if(dataPosition < DATA_INT_SIZE - 1)
 			this.data[++dataPosition] = data;
 	}
 	
@@ -99,6 +99,32 @@ public class TOSOscopeIntPacket {
 
 	public int getDATA_INT_SIZE() {
 		return DATA_INT_SIZE;
+	}
+	
+	public static TOSOscopeIntPacket generateNullPacket(int NullPacketToken, int moteID, int chanID , int lastSampleNumber)
+	{
+		TOSOscopeIntPacket toip = new TOSOscopeIntPacket();
+		toip.setMoteID(moteID);
+		toip.setChan(chanID);
+		toip.setLastSample(lastSampleNumber);
+		int[] data = new int[DATA_INT_SIZE];
+		for(int i=0; i < DATA_INT_SIZE; i++)
+		{
+			data[i] = NullPacketToken;
+ 		}
+		toip.setData(data);
+		return toip;
+	}
+	
+	public static int[] generateNullData(int NullPacketToken)
+	{
+		int[] data = new int[DATA_INT_SIZE];
+		for(int i=0; i < DATA_INT_SIZE; i++)
+		{
+			data[i] = NullPacketToken;
+ 		}
+		return data;
+		
 	}
 	
 

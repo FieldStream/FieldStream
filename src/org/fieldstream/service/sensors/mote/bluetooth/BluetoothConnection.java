@@ -66,7 +66,7 @@ public class BluetoothConnection {
 	
 	private static BluetoothConnection INSTANCE = null;
 	
-	private Reader reader = null;
+	private Packetizer reader = null;
 	
 	private String TAG;
 	
@@ -83,7 +83,7 @@ public class BluetoothConnection {
 	private BluetoothConnection(String mDeviceAddress)
 	{
 		deviceAddress = mDeviceAddress;
-		reader = Reader.getInstance();
+		reader = Packetizer.getInstance();
 	}
 	
 	public static BluetoothConnection getInstance(String mDeviceAddress)
@@ -174,7 +174,7 @@ public class BluetoothConnection {
 			try {
 				pRaw.write(buffer, 0, numBytes);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -320,7 +320,7 @@ public class BluetoothConnection {
 	        	TAG = "BluetoothConnection";
 	        	Log.d(TAG, "*************connection severed***************");
 
-				BluetoothStateManager.getInstance().requestBluetoothState(BluetoothConnectionStates.BT_STATE_BRIDGE_DISCONNECTED, System.currentTimeMillis(), System.currentTimeMillis());
+				BluetoothStateManager.getInstance().requestBluetoothState(BluetoothConnectionStates.BT_STATE_BRIDGE_DISCONNECTED);
 				// BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 	        }
 	    }
@@ -392,7 +392,7 @@ public class BluetoothConnection {
 				btSocket.close();
 				Log.d(TAG, "*******socket closed");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			
 				Log.d(TAG, "*******failed to close the bt socket");			
 				Log.d(TAG, "*******"+e.toString());
 			}

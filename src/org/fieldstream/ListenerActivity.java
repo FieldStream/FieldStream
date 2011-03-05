@@ -28,11 +28,11 @@ package org.fieldstream;
 
 import org.fieldstream.gui.ema.InterviewScheduler;
 import org.fieldstream.service.logger.Log;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
-import org.fieldstream.service.sensors.mote.MoteUpdateSubscriber;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothConnectionStates;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateManager;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateSubscriber;
+import org.fieldstream.service.sensors.mote.sensors.MoteSensorManager;
+import org.fieldstream.service.sensors.mote.sensors.MoteUpdateSubscriber;
 
 import android.app.Activity;
 import android.content.Intent;

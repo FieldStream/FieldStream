@@ -43,9 +43,9 @@ import org.fieldstream.service.sensor.FeatureBus;
 import org.fieldstream.service.sensor.FeatureBusSubscriber;
 import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateManager;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateSubscriber;
+import org.fieldstream.service.sensors.mote.sensors.MoteSensorManager;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

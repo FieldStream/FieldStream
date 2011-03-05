@@ -120,8 +120,81 @@ public class Constants {
 	public static final String quietEnd = "STRESSOR_STOP";
 	public static final String sleepStart = "EOD";
 	public static final String sleepEnd = "SOD";
-
 	
+	// motetypes
+	public static final int MOTE_TYPE_AUTOSENSE_1_ECG = 201;
+	public static final int MOTE_TYPE_AUTOSENSE_1_RIP = 202;
+	public static final int MOTE_TYPE_AUTOSENSE_1_BRIDGE = 203;
+	
+	public static final int MOTE_TYPE_AUTOSENSE_2_ECG_RIP = 204;
+	public static final int MOTE_TYPE_AUTOSENSE_2_ALCOHOL = 205;
+	public static final int MOTE_TYPE_AUTOSENSE_2_BRIDGE = 206;
+	
+	// mote connection types
+	public static final int MOTE_CONNECTION_BRIDGE = 301;
+	public static final int MOTE_CONNECTION_BLUETOOTH = 302;
+	public static final int MOTE_CONNECTION_USB = 303;
+	
+	//number of sensors in each versions of the mote
+	public static final int NO_OF_MOTE_SENSORS_AUTOSENSE_1_ECG = 7;
+	public static final int NO_OF_MOTE_SENSORS_AUTOSENSE_1_RIP = 1;
+	
+	public static final int NO_OF_MOTE_SENSORS_AUTOSENSE_2_ECG_RIP = 8;
+	public static final int NO_OF_MOTE_SENSORS_AUTOSENSE_2_ALCOHOL = 1;
+	
+	// sensor channel numbers coming from mote for each sensor
+	// autosense 1
+	public static final int CHANNEL_AUTOSENSE_1_ECG_ECG = 0;
+	public static final int CHANNEL_AUTOSENSE_1_ECG_ACCEL_X = 1;
+	public static final int CHANNEL_AUTOSENSE_1_ECG_ACCEL_Y = 2;
+	public static final int CHANNEL_AUTOSENSE_1_ECG_ACCEL_Z = 3;
+	public static final int CHANNEL_AUTOSENSE_1_ECG_TEMP_BODY = 4;
+	public static final int CHANNEL_AUTOSENSE_1_ECG_TEMP_AMBIENT = 5;
+	public static final int CHANNEL_AUTOSENSE_1_ECG_GSR = 6;
+	
+	public static final int CHANNEL_AUTOSENSE_1_RIP_RIP = 0;
+	
+	//autosense 2
+	public static final int CHANNEL_AUTOSENSE_2_ECG_ECG = 0;
+	public static final int CHANNEL_AUTOSENSE_2_ECG_ACCEL_X = 1;
+	public static final int CHANNEL_AUTOSENSE_2_ECG_ACCEL_Y = 2;
+	public static final int CHANNEL_AUTOSENSE_2_ECG_ACCEL_Z = 3;
+	public static final int CHANNEL_AUTOSENSE_2_ECG_TEMP_BODY = 4;
+	public static final int CHANNEL_AUTOSENSE_2_ECG_TEMP_AMBIENT = 5;
+	public static final int CHANNEL_AUTOSENSE_2_ECG_GSR = 6;
+	public static final int CHANNEL_AUTOSENSE_2_ECG_RIP = 7;
+	
+	public static final int CHANNEL_AUTOSENSE_2_ALCOHOL_ALCOHOL = 0;
+		
+	// the current sensor suite that is being used
+	public static final int SENSOR_SUITE_AUTOSENSE_1 = 1;
+	public static final int SENSOR_SUITE_AUTOSENSE_2 = 2;
+	
+	public static int CURRENT_SENSOR_SUITE = SENSOR_SUITE_AUTOSENSE_2;
+	
+	private final static HashMap<Integer, String> moteDescriptions = new HashMap<Integer, String>() {
+		{
+		put(MOTE_TYPE_AUTOSENSE_1_ECG, "Autosense Version 1 ECG Mote");
+		put(MOTE_TYPE_AUTOSENSE_1_RIP,  "Autosense Version 1 RIP Mote");
+		put(MOTE_TYPE_AUTOSENSE_1_BRIDGE,  "Autosense Version 1 BRIDGE Mote");
+		put(MOTE_TYPE_AUTOSENSE_2_ECG_RIP,  "Autosense Version 2 ECG AND RIP Mote");
+		put(MOTE_TYPE_AUTOSENSE_2_ALCOHOL,  "Autosense Version 2 ALCOHOL Mote");
+		put(MOTE_TYPE_AUTOSENSE_2_BRIDGE,  "Autosense Version 2 BRIDGE Mote");
+		}
+	};
+	
+	private final static HashMap<Integer, String>  moteSensorDescriptions = new HashMap<Integer, String>() {
+		{
+		put(CHANNEL_AUTOSENSE_1_ECG_ECG, "Autosense Version 1 Mote Electrocardiogram");
+		put(CHANNEL_AUTOSENSE_1_ECG_ACCEL_X, "Autosense Version 1 Accelerometer X");
+		put(CHANNEL_AUTOSENSE_1_ECG_ACCEL_Y, "Autosense Version 1 Accelerometer Y");
+		put(CHANNEL_AUTOSENSE_1_ECG_ACCEL_Z, "Autosense Version 1 Accelerometer Z");
+		put(CHANNEL_AUTOSENSE_1_ECG_TEMP_BODY, "Autosense Version 1 Temperature Body");
+		put(CHANNEL_AUTOSENSE_1_ECG_TEMP_AMBIENT, "Autosense Version 1 Temperature Ambient");
+		put(CHANNEL_AUTOSENSE_1_ECG_GSR, "Autosense Version 1 Galvanic Skin Response");
+		put(CHANNEL_AUTOSENSE_1_RIP_RIP,"Autosense Version 1 Respiration");
+		}
+	};
 	
 	private final static HashMap<Integer, String> sensorDescriptions = new HashMap<Integer, String>() {
 		{
@@ -337,6 +410,17 @@ public class Constants {
 	public static int parseSensorId(int featureSensorID) {
 		return featureSensorID%100;
 	}
+	
+	/*
+	 * Returns the description of the specified mote
+	 * @param moteType
+	 * @return the mote type description (String)
+	 */
+	
+	public static String getMoteDescription(int moteType) {
+		return moteDescriptions.get(moteType);
+	}
+	
 	
 	/**
 	 * Return the description of the specified sensor 

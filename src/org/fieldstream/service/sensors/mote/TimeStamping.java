@@ -28,7 +28,7 @@
 package org.fieldstream.service.sensors.mote;
 
 import org.fieldstream.Constants;
-import org.fieldstream.service.sensors.mote.GenericMoteSensor;
+import org.fieldstream.service.sensors.mote.sensors.GenericMoteSensor;
 import org.fieldstream.service.sensors.mote.tinyos.TOSOscopeIntPacket;
 
 public class TimeStamping {

@@ -28,6 +28,7 @@ import org.fieldstream.service.IInferrenceServiceCallback;
 
 // @author Patrick Blitz
 // @author Andrew Raij
+// @author Somnath Mitra
 
 
 interface IInferrenceService {
@@ -38,6 +39,8 @@ interface IInferrenceService {
 	void logDeadPeriod(in long start, in long end);
 	int getCurrentLabel(int model);
 	int getActiveModels();
+	void activateMote(int mote);
+	void deactivateMote(int mote);
 	void activateModel(int model);
 	void deactivateModel(int model);
 	void activateSensor(int sensor);

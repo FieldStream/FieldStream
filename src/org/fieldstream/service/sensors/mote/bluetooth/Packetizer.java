@@ -34,6 +34,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.fieldstream.Constants;
 import org.fieldstream.service.logger.Log;
+import org.fieldstream.service.sensors.mote.MoteDeviceManager;
 import org.fieldstream.service.sensors.mote.tinyos.RawPacket;
 import org.fieldstream.service.sensors.mote.tinyos.TOSOscopeBytePacket;
 import org.fieldstream.service.sensors.mote.tinyos.TOSOscopeIntPacket;
@@ -43,7 +44,7 @@ import org.fieldstream.service.sensors.mote.tinyos.TOSOscopeIntPacket;
  * of predefined oscilloscope type tinyos message but with a slightly different payload
  * @author mitra
  */
-public class Reader extends Thread {
+public class Packetizer extends Thread {
 
 	private final BlockingQueue<Byte> queue;
 	public Byte END_BYTE;
@@ -62,7 +63,7 @@ public class Reader extends Thread {
 	
 	private volatile boolean keepAlive;
 
-	private static Reader INSTANCE = null;
+	private static Packetizer INSTANCE = null;
 
 	private String TAG;
 
@@ -71,7 +72,7 @@ public class Reader extends Thread {
 	private String TOS_FILE_NAME = "/sdcard/TOS_PACKETS";
 
 
-	Reader() 
+	Packetizer() 
 	{ 
 		queue = new LinkedBlockingQueue<Byte>();	 
 		// packetQueue = pq;
@@ -81,11 +82,11 @@ public class Reader extends Thread {
 		keepAlive = true;
 	}
 
-	public static Reader getInstance()
+	public static Packetizer getInstance()
 	{
 		if(INSTANCE == null)
 		{
-			INSTANCE = new Reader();  
+			INSTANCE = new Packetizer();  
 			INSTANCE.initTOSFile();
 		}
 		return INSTANCE;
@@ -332,7 +333,7 @@ public class Reader extends Thread {
 			toip.setChan(chan);
 
 			//Set the data payload 
-			int data[] = new int[toip.DATA_INT_SIZE];
+			int data[] = new int[TOSOscopeIntPacket.DATA_INT_SIZE];
 			for(int i=0; i < tobp.DATA_SIZE; i++)
 			{
 				lower = tobp.getDataByteAtPosition(2*i);
@@ -353,7 +354,7 @@ public class Reader extends Thread {
 			// This is where the packet gets pushed to the bluetooth state manager
 			TAG = "makeTOSPacket";
 			if (Log.DEBUG) Log.d(TAG,"Channel " + Integer.toString(chan) + " packet made");
-			BluetoothStateManager.getInstance().onReceive(toip);
+			MoteDeviceManager.getInstance().onReceive(toip);
 
 		}
 		catch(Exception e)
@@ -466,7 +467,7 @@ public class Reader extends Thread {
 			try {
 				queue.put(b);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}				
 

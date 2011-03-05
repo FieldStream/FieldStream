@@ -30,11 +30,7 @@
 
 package org.fieldstream.service.sensors.api;
 
-import java.util.concurrent.locks.Lock;
-
 import org.fieldstream.Constants;
-import org.fieldstream.service.FeatureCalculation;
-import org.fieldstream.service.InferrenceService;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.SensorBus;
 
@@ -235,7 +231,7 @@ public abstract class AbstractSensor {
 		//				+ Integer.toString(toSendSamples.length) + " at time "
 		//				+ (currentTime - lastTime) + " with " + lastTime
 		//				+ " and current " + currentTime);
-		lastTime = currentTime;
+		setLastTime(currentTime);
 
 		// send it for feature calculation 
 		// TODO reimplement FeatureCalculation as SensorBusSubscriber
@@ -263,7 +259,7 @@ public abstract class AbstractSensor {
 	 * Synchronized so that only one can be active at any time
 	 * 
 	 * @param input
-	 *            a single new Value for this sensor
+	 *            a single new Value for thi   s sensor
 	 */
 	public synchronized void addValue(int input, long timestamp) {
 		timestamps[bufferIndex] = timestamp;
@@ -510,7 +506,15 @@ public abstract class AbstractSensor {
 	public abstract void activate();
 
 	/**
-	 * deactiovate this sensors
+	 * deactivate this sensors
 	 */
 	public abstract void deactivate();
+
+	public void setLastTime(long lastTime) {
+		this.lastTime = lastTime;
+	}
+
+	public long getLastTime() {
+		return lastTime;
+	}
 }

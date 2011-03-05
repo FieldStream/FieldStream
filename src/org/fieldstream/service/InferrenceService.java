@@ -33,15 +33,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.fieldstream.Constants;
-import org.fieldstream.incentives.AbstractIncentivesManager;
 import org.fieldstream.service.logger.AbstractLogger;
 import org.fieldstream.service.logger.DatabaseLogger;
 import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.logger.TextFileLogger;
 import org.fieldstream.service.sensor.ContextBus;
 import org.fieldstream.service.sensor.ContextSubscriber;
-import org.fieldstream.service.sensors.mote.MoteSensorManager;
+import org.fieldstream.service.sensors.mote.MoteDeviceManager;
 import org.fieldstream.service.sensors.mote.bluetooth.BluetoothStateManager;
+import org.fieldstream.service.sensors.mote.sensors.MoteSensorManager;
 
 import android.app.Service;
 import android.content.Intent;
@@ -116,6 +116,16 @@ public class InferrenceService extends Service implements ContextSubscriber{
 					throws RemoteException {
 				subscribers.remove(listener);				
 			}
+			
+			public void activateMote(int mote) throws RemoteException {
+				fm.activateMote(mote);
+			}
+			
+			
+			public void deactivateMote(int mote) throws RemoteException {
+				fm.deactivateMote(mote);
+				
+			}	
 
 			public void activateModel(int model) throws RemoteException {
 				fm.activate(model);
@@ -233,7 +243,9 @@ public class InferrenceService extends Service implements ContextSubscriber{
 
 			public void deactivateSensor(int sensor) throws RemoteException {
 				fm.deactivateSensor(sensor);
-			}			
+			}
+
+					
 			
 		};
 		
@@ -300,6 +312,9 @@ public class InferrenceService extends Service implements ContextSubscriber{
 		
 		Log.d("InferenceService", "activating");
 		
+		//Create the mote device manager
+		MoteDeviceManager.getInstance();
+		
 		// Create the mote sensor manager
 		MoteSensorManager.getInstance();
 		
@@ -338,7 +353,7 @@ public class InferrenceService extends Service implements ContextSubscriber{
 	}
 	
 	public void deactivate() {
-		if (active) {
+		if (active) {  
 			btStateManager.stopDown();
 			btStateManager.kill();
 			btStateManager = null;	
