@@ -63,6 +63,7 @@ public class Constants {
 	public static final String LOG_DIR = APP_DIR + "/logs";
 	public static final String CONFIG_DIR = APP_DIR + "/config";
 	public static final String EMA_QUESTION_CONFIG_FILENAME = "questions.xml";
+	public static final String EMA_CONFIG_FILENAME = "budgets.xml";
 	public static final String NETWORK_CONFIG_FILENAME = "network.xml";
 	public static final String DEAD_PERIOD_CONFIG_FILENAME = "dead_periods.xml";	
 	public static final String ACTIVATION_CONFIG_FILENAME = "activation.xml";		
