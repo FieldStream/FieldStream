@@ -1110,7 +1110,7 @@ public class InterviewScheduler extends Service {
 				// conditions
 				// not strictly necessary since the interview activity should be
 				// configured as singleInstance
-				if (!interviewRunning) { // && !withinGracePeriod) {
+				if (!interviewRunning && !withinGracePeriod) {
 					if (Log.DEBUG) Log.d("launchContextChangeInterview",
 							"No currently running interview");
 					interviewRunning = true;

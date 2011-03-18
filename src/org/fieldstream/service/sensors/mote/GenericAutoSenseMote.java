@@ -142,7 +142,7 @@ public class GenericAutoSenseMote extends AbstractMote implements MoteReceiverIn
 		
 	}
 
-	@Override
+	
 	public void onReceiveMotePacket(TOSOscopeIntPacket toip) 
 	{
 		Log.d("GenericAutoSenseMote", "onReceiveMotePacket Called");
@@ -365,7 +365,7 @@ public class GenericAutoSenseMote extends AbstractMote implements MoteReceiverIn
 		
 	}
 
-	@Override
+	
 	public void onNullPacketRequest(int moteType, int SensorID,
 			int numberOfPackets) {
 		if(moteType == MoteType)

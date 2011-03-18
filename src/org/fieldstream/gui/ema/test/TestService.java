@@ -189,13 +189,13 @@ public class TestService extends Service {
 			
 		}
 
-		@Override
+		
 		public void activateMote(int mote) throws RemoteException {
 			// TODO Auto-generated method stub
 			
 		}
 
-		@Override
+		
 		public void deactivateMote(int mote) throws RemoteException {
 			// TODO Auto-generated method stub
 			
