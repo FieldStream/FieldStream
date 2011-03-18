@@ -121,10 +121,14 @@ public class GenericMoteSensor extends AbstractSensor implements
 	
 	
 	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
+		Log.d(LOGTAG, "Data arrived from mote sensor " + SensorID + " at sensor " + this.sensorID);
 		if(SensorID == this.sensorID)
 		{
 			if (Log.VERBOSE) Log.v(LOGTAG,"received Data "+data.length);
-				addValue(data, timeStamps);
+			
+			Log.d(LOGTAG, "Sending data from sensor " + SensorID + " to AbstractSensor");
+			addValue(data, timeStamps);
+			Log.d(LOGTAG, "DONE Sending data from sensor " + SensorID + " to AbstractSensor");
 		//	addFreeTextLog(((Integer)counter).toString());
 		}
 		// first cancel the existing timer

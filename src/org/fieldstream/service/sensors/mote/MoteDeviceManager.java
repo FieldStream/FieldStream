@@ -43,8 +43,10 @@ public class MoteDeviceManager {
 	 */
 	public void onReceive(TOSOscopeIntPacket toip)
 	{
+		Log.d("MoteDeviceManager", "onReceive() called");
 		for( MoteReceiverInterface item: motePacketSubscribers )
 		{
+			Log.d("MoteDeviceManager", "sending to receiver");
 			item.onReceiveMotePacket(toip);
 		}
 		return;

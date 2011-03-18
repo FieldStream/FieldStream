@@ -3,6 +3,7 @@ package org.fieldstream.service.sensors.mote;
 import java.util.HashMap;
 
 import org.fieldstream.Constants;
+import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensors.api.AbstractMote;
 import org.fieldstream.service.sensors.mote.sensors.MoteSensorManager;
 import org.fieldstream.service.sensors.mote.tinyos.TOSOscopeIntPacket;
@@ -144,8 +145,11 @@ public class GenericAutoSenseMote extends AbstractMote implements MoteReceiverIn
 	@Override
 	public void onReceiveMotePacket(TOSOscopeIntPacket toip) 
 	{
+		Log.d("GenericAutoSenseMote", "onReceiveMotePacket Called");
 		synchronized(INSTANCE)
 		{
+			Log.d("GenericAutoSenseMote", "onReceiveMotePacket Executing after a wait");
+			
 			// mote id 
 			int moteID = toip.getMoteID();
 			

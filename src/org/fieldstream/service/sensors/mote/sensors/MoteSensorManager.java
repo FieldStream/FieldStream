@@ -92,7 +92,7 @@ public class MoteSensorManager {
 	
 	public void updateSensor(int[] data, int SensorID, long[] timestamps) 
 	{
-		
+		Log.d("MoteSensorManager", "in updateSensor");
 //        if (led) {
 //        	if (moteID % 10 == 1)   // ECG mote
 //        		notif.ledARGB = 0xFFFF0000;
@@ -113,6 +113,8 @@ public class MoteSensorManager {
 //        
 		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
 		{
+				Log.d("MoteSensorManager", "Sending data to a moteUpdateSubscriber");
+			
 				//int SensorID = ChannelToSensorMapping.mapMoteChannelToPhoneSensor(moteID, ChannelID);
 //				String TAG = "updateSensor";
 //				String sendingTo = "sending To " + item.toString();
