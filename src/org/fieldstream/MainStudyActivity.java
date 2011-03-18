@@ -122,6 +122,22 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 	WakeLock wakelock;
 	boolean mDoDestroy = true;
 
+	public static ArrayList<Integer> activeMotesAutoSense2 = new ArrayList<Integer>() {
+		{
+			add(Constants.MOTE_TYPE_AUTOSENSE_2_ALCOHOL);
+			add(Constants.MOTE_TYPE_AUTOSENSE_2_ECG_RIP);		
+		}
+	};
+	
+	public static ArrayList<Integer> activeMotesAutoSense1 = new ArrayList<Integer>() {
+		{
+			add(Constants.MOTE_TYPE_AUTOSENSE_1_ECG);
+			add(Constants.MOTE_TYPE_AUTOSENSE_1_RIP);		
+		}
+	};
+
+
+	
 	/* END USER INTERFACE DECLARATIONS */
 
 	private IInferrenceServiceCallback inferenceCallback = new IInferrenceServiceCallback.Stub() {
@@ -567,12 +583,45 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 				
 				inferenceService.logDeadPeriod(offStart,offEnd);
 				
+				if(Constants.CURRENT_SENSOR_SUITE == Constants.SENSOR_SUITE_AUTOSENSE_1)
+				{
+					for(Integer mote : activeMotesAutoSense1) {
+						inferenceService.activateMote(mote);
+					}
+				}
+				else if(Constants.CURRENT_SENSOR_SUITE == Constants.SENSOR_SUITE_AUTOSENSE_2)
+				{
+					for(Integer mote : activeMotesAutoSense2) {
+						inferenceService.activateMote(mote);
+					}					
+				}
+				
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
+			if(Constants.CURRENT_SENSOR_SUITE == Constants.SENSOR_SUITE_AUTOSENSE_1)
+			{
+				for(Integer mote : activeMotesAutoSense1) {
+					try {
+					inferenceService.deactivateMote(mote);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					} // end catch					
+				} // end for
+			}
+			else if(Constants.CURRENT_SENSOR_SUITE == Constants.SENSOR_SUITE_AUTOSENSE_2)
+			{
+				for(Integer mote : activeMotesAutoSense2) {
+					try {
+					inferenceService.deactivateMote(mote);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}// end catch
+				} // end for							
+			} // end else if
 
 			inferenceService = null;
 			Log.i("inferenceConnection", "Disconnected from inference service");

@@ -80,19 +80,23 @@ public class MoteSensorManager {
 	
 	public void registerListener(MoteUpdateSubscriber subscriber)
 	{
-		Log.d("registerListener", subscriber.toString());
+		Log.d("MoteSensorManager", "added MUS: " + subscriber.toString());		
 		moteUpdateSubsribers.add(subscriber);
 	}
 	
 	public void unregisterListener(MoteUpdateSubscriber subscriber)
 	{
 		moteUpdateSubsribers.remove(subscriber);
+		Log.d("MoteSensorManager", "removed MUS: " + subscriber.toString());
 	}
 
 	
 	public void updateSensor(int[] data, int SensorID, long[] timestamps) 
 	{
-		Log.d("MoteSensorManager", "in updateSensor");
+		if (SensorID == -1) {
+			Log.d("updateSensor", "Packet from sensor " + SensorID + " ignored");			
+			return;
+		}
 //        if (led) {
 //        	if (moteID % 10 == 1)   // ECG mote
 //        		notif.ledARGB = 0xFFFF0000;
@@ -111,26 +115,16 @@ public class MoteSensorManager {
 //        }
 //        nm.notify(1, notif);
 //        
-		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
-		{
-				Log.d("MoteSensorManager", "Sending data to a moteUpdateSubscriber");
-			
-				//int SensorID = ChannelToSensorMapping.mapMoteChannelToPhoneSensor(moteID, ChannelID);
-//				String TAG = "updateSensor";
-//				String sendingTo = "sending To " + item.toString();
-//				Log.d(TAG, sendingTo);
-				
-				// long[] timeStamps = null;
-				// timeStamps = TimeStamping.timestampCalculator(timestamp, SensorID);
-				
-				if (SensorID != -1) {
-					item.onReceiveData(SensorID, data , timestamps);
-				}
-				else {
-					Log.d("updateSensor", "Packet from sensor " + SensorID + " ignored");
-				}
+		Log.d("MoteSensorManager", "MoteUpdateSubscriber List size = " + moteUpdateSubsribers.size());
+		for (int i=0; i < moteUpdateSubsribers.size(); i++) {
+			Log.d("MoteSensorManager", "Trying to send data from sensor " + SensorID + " to a MUS " + i + " of " + (moteUpdateSubsribers.size() - 1));
+			moteUpdateSubsribers.get(i).onReceiveData(SensorID, data , timestamps);			
 		}
-		return;
+//		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
+//		{
+//			Log.d("MoteSensorManager", "Trying to send data from sensor " + SensorID + " to a MUS called " + item.toString());
+//			item.onReceiveData(SensorID, data , timestamps);			
+//		}
 	}
 	
 	public int isSensorActive(int ChannelID)

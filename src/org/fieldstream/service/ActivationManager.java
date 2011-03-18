@@ -406,7 +406,12 @@ public class ActivationManager implements ContextSubscriber {
 			}
 			sensors.put(sensorid, Factory.sensorFactory(sensorid));
 			sensors.get(sensorid).activate();
+			
+			Log.d("ActivationManager", "activated sensor " + sensorid);
 		}		
+		else {
+			Log.d("ActivationManager", "tried to activate sensor " + sensorid + "but already activcated");
+		}
 	}
 
     
