@@ -49,11 +49,8 @@ package org.fieldstream.service.sensor.virtual;
 
 //@author Amin Ahsan Ali
 //@author Patrick Blitz
-//@author Mahbub Rahman
+//@author Mahbubur Rahman
 
-
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 
 import org.fieldstream.Constants;
 import org.fieldstream.service.InferrenceService;
@@ -61,32 +58,26 @@ import org.fieldstream.service.features.Percentile;
 import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
-import org.fieldstream.service.sensors.mote.sensors.MoteSensorManager;
-import org.fieldstream.service.sensors.mote.sensors.MoteUpdateSubscriber;
 
 import android.util.Log;
 
-//import edu.cmu.ices.stress.phone.service.logger.Log;
 /**
  * This Class has two modes. One connects to the mote subsystem to receive updates for the ECG one connects to the replay server. 
  * @author mahbub
  *
  */
-public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateSubscriber, SensorBusSubscriber {
-//public class  StretchVirtualSensor extends AbstractSensor implements SensorBusSubscriber {  //now it should get data from the sensorbus. so it is a subscriber of sensorbus only
+public class  StretchVirtualSensor extends AbstractSensor implements SensorBusSubscriber {
+	//public class  StretchVirtualSensor extends AbstractSensor implements SensorBusSubscriber {  //now it should get data from the sensorbus. so it is a subscriber of sensorbus only
 
 	private static final int FRAMERATE = 60;
-	/**
-	 * duration in seconds.
-	 */
+
+	private static final int missingIndicator=-1; //this value indicates the missing value in the data
+	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
 	//private static final int WINDOW_DURATION=30;
+
 	private static final int WINDOW_DURATION=60;
 	private static final int PVWINDOWSIZE = WINDOW_DURATION*FRAMERATE;
 	private static final Boolean PVSCHEDULER = false;
-	private static long timestamp_check=0;
-	private FileOutputStream fout;
-	private PrintStream printStrm;
-	private String rawFromMote = "/sdcard/stressLog/rawFromMote.txt";
 	/**
 	 * decide if the Replay sensor or the mote RIP sensor should be used! 
 	 */
@@ -145,86 +136,85 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 				synchronized (lock) {
 
 					if (buffer!=null) {
-						Log.d("StretchBefore","BeginTS= "+timestamps[0]+"EndTS= "+timestamps[timestamps.length-1]);
-						//test purpose
-						//						String raw="";
-						//						for(int i=0;i<buffer.length;i++)
-						//							raw+=buffer[i]+",";
-						//						Log.d("BeforeCallingStretchCalculation","raw= "+raw);
-						//						Log.d("BeforeCallingStretchCalculation","raw length= "+buffer.length);
-
-						int[] calculate = stretchCalculation.calculate(buffer, timestamps);
-						Log.d("Stretch:Calculate: ","length= "+calculate.length);
-						//int[] calculate = pvCalculation.calculate(buffer, timestamps);
-						if((calculate.length==0))
+						/**
+						 * Buffer is full now. missing positions contain -1 value to indicate missing
+						 * Find out the missing positions and save it into another array. 
+						 * We have to interpolate values at these points
+						 * Calculate the missing rate 
+						 * If it is greater than 20% then discard
+						 * Otherwise, find out the missing values from the interpolation.
+						 */
+						//search missing indicator
+						int len=buffer.length;
+						int numberOfMissing=0,numberOfAvailable=0;
+						double []missingRemovedVal=new double[len];
+						double []missingRemovedTS=new double[len];
+						double []missingValuedTS=new double[len];
+//						double []interpoletedValForMissingTS=new double[len]; //will contain interpolated values for the missing timestamp positions
+						for(int i=0;i<len;i++)
 						{
-							//first check the variance. if it is very low then the band might be off
-							numberOfConsecutiveEmptyRealPeaks++;
-							if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
+							if(buffer[i]!=missingIndicator)
 							{
-								//adjust threshold for peaks
-								//should check data quality..........make sure that band is not loose
-								//Log.d("Threshold"," no peak="+peakThreshold);
-								peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-								//calculate = pvCalculation.calculate(buffer, timestamps);
-								//continue;		//test wheather it works or not.
+								missingRemovedVal[numberOfAvailable]=buffer[i];
+								missingRemovedTS[numberOfAvailable]=timestamps[i];
+								numberOfAvailable++;
+							}
+							else
+								missingValuedTS[numberOfMissing++]=buffer[i];
+						}
+						if(numberOfMissing/len<MISSINGRATETHRESHOLD)
+						{
+							//missing rate is below the threshold. now interpolate the missing values
+							//then send them for the further computation
+							//otherwise discard or send null values to upward in the framework
+							SplineInterpolation spline = new SplineInterpolation(missingRemovedTS, missingRemovedVal);
+							for(int i=0;i<numberOfMissing;i++)
+							{
+								//interpoletedValForMissingTS[i]=spline.spline_value(missingValuedTS[i]);  //interpolating each signal value for corresponding timestamp
+								for(int j=0;j<len;j++)
+								{
+									if(timestamps[j]==missingValuedTS[i])
+									{
+										buffer[j]=(int)spline.spline_value(missingValuedTS[i]);  //assign the interpolated missing values into the buffer
+									}
+								}
+							}
+							int[] calculate = stretchCalculation.calculate(buffer, timestamps);
+							if((calculate.length==0))
+							{
+								//first check the variance. if it is very low then the band might be off
+								numberOfConsecutiveEmptyRealPeaks++;
+								if(numberOfConsecutiveEmptyRealPeaks>=toleranceOfNotFindingPeaks)
+								{
+									peakThreshold=(int)Percentile.evaluate(buffer, quantile);
+								}
+							}
+							else									//if the calculation function returns null.....
+							{
+								long[] timestampsNew = new long[calculate.length];
+								if(calculate.length<=1)
+								{
+									timestampsNew[0]=timestamps[0];
+								}
+								else if (calculate.length<timestamps.length) {
+									float fakeIndex = 0;
+									float factor = timestamps.length/((float)calculate.length - 1);	
+									timestampsNew[0]=timestamps[0];
+									for (int i=1; i<calculate.length;i++) {
+										fakeIndex = i * factor;
+										timestampsNew[i]=timestamps[(int)Math.floor(fakeIndex)-1];
+									}
+								} else {
+									for (int i=0; i<calculate.length;i++) {
+										timestampsNew[i]=timestamps[i];
+									}
+								}
+								int start = 0;
+								int end = calculate.length;
+								Log.d("StretchAfter","BeginTS= "+timestampsNew[0]+"EndTS= "+timestampsNew[timestampsNew.length-1]);
+								sendBufferReal(calculate, timestampsNew, start, end);
 							}
 						}
-						/*else if((calculate.length>4*numberOfPeakThreshold))	//too many real peaks, need to adjust the threshold to upper value; 5 is probable offset
-						{
-							//							Variance var=new Variance(Constants.FEATURE_VAR, false, 0);
-							//							if(var.calculate(buffer, timestamps, Constants.SENSOR_RIP)>1)
-							//							{
-							//Log.d("Threshold"," too many peaks="+peakThreshold);
-							peakThreshold=(int)Percentile.evaluate(buffer, quantile);
-							//calculate = pvCalculation.calculate(buffer, timestamps);
-							//continue;			//test whether it works or not
-							//							}
-						}*/
-						else									//if the calculation function returns null.....
-						{
-							long[] timestampsNew = new long[calculate.length];
-							if(calculate.length<=1)
-							{
-								timestampsNew[0]=timestamps[0];
-							}
-							else if (calculate.length<timestamps.length) {
-								float fakeIndex = 0;
-								float factor = timestamps.length/((float)calculate.length - 1);	
-								timestampsNew[0]=timestamps[0];
-								for (int i=1; i<calculate.length;i++) {
-									fakeIndex = i * factor;
-									timestampsNew[i]=timestamps[(int)Math.floor(fakeIndex)-1];
-								}
-							} else {
-								for (int i=0; i<calculate.length;i++) {
-									timestampsNew[i]=timestamps[i];
-								}
-							}
-
-							int start = 0;
-							int end = calculate.length;
-							Log.d("StretchAfter","BeginTS= "+timestampsNew[0]+"EndTS= "+timestampsNew[timestampsNew.length-1]);
-							//							for(int t=0;t<end;t++)
-							//							{
-							//								System.out.print(calculate[t]+" ");
-							//							}
-							//							
-							//							String ripData="";
-							//							for(int i=0;i<calculate.length;i++)
-							//							{
-							//								ripData+=calculate[i]+",";
-							//							}
-							//							String checktimestamp="";
-							//							for(int i=0;i<timestampsNew.length;i++)
-							//							{
-							//								checktimestamp+=timestamps[i]+",";
-							//							}
-							//							Log.d("Stretch", "Stretch value= "+ripData);
-							//							Log.d("Stretch","Stretch timestamp= "+checktimestamp);
-
-							sendBufferReal(calculate, timestampsNew, start, end);
-						}							
 					}
 
 					try {
@@ -243,28 +233,11 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 
 	public StretchVirtualSensor(int SensorID) {
 		super(SensorID);
-		//		try {
-		//			outFile = new FileWriter("/mahbub/logDump.txt",true);
-		//			out = new PrintWriter(outFile,true);
-		//		} catch (IOException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-
 		INSTANCE = this;
 		initalize(PVSCHEDULER,PVWINDOWSIZE, PVWINDOWSIZE);	
 	}	
 	@Override
 	public void activate() {
-//		try
-//		{
-//			fout = new FileOutputStream(rawFromMote);
-//			printStrm = new PrintStream(fout);
-//		}
-//		catch(Exception e)
-//		{
-//			e.printStackTrace();
-//		}
 		active = true;
 		runner.active = true;
 		runner.timestamps = null;
@@ -276,7 +249,7 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 		//		} else {
 		//			MoteSensorManager.getInstance().registerListener(this);
 		//		}
-		
+
 		//MoteSensorManager.getInstance().registerListener(this);   //for MoteBusSubscriber
 		SensorBus.getInstance().subscribe(this);   //for SEnsorBus subscribing
 		// as this depends on the ECG sensor to be active, i need to load it to make sure it's there!
@@ -286,26 +259,9 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 			InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_RIP);
 			//InferrenceService.INSTANCE.fm.activateSensor(Constants.SENSOR_ACCELPHONEZ);
 		}
-
 	}
-
 	@Override
 	public void deactivate() {
-//		try{
-//			printStrm.close();
-//			fout.close();
-//
-//		}
-//		catch(Exception e)
-//		{
-//			e.printStackTrace();
-//		}
-
-		//		if (REPLAY_SENSOR) {
-		//			SensorBus.getInstance().unsubscribe(this);
-		//		} else {
-		//			MoteSensorManager.getInstance().unregisterListener(this);
-		//		}
 		SensorBus.getInstance().unsubscribe(this);
 		//MoteSensorManager.getInstance().unregisterListener(this);
 		if (REPLAY_SENSOR) {
@@ -321,7 +277,6 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 			runner.active=false;
 			StretchThread=null;
 		}
-
 	}
 	@Override
 	protected void sendBuffer(int[] toSendSamples, long[] toSendTimestamps,
@@ -356,9 +311,9 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 			Log.d("StretchVirtualSensor","Received ACCELPHONEZ from MoteBus");
 		if(SensorID==Constants.SENSOR_RIP) 
 			Log.d("StretchVirtualSensor","Received RIP from MoteBus");
-		
+
 	}
-		/*		if(SensorID == Constants.SENSOR_RIP)
+	/*		if(SensorID == Constants.SENSOR_RIP)
 		{
 			//all for the debugging
 //			String str="";
@@ -409,8 +364,8 @@ public class  StretchVirtualSensor extends AbstractSensor implements MoteUpdateS
 			addValue(data, timestamps);
 
 		}
-//		if(sensorID==Constants.SENSOR_ACCELPHONEZ) 
-//			Log.d("StretchVirtualSensor","Received ACCELPHONEZ");
+		//		if(sensorID==Constants.SENSOR_ACCELPHONEZ) 
+		//			Log.d("StretchVirtualSensor","Received ACCELPHONEZ");
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);

@@ -27,5 +27,5 @@
 package org.fieldstream.service.sensors.mote.sensors;
 
 public interface MoteUpdateSubscriber {
-	public void onReceiveData(int SensorID, int[] data, long[] timeStamps);
+	public void onReceiveData(int SensorID, int[] data, long[] timeStamps, int lastSampleNumber);
 }

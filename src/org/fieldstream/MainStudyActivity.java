@@ -122,21 +122,6 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 	WakeLock wakelock;
 	boolean mDoDestroy = true;
 
-	public static ArrayList<Integer> activeMotesAutoSense2 = new ArrayList<Integer>() {
-		{
-			add(Constants.MOTE_TYPE_AUTOSENSE_2_ALCOHOL);
-			add(Constants.MOTE_TYPE_AUTOSENSE_2_ECG_RIP);		
-		}
-	};
-	
-	public static ArrayList<Integer> activeMotesAutoSense1 = new ArrayList<Integer>() {
-		{
-			add(Constants.MOTE_TYPE_AUTOSENSE_1_ECG);
-			add(Constants.MOTE_TYPE_AUTOSENSE_1_RIP);		
-		}
-	};
-
-
 	
 	/* END USER INTERFACE DECLARATIONS */
 
@@ -561,6 +546,23 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 		Log.i("FeatureActivity", "bindService()");
 
 	}
+	
+	/*
+	 * Stuff required to init the motes 
+	 */
+	public static ArrayList<Integer> activeMotesAutoSense2 = new ArrayList<Integer>() {
+		{
+			add(Constants.MOTE_TYPE_AUTOSENSE_2_ALCOHOL);
+			add(Constants.MOTE_TYPE_AUTOSENSE_2_ECG_RIP);		
+		}
+	};
+	
+	public static ArrayList<Integer> activeMotesAutoSense1 = new ArrayList<Integer>() {
+		{
+			add(Constants.MOTE_TYPE_AUTOSENSE_1_ECG);
+			add(Constants.MOTE_TYPE_AUTOSENSE_1_RIP);		
+		}
+	};
 
 	private ServiceConnection inferenceConnection = new ServiceConnection() {
 
@@ -579,10 +581,8 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 				//				inferenceService.activateModel(Constants.MODEL_DATAQUALITY);
 				//				inferenceService.activateModel(Constants.MODEL_CONVERSATION);
 				//				inferenceService.activateModel(Constants.MODEL_ACTIVITY);
-			
 				
-				inferenceService.logDeadPeriod(offStart,offEnd);
-				
+				// start the motes here
 				if(Constants.CURRENT_SENSOR_SUITE == Constants.SENSOR_SUITE_AUTOSENSE_1)
 				{
 					for(Integer mote : activeMotesAutoSense1) {
@@ -595,6 +595,10 @@ public class MainStudyActivity extends Activity implements BluetoothStateSubscri
 						inferenceService.activateMote(mote);
 					}					
 				}
+			
+				
+				inferenceService.logDeadPeriod(offStart,offEnd);
+				
 				
 			} catch (RemoteException e) {
 				e.printStackTrace();

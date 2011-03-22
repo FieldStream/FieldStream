@@ -346,7 +346,7 @@ public class SignalRenderer implements MoteUpdateSubscriber, FeatureBusSubscribe
 	}
 
 	
-	public synchronized void onReceiveData(int sensorID, int[] data, long[] timestamp) {
+	public synchronized void onReceiveData(int sensorID, int[] data, long[] timestamp, int lastSampleNumber) {
 		if (!started)
 			return; 
 

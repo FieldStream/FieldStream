@@ -396,6 +396,10 @@ public abstract class AbstractSensor {
 	 *            a array of new values
 	 */
 	public synchronized void addValue(int[] input, long timestamps[]) {
+		if(Log.DEBUG)
+		{
+			Log.d("AbstractSensor","addValue on "+ID);
+		}
 		if (slidingWindowStep == windowSize) {
 			// static windows
 			addValueStaticWindows(input, timestamps);

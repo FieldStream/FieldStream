@@ -47,6 +47,8 @@ public class BluetoothStateManager extends Thread {
 	
 	private static BluetoothStateManager INSTANCE = null;
 	
+	private static String TAG = "BluetoothStateManager";
+	
 	public ArrayList<BluetoothStateSubscriber> btStateSubscribers;
 	
 	/* This variable holds an instance of the 
@@ -102,7 +104,6 @@ public class BluetoothStateManager extends Thread {
 			INSTANCE.btStateSubscribers = new ArrayList<BluetoothStateSubscriber>();
 			
 			
-			String TAG = "BluetoothStateManager";
 			String msg = "BluetoothStateManager Created";
 			if (Log.DEBUG) Log.d(TAG,msg);
 		}
@@ -129,6 +130,8 @@ public class BluetoothStateManager extends Thread {
 				if (Log.DEBUG) Log.d(TAG, sendingTo);
 				item.onReceiveBluetoothStateUpdate(BluetoothState);
 		}
+		
+		
 		return;
 	}
 	
@@ -159,8 +162,8 @@ public class BluetoothStateManager extends Thread {
 	 */
 	public synchronized void requestBluetoothState(int BluetoothState)
 	{
-		String TAG = "BluetoothManager.requestedBluetoothState";
-		String msg = Integer.toString(BluetoothState);
+		String TAG = "BluetoothManager";
+		String msg = "Requesting bluetooth state = "+Integer.toString(BluetoothState);
 		Log.d(TAG , msg);
 		// Save the requested State
 		requestedBluetoothState = BluetoothState;
@@ -194,9 +197,11 @@ public class BluetoothStateManager extends Thread {
 			BluetoothConnectionStates.setCURRENT_BT_STATE(BluetoothConnectionStates.BT_STATE_NO_DUTY_CYCLE);
 			// change the state times
 			
-			TAG = "BluetoothStateManager.requestBluetoothState()";
+			TAG = "BluetoothStateManager";
 			msg = "Started in Continuous / No Duty Cycle State";
-			 Log.d(TAG,msg);
+			
+			if(Log.DEBUG)
+				Log.d(TAG,msg);
 			 
 			 disconnected = false;
 			
@@ -210,9 +215,11 @@ public class BluetoothStateManager extends Thread {
 			BluetoothConnectionStates.setCURRENT_BT_STATE(BluetoothConnectionStates.BT_STATE_DEAD_TIME);
 			// change the state times			
 			
-			TAG = "BluetoothStateManager.requestBluetoothState()";
+			TAG = "BluetoothStateManager";
 			msg = "Changed to Dead Time State";
-			 Log.d(TAG,msg);
+			 
+			if(Log.DEBUG)
+				Log.d(TAG,msg);
 		}
 		
 		// if the requested state is connection severed or bridge is disconnected
@@ -223,9 +230,11 @@ public class BluetoothStateManager extends Thread {
 			BluetoothConnectionStates.setCURRENT_BT_STATE(BluetoothConnectionStates.BT_STATE_BRIDGE_DISCONNECTED);
 			// change the state times			
 			
-			TAG = "BluetoothStateManager.requestBluetoothState()";
+			TAG = "BluetoothStateManager";
 			msg = "Changed to Disconnected state";
-			Log.d(TAG,msg);			
+			
+			if(Log.DEBUG)
+				Log.d(TAG,msg);			
 		}
 		
 		// if the requested state is duty cycle
@@ -240,8 +249,9 @@ public class BluetoothStateManager extends Thread {
 			BluetoothConnectionStates.setCURRENT_BT_STATE(BluetoothConnectionStates.BT_STATE_DUTY_CYCLE);
 			// change the state times
 			
-			TAG = "BluetoothStateManager.requestBluetoothState()";
+			TAG = "BluetoothStateManager";
 			msg = "Started in Duty Cycle State";
+			if(Log.DEBUG)
 			 Log.d(TAG,msg);			
 		}
 		
@@ -256,9 +266,10 @@ public class BluetoothStateManager extends Thread {
 			// change the state times
 			 timeToNextScan = System.currentTimeMillis() + BluetoothConnectionStates.BT_SCAN_PERIOD;
 			
-			TAG = "BluetoothStateManager.requestBluetoothState()";
+			TAG = "BluetoothStateManager";
 			msg = "Bridge Problem State";
-			Log.d(TAG,msg);			
+			if(Log.DEBUG)
+				Log.d(TAG,msg);			
 		}
 		
 		// update the Bluetooth State for all subscribers
@@ -305,7 +316,7 @@ public class BluetoothStateManager extends Thread {
 			{
 				reader.setPriority(MAX_PRIORITY);
 				reader.start();
-				if (Log.DEBUG) Log.d("BluetoothStateManager.run()","Starting Reader");
+				if (Log.DEBUG) Log.d("BluetoothStateManager","Starting a new Reader");
 			}
 			
 												
@@ -347,7 +358,7 @@ public class BluetoothStateManager extends Thread {
 			reader.kill();
 			reader = null;
 			
-			String TAG = "BluetoothStateManager.stopDown()";
+			String TAG = "BluetoothStateManager";
 			String msg = "Stopped";
 			if (Log.DEBUG) Log.d(TAG,msg);
 		
@@ -367,6 +378,10 @@ public class BluetoothStateManager extends Thread {
 	{
 		while(keepAlive)
 		{	
+		
+			if(Log.DEBUG)
+				Log.d(TAG, "running");
+		
 			
 		if (!disconnected) 
 		{
@@ -374,22 +389,33 @@ public class BluetoothStateManager extends Thread {
 	
 			// this is where periodic scanning kicks in
 			if (disconnected) {
+				if(Log.DEBUG)
+					Log.d(TAG, "disconnected - going for periodic duty cycle");
+				
 				requestBluetoothState(BluetoothConnectionStates.BT_STATE_PERIODIC_SCANNING);
 			}
 	
 			// if the reader dies (which sometimes does), then restart it
 			if (reader == null)
+			{
+				if(Log.DEBUG)
+				{
+					Log.d("BluetoothStateManager","Reader was killed - restarting");
+				}
 				reader = Packetizer.getInstance();
+			}
 			
 			// if this is a new reader thread increase its priority so that it doesn't get killed by Android		
 			if(reader.getState() == Thread.State.NEW)
 			{
 				reader.setPriority(MAX_PRIORITY);
 				reader.start();
-				if (Log.DEBUG) Log.d("BluetoothStateManager.run()","Starting Reader");
+				if (Log.DEBUG) Log.d("BluetoothStateManager","Starting and prioritizing Reader");
 			}
 			else if (reader.getState() == Thread.State.TERMINATED) {
-				if (Log.DEBUG) Log.e("BluetoothStateManager.run()","Reader Terminated...what happened?");
+				if (Log.DEBUG) Log.e("BluetoothStateManager","Reader Terminated...what happened?");
+				reader.setPriority(MAX_PRIORITY);
+				reader.start();
 			}
 
 		// if periodic Scanning is true
@@ -415,7 +441,7 @@ public class BluetoothStateManager extends Thread {
 			} // end try
 			catch(Exception e)
 			{
-				String TAG = "BluetoothStateManager.run()";
+				String TAG = "BluetoothStateManager";
 				String msg = "Exception while sleeping";
 				if (Log.DEBUG) Log.d(TAG,msg);
 			} // end catch

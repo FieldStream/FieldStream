@@ -65,6 +65,8 @@ public class MoteSensorManager {
 		moteUpdateSubsribers = new ArrayList<MoteUpdateSubscriber>();
 		notif = new Notification();
 		notif.flags = Notification.FLAG_SHOW_LIGHTS;
+		
+		
 	}
 	public static MoteSensorManager getInstance()
 	{
@@ -91,7 +93,7 @@ public class MoteSensorManager {
 	}
 
 	
-	public void updateSensor(int[] data, int SensorID, long[] timestamps) 
+	public void updateSensor(int[] data, int SensorID, long[] timestamps, int lastSampleNumber) 
 	{
 		if (SensorID == -1) {
 			Log.d("updateSensor", "Packet from sensor " + SensorID + " ignored");			
@@ -115,16 +117,21 @@ public class MoteSensorManager {
 //        }
 //        nm.notify(1, notif);
 //        
-		Log.d("MoteSensorManager", "MoteUpdateSubscriber List size = " + moteUpdateSubsribers.size());
-		for (int i=0; i < moteUpdateSubsribers.size(); i++) {
-			Log.d("MoteSensorManager", "Trying to send data from sensor " + SensorID + " to a MUS " + i + " of " + (moteUpdateSubsribers.size() - 1));
-			moteUpdateSubsribers.get(i).onReceiveData(SensorID, data , timestamps);			
+		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
+		{
+				//int SensorID = ChannelToSensorMapping.mapMoteChannelToPhoneSensor(moteID, ChannelID);
+				String TAG = "MoteSensorManager.updateSensor()";
+				String sendingTo = "sending To " + SensorID;
+				if(Log.DEBUG)
+				{
+					Log.d(TAG, sendingTo);
+				}
+				
+				// long[] timeStamps = null;
+				// timeStamps = TimeStamping.timestampCalculator(timestamp, SensorID);
+				
+				item.onReceiveData(SensorID, data , timestamps, lastSampleNumber);
 		}
-//		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
-//		{
-//			Log.d("MoteSensorManager", "Trying to send data from sensor " + SensorID + " to a MUS called " + item.toString());
-//			item.onReceiveData(SensorID, data , timestamps);			
-//		}
 	}
 	
 	public int isSensorActive(int ChannelID)

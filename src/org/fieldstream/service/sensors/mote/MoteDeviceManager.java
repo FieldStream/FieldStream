@@ -7,6 +7,8 @@ import org.fieldstream.service.sensors.mote.tinyos.TOSOscopeIntPacket;
 
 public class MoteDeviceManager {
 	
+	private String TAG = "MoteDeviceManager";
+	
 	private static MoteDeviceManager INSTANCE;
 	
 	public ArrayList<MoteReceiverInterface> motePacketSubscribers;
@@ -42,7 +44,7 @@ public class MoteDeviceManager {
 	 * This distributes packets to motes
 	 */
 	public void onReceive(TOSOscopeIntPacket toip)
-	{
+	{ 
 		Log.d("MoteDeviceManager", "onReceive() called");
 		for( MoteReceiverInterface item: motePacketSubscribers )
 		{

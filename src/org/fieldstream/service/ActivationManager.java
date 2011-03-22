@@ -95,7 +95,7 @@ public class ActivationManager implements ContextSubscriber {
 	private FeatureCalculation featureCalculation;
 	
 	static private ActivationManager INSTANCE = null;
-	
+		
 	//this was not present in the statemanager before.
 	public static ActivationManager getInstance()
 	{
