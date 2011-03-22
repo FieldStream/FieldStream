@@ -48,7 +48,7 @@ public class TestLogger implements MoteUpdateSubscriber {
 		MoteSensorManager.getInstance().registerListener(this);
 	}
 	
-	public void onReceiveData(int SensorID, int[] data , long[] timestamp) {
+	public void onReceiveData(int SensorID, int[] data , long[] timestamp, int lastSampleNumber) {
 			if (pTos!=null) {
 				pTos.print("received data "+data.length+" for sensor "+SensorID+ " at time "+System.currentTimeMillis());
 			}

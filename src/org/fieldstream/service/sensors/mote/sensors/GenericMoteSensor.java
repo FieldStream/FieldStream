@@ -31,6 +31,7 @@ package org.fieldstream.service.sensors.mote.sensors;
 
 import org.fieldstream.Constants;
 import org.fieldstream.service.logger.Log;
+import org.fieldstream.service.logger.SimpleFileLogger;
 import org.fieldstream.service.sensors.api.AbstractSensor;
 import org.fieldstream.service.sensors.mote.ChannelToSensorMapping;
 import org.fieldstream.service.sensors.mote.MoteDeviceManager;
@@ -76,6 +77,8 @@ public class GenericMoteSensor extends AbstractSensor implements
 	private long timeOut = timeOutDefault;
 	private Handler timeOutHandler;
 	
+	private SimpleFileLogger sfl;
+	
 	public GenericMoteSensor(int SensorID) {
 		super(SensorID);
 		sensorID=SensorID;
@@ -111,7 +114,12 @@ public class GenericMoteSensor extends AbstractSensor implements
 				initalize(ALCOHOLSCHEDULER, ALCOHOLWINDOWSIZE, ALCOHOLWINDOWSIZE);
 				break;								
 		}
-		if (Log.VERBOSE) Log.v(LOGTAG,"instanciating  "+sensorID);
+		
+		sfl = new SimpleFileLogger("/sdcard/sensor_"+Integer.toString(sensorID));
+		timeOutHandler = null;
+		timeOutHandler = new Handler();
+		
+		if (Log.DEBUG) Log.v(LOGTAG,"instanciating  "+sensorID);
 	}
 
 	private int sensorID;
@@ -120,18 +128,23 @@ public class GenericMoteSensor extends AbstractSensor implements
 
 	
 	
-	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
-		if(SensorID == this.sensorID)
-		{
-			if (Log.VERBOSE) Log.v(LOGTAG,"received Data "+data.length);
-				addValue(data, timeStamps);
-		//	addFreeTextLog(((Integer)counter).toString());
-		}
-		// first cancel the existing timer
-		cancelTimeOutTimer();
+	public synchronized void onReceiveData(int SensorID, int[] data, long[] timeStamps, int lastSampleNumber) {
 		
-		// now set up the new timer
-		setUpTimeOutTimer();
+		
+			if(SensorID == this.sensorID)
+			{
+				if (Log.DEBUG) 
+				{
+					Log.d(LOGTAG," received Data on sensor "+SensorID+" - "+Constants.getSensorDescription(SensorID));
+					Log.d(LOGTAG," lastSampleNumber "+lastSampleNumber);
+				}
+				addValue(data, timeStamps);
+				sfl.log(lastSampleNumber+"\n");
+			//	addFreeTextLog(((Integer)counter).toString());
+			}
+		
+			// now set up the new timer
+			setUpTimeOutTimer();
 		
 	}
 	
@@ -141,32 +154,43 @@ public class GenericMoteSensor extends AbstractSensor implements
 			
 			// request the mote device manager to generate certain number of packets
 			// calculate the number of packets to generate
-			int numberOfPacketsToGenerate = (int) (timeOut / getFrameRate(sensorID) + 1);
+			// number of packet in one minute
+			float numberOfSamplesInOneSecond = 10;
+			// System.out.println(" numberOfPacketsInOneSecond " + numberOfSamplesInOneSecond);
 			
+			float numberOfPacketsInOneSecond = numberOfSamplesInOneSecond / 50 ;
+			// System.out.println(" numberOfPacketsInOneSecond " + numberOfPacketsInOneSecond);
+			
+			int numberOfPacketsInOneMinute = (int) ( 60 * numberOfPacketsInOneSecond );
+			//System.out.println(" numberOfPacketsInOneMinute " + numberOfPacketsInOneMinute);
+			
+			int numberOfPacketsToGenerate = numberOfPacketsInOneMinute;
+		
+			//System.out.println(numberOfPacketsToGenerate);
 			// now ask the mote device manager to generate some
 			// packets of particular mote type that this sensor belongs to 
 			int moteType = ChannelToSensorMapping.getSensorToMoteTypeMap(sensorID);
+			
+			if(Log.DEBUG)
+			{
+				Log.d("GenericMoteSensor.timeOutRun","generating "+numberOfPacketsToGenerate+" packets for sensor ID = "+sensorID);
+			}
 			
 			MoteDeviceManager.getInstance().sendNullPacketRequest(moteType, sensorID, numberOfPacketsToGenerate);
 		}
 	} ;
 	
-	private void cancelTimeOutTimer()
-	{
-		if(timeOutHandler != null)
-		{
-			timeOutHandler.removeCallbacks(timeOutRun);
-		}
-	}
 	
 	private void setUpTimeOutTimer()
 	{
-		if(timeOutHandler == null)
-		{
-			timeOutHandler = new Handler();
-		}
+		timeOutHandler.removeCallbacks(timeOutRun);
+		
 		timeOut = timeOutDefault;
 		timeOutHandler.postDelayed(timeOutRun, timeOut);
+		if(Log.DEBUG)
+		{
+			Log.d("GenericMoteSensor","Sensor "+sensorID+" setting up time out timer");
+		}
 	}
 
 
@@ -196,6 +220,7 @@ public class GenericMoteSensor extends AbstractSensor implements
 //		}
 		MoteSensorManager.getInstance().unregisterListener(this);
 		active=false;
+		sfl.closeFileLogger();
 		if (Log.DEBUG) Log.d(LOGTAG,"Mote Sensor "+sensorID+" deactivated!");
 	}
 	

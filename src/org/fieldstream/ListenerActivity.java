@@ -114,7 +114,7 @@ implements MoteUpdateSubscriber, BluetoothStateSubscriber, Runnable
 		stopService(emaScheduler);*/
 	}
 
-	public void onReceiveData(int SensorID, int[] data, long[] timeStamps)
+	public void onReceiveData(int SensorID, int[] data, long[] timeStamps, int lastSampleNumber)
 	{		
 		String TAG = "ListenerActivity.onReceiveData";
 		String msg1 = makeSensorIDString(SensorID);

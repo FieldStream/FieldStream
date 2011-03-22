@@ -65,6 +65,8 @@ public class MoteSensorManager {
 		moteUpdateSubsribers = new ArrayList<MoteUpdateSubscriber>();
 		notif = new Notification();
 		notif.flags = Notification.FLAG_SHOW_LIGHTS;
+		
+		
 	}
 	public static MoteSensorManager getInstance()
 	{
@@ -90,7 +92,7 @@ public class MoteSensorManager {
 	}
 
 	
-	public void updateSensor(int[] data, int SensorID, long[] timestamps) 
+	public void updateSensor(int[] data, int SensorID, long[] timestamps, int lastSampleNumber) 
 	{
 		
 //        if (led) {
@@ -114,15 +116,18 @@ public class MoteSensorManager {
 		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
 		{
 				//int SensorID = ChannelToSensorMapping.mapMoteChannelToPhoneSensor(moteID, ChannelID);
-//				String TAG = "updateSensor";
-//				String sendingTo = "sending To " + item.toString();
-//				Log.d(TAG, sendingTo);
+				String TAG = "MoteSensorManager.updateSensor()";
+				String sendingTo = "sending To " + SensorID;
+				if(Log.DEBUG)
+				{
+					Log.d(TAG, sendingTo);
+				}
 				
 				// long[] timeStamps = null;
 				// timeStamps = TimeStamping.timestampCalculator(timestamp, SensorID);
 				
 				if (SensorID != -1) {
-					item.onReceiveData(SensorID, data , timestamps);
+					item.onReceiveData(SensorID, data , timestamps, lastSampleNumber);
 				}
 				else {
 					Log.d("updateSensor", "Packet from sensor " + SensorID + " ignored");

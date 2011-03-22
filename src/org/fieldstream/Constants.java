@@ -196,6 +196,34 @@ public class Constants {
 		}
 	};
 	
+	private final static HashMap<Integer, String>  moteSensorAutoSense1Descriptions = new HashMap<Integer, String>() {
+		{
+		put(CHANNEL_AUTOSENSE_1_ECG_ECG, "Autosense Version 1 Mote Electrocardiogram");
+		put(CHANNEL_AUTOSENSE_1_ECG_ACCEL_X, "Autosense Version 1 Accelerometer X");
+		put(CHANNEL_AUTOSENSE_1_ECG_ACCEL_Y, "Autosense Version 1 Accelerometer Y");
+		put(CHANNEL_AUTOSENSE_1_ECG_ACCEL_Z, "Autosense Version 1 Accelerometer Z");
+		put(CHANNEL_AUTOSENSE_1_ECG_TEMP_BODY, "Autosense Version 1 Temperature Body");
+		put(CHANNEL_AUTOSENSE_1_ECG_TEMP_AMBIENT, "Autosense Version 1 Temperature Ambient");
+		put(CHANNEL_AUTOSENSE_1_ECG_GSR, "Autosense Version 1 Galvanic Skin Response");
+		put(CHANNEL_AUTOSENSE_1_RIP_RIP,"Autosense Version 1 Respiration");
+		}
+	};
+	
+	private final static HashMap<Integer, String>  moteSensorAutoSense2Descriptions = new HashMap<Integer, String>() {
+		{
+		put(CHANNEL_AUTOSENSE_2_ECG_ECG, "Autosense Version 2 Mote Electrocardiogram");
+		put(CHANNEL_AUTOSENSE_2_ECG_ACCEL_X, "Autosense Version 2 Accelerometer X");
+		put(CHANNEL_AUTOSENSE_2_ECG_ACCEL_Y, "Autosense Version 2 Accelerometer Y");
+		put(CHANNEL_AUTOSENSE_2_ECG_ACCEL_Z, "Autosense Version 2 Accelerometer Z");
+		put(CHANNEL_AUTOSENSE_2_ECG_TEMP_BODY, "Autosense Version 2 Temperature Body");
+		put(CHANNEL_AUTOSENSE_2_ECG_TEMP_AMBIENT, "Autosense Version 2 Temperature Ambient");
+		put(CHANNEL_AUTOSENSE_2_ECG_GSR, "Autosense Version 2 Galvanic Skin Response");
+		put(CHANNEL_AUTOSENSE_2_ECG_RIP,"Autosense Version 2 Respiration");
+		put(CHANNEL_AUTOSENSE_2_ALCOHOL_ALCOHOL,"Autosense Version 2 Alcohol");
+		}
+	};
+	
+	
 	private final static HashMap<Integer, String> sensorDescriptions = new HashMap<Integer, String>() {
 		{
 			put(SENSOR_GSR, "Galvanic Skin Response");
@@ -420,6 +448,24 @@ public class Constants {
 	public static String getMoteDescription(int moteType) {
 		return moteDescriptions.get(moteType);
 	}
+	
+	/*
+	 * the mote sensor descriptions
+	 */
+	public static String getMoteSensorDescriptions(int moteType, int chanID)
+	{
+		if(moteType == MOTE_TYPE_AUTOSENSE_1_ECG )
+			return moteSensorAutoSense1Descriptions.get(chanID);
+		else if(moteType == MOTE_TYPE_AUTOSENSE_1_RIP)
+			return moteSensorAutoSense1Descriptions.get(chanID);
+		else if(moteType == MOTE_TYPE_AUTOSENSE_2_ECG_RIP )
+			return moteSensorAutoSense2Descriptions.get(chanID);
+		else if(moteType == MOTE_TYPE_AUTOSENSE_2_ALCOHOL)
+			return moteSensorAutoSense2Descriptions.get(chanID);
+		
+		return null;
+	}
+	
 	
 	
 	/**

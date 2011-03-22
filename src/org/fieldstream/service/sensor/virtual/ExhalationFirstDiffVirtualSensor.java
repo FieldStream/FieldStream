@@ -273,7 +273,7 @@ public class ExhalationFirstDiffVirtualSensor extends AbstractSensor implements 
 //			addValue(data, timestamps);		
 //		}
 //	}
-	public void onReceiveData(int SensorID, int[] data, long[] timeStamps) {
+	public void onReceiveData(int SensorID, int[] data, long[] timeStamps, int lastSampleNumber) {
 		Log.d("FirstDiffExhal_onReceiveData","SensorID = " + SensorID);
 		if(SensorID == Constants.SENSOR_RIP)
 		{
