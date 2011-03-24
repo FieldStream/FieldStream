@@ -66,7 +66,7 @@ public class BluetoothConnection {
 	
 	private static BluetoothConnection INSTANCE = null;
 	
-	private Packetizer reader = null;
+	// private Packetizer reader = null;
 	
 	private String TAG;
 	
@@ -83,7 +83,7 @@ public class BluetoothConnection {
 	private BluetoothConnection(String mDeviceAddress)
 	{
 		deviceAddress = mDeviceAddress;
-		reader = Packetizer.getInstance();
+		// reader = Packetizer.getInstance();
 	}
 	
 	public static BluetoothConnection getInstance(String mDeviceAddress)
@@ -347,7 +347,7 @@ public class BluetoothConnection {
 				
 					// we actually have a real packet so put it in the queue
 
-					reader.addBytes(receivedBytes, numBytes);
+					Packetizer.getInstance().addBytes(receivedBytes, numBytes);
 			  } // end if(!stop)
 				
 			} // end try
