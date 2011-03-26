@@ -613,6 +613,10 @@ public class Packetizer extends Thread {
 		try
 		{		
 			b = queue.take();
+			if(Log.DEBUG)
+			{
+				Log.d("Packetizer","Read one Byte");
+			}
 		}
 		catch(Exception e)
 		{
@@ -751,6 +755,10 @@ public class Packetizer extends Thread {
 		// Going for minimal change atm, could use a once over later. -- NPS
 		
 		// error, index too large
+		if(Log.DEBUG)
+		{
+			Log.d("Packetizer","placedata with index = "+j);
+		}
 		if (j>=114) return;
 		
 		if (j<6) { 
