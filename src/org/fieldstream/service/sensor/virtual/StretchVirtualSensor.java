@@ -369,18 +369,18 @@ public class  StretchVirtualSensor extends AbstractSensor implements SensorBusSu
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);
-			String ripData="";
-			for(int i=0;i<data.length;i++)
-			{
-				ripData+=data[i]+",";
-			}
-			String checktimestamp="";
-			for(int i=0;i<timestamps.length;i++)
-			{
-				checktimestamp+=timestamps[i]+",";
-			}
-			Log.d("StretchVirtualSensor", "raw RIP data for Stretch= "+ripData);
-			Log.d("StretchVirtualSensor","raw RIP data timestamp for stretch= "+checktimestamp);
+//			String ripData="";
+//			for(int i=0;i<data.length;i++)
+//			{
+//				ripData+=data[i]+",";
+//			}
+//			String checktimestamp="";
+//			for(int i=0;i<timestamps.length;i++)
+//			{
+//				checktimestamp+=timestamps[i]+",";
+//			}
+//			Log.d("StretchVirtualSensor", "raw RIP data for Stretch= "+ripData);
+//			Log.d("StretchVirtualSensor","raw RIP data timestamp for stretch= "+checktimestamp);
 		}
 	}
 }

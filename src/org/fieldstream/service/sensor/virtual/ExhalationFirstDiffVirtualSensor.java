@@ -139,19 +139,19 @@ public class ExhalationFirstDiffVirtualSensor extends AbstractSensor implements 
 							//								sensor += calculate[i] + ",";
 							//							}		
 							//							Log.d("Exhalation", "Exhalation Durations = " + sensor);
-							String sensor = "";
+//							String sensor = "";
 
-							for (int i=0; i < calculate.length; i++) {
-								sensor += calculate[i] + ",";
-							}		
-							Log.d("ExhalationFirstDiff", "ExhalationFirstDiff Durations = " + sensor);	
+//							for (int i=0; i < calculate.length; i++) {
+//								sensor += calculate[i] + ",";
+//							}		
+//							Log.d("ExhalationFirstDiff", "ExhalationFirstDiff Durations = " + sensor);	
 
-							String timeStamp="";
-							for(int i=0;i<timestampsNew.length;i++)
-							{
-								timeStamp+=timestampsNew[i]+",";
-							}
-							Log.d("ExhalationFirstDiff","ExhalationFirstDiff timestamp= "+timeStamp);
+//							String timeStamp="";
+//							for(int i=0;i<timestampsNew.length;i++)
+//							{
+//								timeStamp+=timestampsNew[i]+",";
+//							}
+//							Log.d("ExhalationFirstDiff","ExhalationFirstDiff timestamp= "+timeStamp);
 
 							//sendBufferReal(calculate, timestamps, start, end);
 							sendBufferReal(calculate, timestampsNew, start, end);
@@ -281,23 +281,23 @@ public class ExhalationFirstDiffVirtualSensor extends AbstractSensor implements 
 			//Arrays.fill(timeStamps, 0, data.length, timestamp);
 			addValue(data, timeStamps);	
 			
-			if (Log.DEBUG) {
-				//Log.d("RealPeakValleyVirtualSensor", "raw value = " + data[0]);
-				//comment out-mahbub
-				//Log.d("RealPeakValleyVirtualSensor", "length of data array = " + data[0]);
-				String ripData="";
-				for(int i=0;i<data.length;i++)
-				{
-					ripData+=data[i]+",";
-				}
-				String checktimestamp="";
-				for(int i=0;i<timeStamps.length;i++)
-				{
-					checktimestamp+=timestamps[i]+",";
-				}
-				Log.d("ExhalationFirstDiff", "raw RIP data= "+ripData);
-				Log.d("ExhalationFirstDiff","raw RIP data timestamp= "+checktimestamp);
-			}
+//			if (Log.DEBUG) {
+//				//Log.d("RealPeakValleyVirtualSensor", "raw value = " + data[0]);
+//				//comment out-mahbub
+//				//Log.d("RealPeakValleyVirtualSensor", "length of data array = " + data[0]);
+//				String ripData="";
+//				for(int i=0;i<data.length;i++)
+//				{
+//					ripData+=data[i]+",";
+//				}
+//				String checktimestamp="";
+//				for(int i=0;i<timeStamps.length;i++)
+//				{
+//					checktimestamp+=timestamps[i]+",";
+//				}
+//				Log.d("ExhalationFirstDiff", "raw RIP data= "+ripData);
+//				Log.d("ExhalationFirstDiff","raw RIP data timestamp= "+checktimestamp);
+//			}
 		}
 	}
 	public void receiveBuffer(int sensorID, int[] data, long[] timestamps,

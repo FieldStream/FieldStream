@@ -163,19 +163,19 @@ public class  RealPeakValleyVirtualSensor extends AbstractSensor implements Sens
 							int start = 0;
 							int end = calculate.length;
 							
-							String sensor = "";
-
-							for (int i=0; i < calculate.length; i++) {
-								sensor += calculate[i] + ",";
-							}		
-							Log.d("RealPeakValleyVirtualSensor", "RealPeakValley = " + sensor);	
-
-							String timeStamp="";
-							for(int i=0;i<timestampsNew.length;i++)
-							{
-								timeStamp+=timestampsNew[i]+",";
-							}
-							Log.d("RealPeakValleyVirtualSensor","RealPeakValley timestamp= "+timeStamp);
+//							String sensor = "";
+//
+//							for (int i=0; i < calculate.length; i++) {
+//								sensor += calculate[i] + ",";
+//							}		
+//							Log.d("RealPeakValleyVirtualSensor", "RealPeakValley = " + sensor);	
+//
+//							String timeStamp="";
+//							for(int i=0;i<timestampsNew.length;i++)
+//							{
+//								timeStamp+=timestampsNew[i]+",";
+//							}
+//							Log.d("RealPeakValleyVirtualSensor","RealPeakValley timestamp= "+timeStamp);
 
 							sendBufferReal(calculate, timestampsNew, start, end);
 						}							
@@ -298,18 +298,18 @@ public class  RealPeakValleyVirtualSensor extends AbstractSensor implements Sens
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);
-			String ripData="";
-			for(int i=0;i<data.length;i++)
-			{
-				ripData+=data[i]+",";
-			}
-			String checktimestamp="";
-			for(int i=0;i<timestamps.length;i++)
-			{
-				checktimestamp+=timestamps[i]+",";
-			}
-			Log.d("RealPeakValleyVirtualSensor", "raw RIP data= "+ripData);
-			Log.d("RealPeakValleyVirtualSensor","raw RIP data timestamp= "+checktimestamp);
+//			String ripData="";
+//			for(int i=0;i<data.length;i++)
+//			{
+//				ripData+=data[i]+",";
+//			}
+//			String checktimestamp="";
+//			for(int i=0;i<timestamps.length;i++)
+//			{
+//				checktimestamp+=timestamps[i]+",";
+//			}
+//			Log.d("RealPeakValleyVirtualSensor", "raw RIP data= "+ripData);
+//			Log.d("RealPeakValleyVirtualSensor","raw RIP data timestamp= "+checktimestamp);
 		}
 	}
 }

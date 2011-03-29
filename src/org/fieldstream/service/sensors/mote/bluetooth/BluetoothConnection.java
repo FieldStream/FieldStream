@@ -340,7 +340,7 @@ public class BluetoothConnection {
 					// Receiving Message
 					byte[] receivedBytes = (byte[])(msg.obj);
 					int numBytes = msg.arg1;
-					TAG = "receivedMsgHandler";
+					TAG = "BluetoothConnection";
 					if (Log.DEBUG) Log.d(TAG,Integer.toString(numBytes));
 					logToRaw(receivedBytes, numBytes);
 					

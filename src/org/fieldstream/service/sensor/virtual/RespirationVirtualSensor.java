@@ -203,19 +203,19 @@ public class  RespirationVirtualSensor extends AbstractSensor implements SensorB
 								int start = 0;
 								int end = calculate.length;
 
-								String sensor = "";
-
-								for (int i=0; i < calculate.length; i++) {
-									sensor += calculate[i] + ",";
-								}		
-								Log.d("RespirationVirtualSensor", "RealPeakValley = " + sensor);	
-
-								String timeStamp="";
-								for(int i=0;i<timestampsNew.length;i++)
-								{
-									timeStamp+=timestampsNew[i]+",";
-								}
-								Log.d("RespirationVirtualSensor","RealPeakValley timestamp= "+timeStamp);
+//								String sensor = "";
+//
+//								for (int i=0; i < calculate.length; i++) {
+//									sensor += calculate[i] + ",";
+//								}		
+//								Log.d("RespirationVirtualSensor", "RealPeakValley = " + sensor);	
+//
+//								String timeStamp="";
+//								for(int i=0;i<timestampsNew.length;i++)
+//								{
+//									timeStamp+=timestampsNew[i]+",";
+//								}
+//								Log.d("RespirationVirtualSensor","RealPeakValley timestamp= "+timeStamp);
 
 								sendBufferReal(calculate, timestampsNew, start, end);
 							}	

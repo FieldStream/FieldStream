@@ -350,18 +350,18 @@ public class  ExhalationFirstDiffVirtualSensorNew extends AbstractSensor impleme
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);
-			String ripData="";
-			for(int i=0;i<data.length;i++)
-			{
-				ripData+=data[i]+",";
-			}
-			String checktimestamp="";
-			for(int i=0;i<timestamps.length;i++)
-			{
-				checktimestamp+=timestamps[i]+",";
-			}
-			Log.d("ExhalationFirstDiffVirtualSensor", "raw RIP data for ExhalationFirstDiff= "+ripData);
-			Log.d("ExhalationFirstDiffVirtualSensor","raw RIP data timestamp for ExhalationFirstDiff= "+checktimestamp);
+//			String ripData="";
+//			for(int i=0;i<data.length;i++)
+//			{
+//				ripData+=data[i]+",";
+//			}
+//			String checktimestamp="";
+//			for(int i=0;i<timestamps.length;i++)
+//			{
+//				checktimestamp+=timestamps[i]+",";
+//			}
+//			Log.d("ExhalationFirstDiffVirtualSensor", "raw RIP data for ExhalationFirstDiff= "+ripData);
+//			Log.d("ExhalationFirstDiffVirtualSensor","raw RIP data timestamp for ExhalationFirstDiff= "+checktimestamp);
 		}
 	}
 }

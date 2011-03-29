@@ -379,8 +379,8 @@ public class BluetoothStateManager extends Thread {
 		while(keepAlive)
 		{	
 		
-			if(Log.DEBUG)
-				Log.d(TAG, "running");
+//			if(Log.DEBUG)
+//				Log.d(TAG, "running");
 		
 			
 		if (!disconnected) 

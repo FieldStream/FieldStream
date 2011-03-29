@@ -204,20 +204,20 @@ public class IEratioVirtualSensor extends AbstractSensor implements SensorBusSub
 		if (sensorID==Constants.SENSOR_VIRTUAL_REALPEAKVALLEY) {
 			addValue(data, timestamps);
 			
-			if (Log.DEBUG) {
-				String realPeakValley="";
-				for(int i=0;i<data.length;i++)
-				{
-					realPeakValley+=data[i]+",";
-				}
-				String checktimestamp="";
-				for(int i=0;i<timestamps.length;i++)
-				{
-					checktimestamp+=timestamps[i]+",";
-				}
-				Log.d("IEratioVirtualSensor", "real Peak Valley= "+realPeakValley);
-				Log.d("IEratioVirtualSensor","real Peak Valley TS= "+checktimestamp);
-			}
+//			if (Log.DEBUG) {
+//				String realPeakValley="";
+//				for(int i=0;i<data.length;i++)
+//				{
+//					realPeakValley+=data[i]+",";
+//				}
+//				String checktimestamp="";
+//				for(int i=0;i<timestamps.length;i++)
+//				{
+//					checktimestamp+=timestamps[i]+",";
+//				}
+//				Log.d("IEratioVirtualSensor", "real Peak Valley= "+realPeakValley);
+//				Log.d("IEratioVirtualSensor","real Peak Valley TS= "+checktimestamp);
+//			}
 		}
 	}
 }

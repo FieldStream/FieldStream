@@ -187,19 +187,19 @@ public class  IEratioVirtualSensorNew extends AbstractSensor implements SensorBu
 								int start = 0;
 								int end = calculate.length;
 
-								String sensor = "";
-
-								for (int i=0; i < calculate.length; i++) {
-									sensor += calculate[i] + ",";
-								}		
-								Log.d("IEratioVirtualSensor", "RealPeakValley = " + sensor);	
-
-								String timeStamp="";
-								for(int i=0;i<timestampsNew.length;i++)
-								{
-									timeStamp+=timestampsNew[i]+",";
-								}
-								Log.d("IEratioVirtualSensor","RealPeakValley timestamp= "+timeStamp);
+//								String sensor = "";
+//
+//								for (int i=0; i < calculate.length; i++) {
+//									sensor += calculate[i] + ",";
+//								}		
+//								Log.d("IEratioVirtualSensor", "RealPeakValley = " + sensor);	
+//
+//								String timeStamp="";
+//								for(int i=0;i<timestampsNew.length;i++)
+//								{
+//									timeStamp+=timestampsNew[i]+",";
+//								}
+//								Log.d("IEratioVirtualSensor","RealPeakValley timestamp= "+timeStamp);
 
 								sendBufferReal(calculate, timestampsNew, start, end);
 							}
@@ -345,18 +345,18 @@ public class  IEratioVirtualSensorNew extends AbstractSensor implements SensorBu
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);
-			String ripData="";
-			for(int i=0;i<data.length;i++)
-			{
-				ripData+=data[i]+",";
-			}
-			String checktimestamp="";
-			for(int i=0;i<timestamps.length;i++)
-			{
-				checktimestamp+=timestamps[i]+",";
-			}
-			Log.d("IEratioVirtualSensor", "raw RIP data for IEratio= "+ripData);
-			Log.d("IEratioVirtualSensor","raw RIP data timestamp for IEratio= "+checktimestamp);
+//			String ripData="";
+//			for(int i=0;i<data.length;i++)
+//			{
+//				ripData+=data[i]+",";
+//			}
+//			String checktimestamp="";
+//			for(int i=0;i<timestamps.length;i++)
+//			{
+//				checktimestamp+=timestamps[i]+",";
+//			}
+//			Log.d("IEratioVirtualSensor", "raw RIP data for IEratio= "+ripData);
+//			Log.d("IEratioVirtualSensor","raw RIP data timestamp for IEratio= "+checktimestamp);
 		}
 	}
 }

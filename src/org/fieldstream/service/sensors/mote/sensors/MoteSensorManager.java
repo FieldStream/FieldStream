@@ -117,15 +117,16 @@ public class MoteSensorManager {
 //        }
 //        nm.notify(1, notif);
 //        
+		if(Log.DEBUG)
+		{
+			String TAG = "MoteSensorManager.updateSensor()";
+			String sendingTo = "sending To " + SensorID;
+			Log.d(TAG, sendingTo);
+		}
+
 		for(MoteUpdateSubscriber item : moteUpdateSubsribers)
 		{
 				//int SensorID = ChannelToSensorMapping.mapMoteChannelToPhoneSensor(moteID, ChannelID);
-				String TAG = "MoteSensorManager.updateSensor()";
-				String sendingTo = "sending To " + SensorID;
-				if(Log.DEBUG)
-				{
-					Log.d(TAG, sendingTo);
-				}
 				
 				// long[] timeStamps = null;
 				// timeStamps = TimeStamping.timestampCalculator(timestamp, SensorID);

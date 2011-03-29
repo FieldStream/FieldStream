@@ -340,18 +340,18 @@ public class  InhalationVirtualSensorNew extends AbstractSensor implements Senso
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);
-			String ripData="";
-			for(int i=0;i<data.length;i++)
-			{
-				ripData+=data[i]+",";
-			}
-			String checktimestamp="";
-			for(int i=0;i<timestamps.length;i++)
-			{
-				checktimestamp+=timestamps[i]+",";
-			}
-			Log.d("InhalationVirtualSensor", "raw RIP data for Inhalation= "+ripData);
-			Log.d("InhalationVirtualSensor","raw RIP data timestamp for Inhalation= "+checktimestamp);
+//			String ripData="";
+//			for(int i=0;i<data.length;i++)
+//			{
+//				ripData+=data[i]+",";
+//			}
+//			String checktimestamp="";
+//			for(int i=0;i<timestamps.length;i++)
+//			{
+//				checktimestamp+=timestamps[i]+",";
+//			}
+//			Log.d("InhalationVirtualSensor", "raw RIP data for Inhalation= "+ripData);
+//			Log.d("InhalationVirtualSensor","raw RIP data timestamp for Inhalation= "+checktimestamp);
 		}
 	}
 }

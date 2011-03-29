@@ -197,18 +197,18 @@ public class InhalationVirtualSensor extends AbstractSensor implements SensorBus
 	public void receiveBuffer(int sensorID, int[] data, long[] timestamps,
 			int startNewData, int endNewData) {
 		if (sensorID==Constants.SENSOR_VIRTUAL_REALPEAKVALLEY) {
-			String dataStr="";
-			for(int i=0;i<data.length;i++)
-			{
-				dataStr+=data[i]+" ";
-			}
-			String timeStr="";
-			for(int i=0;i<timestamps.length;i++)
-			{
-				timeStr+=timestamps[i]+" ";
-			}
-			Log.d("InhalationVirtualSensor","real Peak Valley= "+dataStr);
-			Log.d("InhalationVirtualSensor","real Peak Valley TS= "+timeStr);
+//			String dataStr="";
+//			for(int i=0;i<data.length;i++)
+//			{
+//				dataStr+=data[i]+" ";
+//			}
+//			String timeStr="";
+//			for(int i=0;i<timestamps.length;i++)
+//			{
+//				timeStr+=timestamps[i]+" ";
+//			}
+//			Log.d("InhalationVirtualSensor","real Peak Valley= "+dataStr);
+//			Log.d("InhalationVirtualSensor","real Peak Valley TS= "+timeStr);
 			addValue(data, timestamps);		
 		}
 	}

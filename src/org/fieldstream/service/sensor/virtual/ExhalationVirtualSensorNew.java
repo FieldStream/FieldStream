@@ -209,19 +209,19 @@ public class  ExhalationVirtualSensorNew extends AbstractSensor implements Senso
 								int start = 0;
 								int end = calculate.length;
 
-								String sensor = "";
-
-								for (int i=0; i < calculate.length; i++) {
-									sensor += calculate[i] + ",";
-								}		
-								Log.d("ExhalVirtualSensor", "RealPeakValley = " + sensor);	
-
-								String timeStamp="";
-								for(int i=0;i<timestampsNew.length;i++)
-								{
-									timeStamp+=timestampsNew[i]+",";
-								}
-								Log.d("ExhalVirtualSensor","RealPeakValley timestamp= "+timeStamp);
+//								String sensor = "";
+//
+//								for (int i=0; i < calculate.length; i++) {
+//									sensor += calculate[i] + ",";
+//								}		
+//								Log.d("ExhalVirtualSensor", "RealPeakValley = " + sensor);	
+//
+//								String timeStamp="";
+//								for(int i=0;i<timestampsNew.length;i++)
+//								{
+//									timeStamp+=timestampsNew[i]+",";
+//								}
+//								Log.d("ExhalVirtualSensor","RealPeakValley timestamp= "+timeStamp);
 
 								sendBufferReal(calculate, timestampsNew, start, end);
 							}
@@ -368,18 +368,18 @@ public class  ExhalationVirtualSensorNew extends AbstractSensor implements Senso
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);
-			String ripData="";
-			for(int i=0;i<data.length;i++)
-			{
-				ripData+=data[i]+",";
-			}
-			String checktimestamp="";
-			for(int i=0;i<timestamps.length;i++)
-			{
-				checktimestamp+=timestamps[i]+",";
-			}
-			Log.d("ExhalationVirtualSensor", "raw RIP data for Exhalation= "+ripData);
-			Log.d("ExhalationVirtualSensor","raw RIP data timestamp for Exhalation= "+checktimestamp);
+//			String ripData="";
+//			for(int i=0;i<data.length;i++)
+//			{
+//				ripData+=data[i]+",";
+//			}
+//			String checktimestamp="";
+//			for(int i=0;i<timestamps.length;i++)
+//			{
+//				checktimestamp+=timestamps[i]+",";
+//			}
+//			Log.d("ExhalationVirtualSensor", "raw RIP data for Exhalation= "+ripData);
+//			Log.d("ExhalationVirtualSensor","raw RIP data timestamp for Exhalation= "+checktimestamp);
 		}
 	}
 }
