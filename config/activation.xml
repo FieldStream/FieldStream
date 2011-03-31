@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fieldstream>
+	<activation>
+		<startup>
+			<model>MODEL_ACTIVITY</model>
+			<model>MODEL_DATAQUALITY</model>
+			<model>MODEL_STRESS</model>
+			<model>MODEL_ACCUMULATION</model>
+			<model>MODEL_CONVERSATION</model>	
+			<model>MODEL_ACCELCOMMUTING</model>
+			<model>MODEL_SELF_DRINKING</model>
+			<model>MODEL_SELF_SMOKING</model>
+
+			<sensor>SENSOR_BATTERY_LEVEL</sensor>
+			<sensor>SENSOR_ACCELCHESTX</sensor>
+			<sensor>SENSOR_ACCELCHESTY</sensor>
+			<sensor>SENSOR_ACCELCHESTZ</sensor>
+			<sensor>SENSOR_ACCELPHONEX</sensor>									
+			<sensor>SENSOR_ACCELPHONEY</sensor>									
+			<sensor>SENSOR_ACCELPHONEZ</sensor>									
+			<sensor>SENSOR_BODY_TEMP</sensor>
+			<sensor>SENSOR_AMBIENT_TEMP</sensor>
+			<sensor>SENSOR_GSR</sensor>
+			<sensor>SENSOR_ALCOHOL</sensor>
+		</startup>
+						
+		<runtime>
+			<trigger model="MODEL_ACTIVITY" output="2" majority_buffer_size="5">
+				<deactivate>MODEL_STRESS</deactivate>
+				<deactivate>MODEL_ACCUMULATION</deactivate>								
+				<deactivate>MODEL_DATAQUALITY</deactivate>				
+			</trigger>
+
+			<trigger model="MODEL_ACTIVITY" output="0" majority_buffer_size="5">
+				<activate>MODEL_STRESS</activate>
+				<activate>MODEL_ACCUMULATION</activate>				
+				<activate>MODEL_DATAQUALITY</activate>				
+			</trigger>
+
+			<trigger model="MODEL_ACTIVITY" output="1" majority_buffer_size="5">
+				<activate>MODEL_STRESS</activate>
+				<activate>MODEL_ACCUMULATION</activate>				
+				<activate>MODEL_DATAQUALITY</activate>				
+			</trigger>
+
+			<trigger model="MODEL_GPSCOMMUTING" output="0" majority_buffer_size="5">
+				<deactivate>MODEL_GPSCOMMUTING</deactivate>
+			</trigger>
+
+			<trigger model="MODEL_ACCELCOMMUTING" output="1" majority_buffer_size="1">
+				<activate>MODEL_GPSCOMMUTING</activate>
+			</trigger>
+
+		</runtime>
+	</activation>
+</fieldstream>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fieldstream>
+	<emaconfig>
+		<min_time_between_ema>33</min_time_between_ema>
+		<max_number_emas>20</max_number_emas>
+		<periodic_ema>
+			<interval>55</interval>
+		</periodic_ema>
+		<event_triggered_ema>			
+			<event model="8">
+				<budget>4</budget>
+				<expected_number>4</expected_number>				
+			</event>
+			<event model="21">
+				<budget>1</budget>
+				<expected_number>1</expected_number>				
+			</event>
+			<event model="22">
+				<budget>3</budget>
+				<expected_number>8</expected_number>				
+			</event>							
+		</event_triggered_ema>
+	</emaconfig>
+</fieldstream>
