@@ -37,6 +37,7 @@ import org.fieldstream.service.features.Percentile;
 import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
+import org.fieldstream.service.sensors.mote.PacketLoss;
 
 import android.util.Log;
 
@@ -51,7 +52,7 @@ public class  InhalationVirtualSensorNew extends AbstractSensor implements Senso
 	private static final int FRAMERATE = 60;
 	//private static final int WINDOW_DURATION=30;
 	
-	private static final int missingIndicator=-1; //-1 in the array indicates that the data is missing
+	private static final int missingIndicator=PacketLoss.MISSING_TOKEN_RIP; //-1 in the array indicates that the data is missing
 	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
 
 	

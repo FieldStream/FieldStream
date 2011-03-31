@@ -58,6 +58,7 @@ import org.fieldstream.service.features.Percentile;
 import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
+import org.fieldstream.service.sensors.mote.PacketLoss;
 
 import android.util.Log;
 
@@ -71,7 +72,7 @@ public class  StretchVirtualSensor extends AbstractSensor implements SensorBusSu
 
 	private static final int FRAMERATE = 60;
 
-	private static final int missingIndicator=-1; //this value indicates the missing value in the data
+	private static final int missingIndicator=PacketLoss.MISSING_TOKEN_RIP; //this value indicates the missing value in the data
 	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
 	//private static final int WINDOW_DURATION=30;
 
@@ -369,18 +370,18 @@ public class  StretchVirtualSensor extends AbstractSensor implements SensorBusSu
 		if(sensorID==Constants.SENSOR_RIP)		//date: 20th January 2011: now it receives data from the sensor bus
 		{
 			addValue(data, timestamps);
-//			String ripData="";
-//			for(int i=0;i<data.length;i++)
-//			{
-//				ripData+=data[i]+",";
-//			}
-//			String checktimestamp="";
-//			for(int i=0;i<timestamps.length;i++)
-//			{
-//				checktimestamp+=timestamps[i]+",";
-//			}
-//			Log.d("StretchVirtualSensor", "raw RIP data for Stretch= "+ripData);
-//			Log.d("StretchVirtualSensor","raw RIP data timestamp for stretch= "+checktimestamp);
+			String ripData="";
+			for(int i=0;i<data.length;i++)
+			{
+				ripData+=data[i]+",";
+			}
+			String checktimestamp="";
+			for(int i=0;i<timestamps.length;i++)
+			{
+				checktimestamp+=timestamps[i]+",";
+			}
+			Log.d("StretchVirtualSensor", "raw RIP data for Stretch= "+ripData);
+			Log.d("StretchVirtualSensor","raw RIP data timestamp for stretch= "+checktimestamp);
 		}
 	}
 }

@@ -60,6 +60,7 @@ import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
+import org.fieldstream.service.sensors.mote.PacketLoss;
 
 /**
  * This Class has two modes. One connects to the mote subsystem to receive updates for the ECG one connects to the replay server. 
@@ -72,7 +73,7 @@ public class  RespirationVirtualSensor extends AbstractSensor implements SensorB
 	private static final int WINDOW_DURATION=60;
 	private static final int PVWINDOWSIZE = WINDOW_DURATION*FRAMERATE;
 	
-	private static final int missingIndicator=-1; //-1 in the array indicates that the data is missing
+	private static final int missingIndicator=PacketLoss.MISSING_TOKEN_RIP; //-1 in the array indicates that the data is missing
 	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
 	
 	

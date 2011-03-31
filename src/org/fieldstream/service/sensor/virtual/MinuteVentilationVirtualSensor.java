@@ -37,6 +37,7 @@ import org.fieldstream.service.logger.Log;
 import org.fieldstream.service.sensor.SensorBus;
 import org.fieldstream.service.sensor.SensorBusSubscriber;
 import org.fieldstream.service.sensors.api.AbstractSensor;
+import org.fieldstream.service.sensors.mote.PacketLoss;
 
 
 public class  MinuteVentilationVirtualSensor extends AbstractSensor implements SensorBusSubscriber {
@@ -48,7 +49,7 @@ public class  MinuteVentilationVirtualSensor extends AbstractSensor implements S
 	private static final int WINDOW_DURATION=60;
 	private static final int PVWINDOWSIZE = WINDOW_DURATION*FRAMERATE;
 	private static final Boolean PVSCHEDULER = false;
-	private static final int missingIndicator=-1; //-1 in the array indicates that the data is missing
+	private static final int missingIndicator=PacketLoss.MISSING_TOKEN_RIP; //-1 in the array indicates that the data is missing
 	private static final float MISSINGRATETHRESHOLD=20/100; //20% missing rate is allowed
 	/**
 	 * decide if the Replay sensor or the mote RIP sensor should be used! 
