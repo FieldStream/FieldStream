@@ -30,7 +30,7 @@ Authors: Patrick Blitz, Mishfaq Ahmed, Andrew Raij
 
 <LinearLayout android:id="@+id/LinearLayout01" xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_height="fill_parent" android:layout_width="fill_parent"
-	android:orientation="vertical" android:layout_gravity="center_vertical|fill_vertical|center_horizontal|fill_horizontal" android:gravity="center_vertical|fill_vertical|center_horizontal|fill_horizontal" android:keepScreenOn="true">
+	android:orientation="vertical" android:layout_gravity="center_vertical|fill_vertical|center_horizontal|fill_horizontal" android:gravity="center_vertical|fill_vertical|center_horizontal|fill_horizontal" >
 
 
 	<!--		<TextView android:id="@+id/Question" -->
