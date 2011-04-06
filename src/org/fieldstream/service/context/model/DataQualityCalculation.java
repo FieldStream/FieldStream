@@ -60,6 +60,7 @@ public class DataQualityCalculation extends ModelCalculation{
 	Intent fixBandIntent;
 	
 	public DataQualityCalculation() {
+		super(false, -1);
 		Log.d(TAG, "Created");
 		fixBandIntent = new Intent(InferrenceService.INSTANCE.getBaseContext(), FixBandProblemActivity.class);
 		fixBandIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -110,11 +111,25 @@ public class DataQualityCalculation extends ModelCalculation{
 		if (Log.DEBUG) Log.d("DataQualityCalculation", "Received data");		
 		//if (Log.DEBUG) Log.d("DataQualityCalculation", "ECK mean "+fs.getFeature(Constants.getId(Constants.FEATURE_MEAN, Constants.SENSOR_ECK)));		
 		//if (Log.DEBUG) Log.d("DataQualityCalculation", "Rip Quality "+fs.getFeature(Constants.getId(Constants.FEATURE_MAX, Constants.SENSOR_VIRTUAL_RIP_QUALITY)));		
-		if (Log.DEBUG) Log.d("DataQualityCalculation", "Temp Quality "+fs.getFeature(Constants.getId(Constants.FEATURE_MAX, Constants.SENSOR_VIRTUAL_TEMP_QUALITY)));		
+//		if (Log.DEBUG) Log.d("DataQualityCalculation", "Temp Quality "+fs.getFeature(Constants.getId(Constants.FEATURE_MAX, Constants.SENSOR_VIRTUAL_TEMP_QUALITY)));		
 		//if (Log.DEBUG) Log.d("DataQualityCalculation", "Eck Quality "+fs.getFeature(Constants.getId(Constants.FEATURE_MAX, Constants.SENSOR_VIRTUAL_ECK_QUALITY)));		
 	 
-		//		ContextBus.getInstance().pushNewContext(getID(), currentDataQuality, fs.getBeginTime(), fs.getEndTime());	
-//		startFixBandActivityIfNeeded(currentDataQuality);
+		int eckDataQuality = currentDataQuality % 10;
+		int ripDataQuality = currentDataQuality / 10;
+
+		int featureRIP = Constants.getId(Constants.FEATURE_MAX, Constants.SENSOR_VIRTUAL_RIP_QUALITY);
+		if (fs.hasFeature(featureRIP)) {
+			ripDataQuality = (int)fs.getFeature(featureRIP);
+		}
+		int featureECK = Constants.getId(Constants.FEATURE_MAX, Constants.SENSOR_VIRTUAL_ECK_QUALITY);
+		if (fs.hasFeature(featureECK)) {
+			eckDataQuality = (int)fs.getFeature(featureECK);
+		}
+		
+		currentDataQuality = 10 * ripDataQuality + eckDataQuality;
+		
+		ContextBus.getInstance().pushNewContext(getID(), currentDataQuality, fs.getBeginTime(), fs.getEndTime());	
+		startFixBandActivityIfNeeded(currentDataQuality);
 	}
 	
 	// ===================================================================================================
