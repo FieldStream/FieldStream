@@ -33,7 +33,7 @@ package org.fieldstream.service.logger;
 
 public class Log {
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static final boolean VERBOSE = false;
 	public static final boolean Cda = true;
 

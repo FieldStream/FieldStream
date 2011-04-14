@@ -421,6 +421,10 @@ public class SignalRenderer implements MoteUpdateSubscriber, FeatureBusSubscribe
 		private synchronized void updateMaxMin() {
 			if (sensorBuffer != null) {
 				for (int i=0; i < sensorBuffer.length; i++) {
+					
+					if (sensorBuffer[i] >= 4095) 
+						continue;
+					
 					if (sensorBuffer[i] < min)
 						min = sensorBuffer[i];
 					
