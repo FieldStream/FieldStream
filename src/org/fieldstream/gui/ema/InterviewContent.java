@@ -193,6 +193,7 @@ public void loadResponses(){
                      }
                      
                      
+                     
                      //NodeList response_stringList = questionElement.getElementsByTagName("response_string");
                      //Element question_stringElement = (Element)question_stringList.item(0); 
                      //NodeList textquestion_stringList = question_stringElement.getChildNodes();                                         
@@ -205,7 +206,11 @@ public void loadResponses(){
                      //cqid =1;
                      //crc =1;
                      //ismcq = false;
-                     responses[iterator]= new Response(iterator, response_string,false);
+                     if(totalStrings != 0)
+                    	 responses[iterator]= new Response(iterator, response_string,false);
+                     else
+                    	 responses[iterator]= new Response(iterator, response_string,true);
+                    
               		 /*here the arrays to keep the components for the questions will be filled*/
             	 }
             }         

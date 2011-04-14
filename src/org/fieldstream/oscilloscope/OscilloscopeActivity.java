@@ -117,6 +117,7 @@ public class OscilloscopeActivity extends Activity {
 		addSensorToListIfAvailable(Constants.SENSOR_ACCELCHESTX);
 		addSensorToListIfAvailable(Constants.SENSOR_ACCELCHESTY);
 		addSensorToListIfAvailable(Constants.SENSOR_ACCELCHESTZ);        
+		addSensorToListIfAvailable(Constants.SENSOR_ALCOHOL);        
     
 		addFeatureToListIfAvailable(Constants.getId(Constants.FEATURE_HR, Constants.SENSOR_VIRTUAL_RR));
 		addFeatureToListIfAvailable(Constants.getId(Constants.FEATURE_RESP_RATE, Constants.SENSOR_RIP));
