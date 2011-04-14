@@ -78,7 +78,7 @@ Author: Mishfaq Ahmed
 		</EditText>
 		
 <!--		</GridView>-->
-<Button android:text="Report a drinking event" android:layout_below="@+id/EMAFreeResponse" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity= "center_horizontal" android:id="@+id/drinkButton"></Button>
-<Button android:text="Report a smoking event" android:layout_below="@+id/drinkButton" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity= "center_horizontal" android:id="@+id/smokeButton"></Button>
+<Button android:text="Report craving" android:layout_below="@+id/EMAFreeResponse" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity= "center_horizontal" android:id="@+id/drinkButton"></Button>
+<Button android:text="Report drug use" android:layout_below="@+id/drinkButton" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity= "center_horizontal" android:id="@+id/smokeButton"></Button>
 </RelativeLayout>		    
 
